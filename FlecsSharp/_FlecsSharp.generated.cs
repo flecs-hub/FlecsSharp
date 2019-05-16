@@ -27,71 +27,99 @@ namespace FlecsSharp
 #endregion
 
 #region Typedefs
-    unsafe partial struct OsThread
+    public unsafe partial struct OsThread
     {
         public OsThread(UInt64 value)
         {
             Value = value;
         }
 
-        public UInt64 Value;
+        UInt64 Value;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static explicit operator OsThread(UInt64 val) => new OsThread(val);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static explicit operator UInt64(OsThread val) => val.Value;
     }
 
-    unsafe partial struct OsMutex
+    public unsafe partial struct OsMutex
     {
         public OsMutex(UInt64 value)
         {
             Value = value;
         }
 
-        public UInt64 Value;
+        UInt64 Value;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static explicit operator OsMutex(UInt64 val) => new OsMutex(val);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static explicit operator UInt64(OsMutex val) => val.Value;
     }
 
-    unsafe partial struct OsCond
+    public unsafe partial struct OsCond
     {
         public OsCond(UInt64 value)
         {
             Value = value;
         }
 
-        public UInt64 Value;
+        UInt64 Value;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static explicit operator OsCond(UInt64 val) => new OsCond(val);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static explicit operator UInt64(OsCond val) => val.Value;
     }
 
-    unsafe partial struct Bool
+    public unsafe partial struct Bool
     {
         public Bool(sbyte value)
         {
             Value = value;
         }
 
-        public sbyte Value;
+        sbyte Value;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static explicit operator Bool(sbyte val) => new Bool(val);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static explicit operator sbyte(Bool val) => val.Value;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator Bool(bool val) => val ? (Bool)1 : (Bool)0;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator bool(Bool val) => ((sbyte)val) != 0;
     }
 
-    unsafe partial struct EntityId
+    public unsafe partial struct EntityId
     {
         public EntityId(UInt64 value)
         {
             Value = value;
         }
 
-        public UInt64 Value;
+        UInt64 Value;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static explicit operator EntityId(UInt64 val) => new EntityId(val);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static explicit operator UInt64(EntityId val) => val.Value;
     }
 
-    unsafe partial struct TypeId
+    public unsafe partial struct TypeId
     {
         public TypeId(UInt32 value)
         {
             Value = value;
         }
 
-        public UInt32 Value;
+        UInt32 Value;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static explicit operator TypeId(UInt32 val) => new TypeId(val);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static explicit operator UInt32(TypeId val) => val.Value;
     }
 
 #endregion
 
 #region Structs
     //ecs_os_api_t
-    unsafe partial struct OsApi
+    public unsafe partial struct OsApi
     {
         internal Data* ptr;
         internal OsApi(Data* ptr) => this.ptr = ptr;
@@ -128,7 +156,7 @@ namespace FlecsSharp
 
     //ecs_time_t
     [StructLayout(LayoutKind.Sequential)]
-    unsafe partial struct Time
+    public unsafe partial struct Time
     {
         public Time* Ptr() { fixed(Time* ptr = &this) return ptr; }
         internal int sec;
@@ -137,7 +165,7 @@ namespace FlecsSharp
 
     //EcsIter
     [StructLayout(LayoutKind.Sequential)]
-    unsafe partial struct Iterator
+    public unsafe partial struct Iterator
     {
         public Iterator* Ptr() { fixed(Iterator* ptr = &this) return ptr; }
         internal IntPtr ctx;
@@ -148,7 +176,7 @@ namespace FlecsSharp
     }
 
     //ecs_vector_params_t
-    unsafe partial struct VectorParams
+    public unsafe partial struct VectorParams
     {
         internal Data* ptr;
         internal VectorParams(Data* ptr) => this.ptr = ptr;
@@ -167,7 +195,7 @@ namespace FlecsSharp
     }
 
     //EcsMapIter
-    unsafe partial struct MapIter
+    public unsafe partial struct MapIter
     {
         internal Data* ptr;
         internal MapIter(Data* ptr) => this.ptr = ptr;
@@ -184,7 +212,7 @@ namespace FlecsSharp
     }
 
     //ecs_world_stats_t
-    unsafe partial struct WorldStats
+    public unsafe partial struct WorldStats
     {
         internal Data* ptr;
         internal WorldStats(Data* ptr) => this.ptr = ptr;
@@ -227,7 +255,7 @@ namespace FlecsSharp
     }
 
     //memory
-    unsafe partial struct MemoryStats
+    public unsafe partial struct MemoryStats
     {
         internal Data* ptr;
         internal MemoryStats(Data* ptr) => this.ptr = ptr;
@@ -250,7 +278,7 @@ namespace FlecsSharp
     }
 
     //total
-    unsafe partial struct MemStat
+    public unsafe partial struct MemStat
     {
         internal Data* ptr;
         internal MemStat(Data* ptr) => this.ptr = ptr;
@@ -267,7 +295,7 @@ namespace FlecsSharp
     }
 
     //ecs_rows_t
-    unsafe partial struct Rows
+    public unsafe partial struct Rows
     {
         internal Data* ptr;
         internal Rows(Data* ptr) => this.ptr = ptr;
@@ -297,7 +325,7 @@ namespace FlecsSharp
     }
 
     //ecs_reference_t
-    unsafe partial struct ComponentReference
+    public unsafe partial struct ComponentReference
     {
         internal Data* ptr;
         internal ComponentReference(Data* ptr) => this.ptr = ptr;
@@ -318,7 +346,7 @@ namespace FlecsSharp
 
 #region OpaquePtrs
     //ecs_vector_t
-    unsafe partial struct Vector
+    public unsafe partial struct Vector
     {
         IntPtr ptr;
         public Vector(IntPtr ptr) => this.ptr = ptr;
@@ -326,7 +354,7 @@ namespace FlecsSharp
     }
 
     //ecs_map_t
-    unsafe partial struct Map
+    public unsafe partial struct Map
     {
         IntPtr ptr;
         public Map(IntPtr ptr) => this.ptr = ptr;
@@ -334,7 +362,7 @@ namespace FlecsSharp
     }
 
     //ecs_world_t
-    unsafe partial struct World
+    public unsafe partial struct World
     {
         IntPtr ptr;
         public World(IntPtr ptr) => this.ptr = ptr;

@@ -5,40 +5,46 @@ using SharpC;
 
 namespace FlecsSharp
 {
-    public unsafe partial struct Iterator
+    unsafe partial struct Iterator
     {
         public IntPtr Ctx
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)] get => this.ctx;
-            [MethodImpl(MethodImplOptions.AggressiveInlining)] set => this.ctx = value;
+            //[MethodImpl(MethodImplOptions.AggressiveInlining)] set => this.ctx = value;
         }
 
         public IntPtr _Data
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)] get => this.data;
-            [MethodImpl(MethodImplOptions.AggressiveInlining)] set => this.data = value;
+            //[MethodImpl(MethodImplOptions.AggressiveInlining)] set => this.data = value;
         }
 
         internal HasnextDelegate HasnextCallback
         {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)] get => Marshal.GetDelegateForFunctionPointer<HasnextDelegate>(this._hasnext);
-            [MethodImpl(MethodImplOptions.AggressiveInlining)] set =>  this._hasnext = Marshal.GetFunctionPointerForDelegate(value);
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => Marshal.GetDelegateForFunctionPointer<HasnextDelegate>(this._hasnext);
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            set =>  this._hasnext = Marshal.GetFunctionPointerForDelegate(value);
         }
 
         internal NextDelegate NextCallback
         {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)] get => Marshal.GetDelegateForFunctionPointer<NextDelegate>(this._next);
-            [MethodImpl(MethodImplOptions.AggressiveInlining)] set =>  this._next = Marshal.GetFunctionPointerForDelegate(value);
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => Marshal.GetDelegateForFunctionPointer<NextDelegate>(this._next);
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            set =>  this._next = Marshal.GetFunctionPointerForDelegate(value);
         }
 
         internal ReleaseDelegate ReleaseCallback
         {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)] get => Marshal.GetDelegateForFunctionPointer<ReleaseDelegate>(this._release);
-            [MethodImpl(MethodImplOptions.AggressiveInlining)] set =>  this._release = Marshal.GetFunctionPointerForDelegate(value);
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => Marshal.GetDelegateForFunctionPointer<ReleaseDelegate>(this._release);
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            set =>  this._release = Marshal.GetFunctionPointerForDelegate(value);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Bool IterHasnext()
+        public bool IterHasnext()
         {
             fixed(Iterator* thisPtr = &this)
             return ecs.iter_hasnext( thisPtr);

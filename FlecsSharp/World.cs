@@ -5,7 +5,7 @@ using SharpC;
 
 namespace FlecsSharp
 {
-    public unsafe partial struct World
+    unsafe partial struct World
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void GetStats(WorldStats stats)
@@ -14,13 +14,13 @@ namespace FlecsSharp
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void MeasureFrameTime(Bool enable)
+        public void MeasureFrameTime(bool enable)
         {
             ecs.measure_frame_time( this, enable);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void MeasureSystemTime(Bool enable)
+        public void MeasureSystemTime(bool enable)
         {
             ecs.measure_system_time( this, enable);
         }
@@ -122,7 +122,7 @@ namespace FlecsSharp
         ///bool ecs_progress(ecs_world_t *world, float delta_time)
         ///</code>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Bool Progress(float deltaTime)
+        public bool Progress(float deltaTime)
         {
             return ecs.progress( this, deltaTime);
         }
@@ -157,7 +157,7 @@ namespace FlecsSharp
         ///void ecs_set_automerge(ecs_world_t *world, bool auto_merge)
         ///</code>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void SetAutomerge(Bool autoMerge)
+        public void SetAutomerge(bool autoMerge)
         {
             ecs.set_automerge( this, autoMerge);
         }
@@ -406,7 +406,7 @@ namespace FlecsSharp
         ///ecs_entity_t ecs_clone(ecs_world_t *world, ecs_entity_t entity, bool copy_value)
         ///</code>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public EntityId Clone(EntityId entity, Bool copyValue)
+        public EntityId Clone(EntityId entity, bool copyValue)
         {
             return ecs.clone( this, entity, copyValue);
         }
@@ -609,7 +609,7 @@ namespace FlecsSharp
         ///bool _ecs_has(ecs_world_t *world, ecs_entity_t entity, ecs_type_t type)
         ///</code>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Bool Has(EntityId entity, TypeId type)
+        public bool Has(EntityId entity, TypeId type)
         {
             return _ecs.has( this, entity, type);
         }
@@ -630,7 +630,7 @@ namespace FlecsSharp
         ///bool _ecs_has_any(ecs_world_t *world, ecs_entity_t entity, ecs_type_t type)
         ///</code>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Bool HasAny(EntityId entity, TypeId type)
+        public bool HasAny(EntityId entity, TypeId type)
         {
             return _ecs.has_any( this, entity, type);
         }
@@ -651,7 +651,7 @@ namespace FlecsSharp
         ///bool ecs_contains(ecs_world_t *world, ecs_entity_t parent, ecs_entity_t child)
         ///</code>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Bool Contains(EntityId parent, EntityId child)
+        public bool Contains(EntityId parent, EntityId child)
         {
             return ecs.contains( this, parent, child);
         }
@@ -725,7 +725,7 @@ namespace FlecsSharp
         ///bool ecs_is_empty(ecs_world_t *world, ecs_entity_t entity)
         ///</code>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Bool IsEmpty(EntityId entity)
+        public bool IsEmpty(EntityId entity)
         {
             return ecs.is_empty( this, entity);
         }
@@ -882,7 +882,7 @@ namespace FlecsSharp
         ///void ecs_enable(ecs_world_t *world, ecs_entity_t system, bool enabled)
         ///</code>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Enable(EntityId system, Bool enabled)
+        public void Enable(EntityId system, bool enabled)
         {
             ecs.enable( this, system, enabled);
         }
@@ -919,7 +919,7 @@ namespace FlecsSharp
         ///bool ecs_is_enabled(ecs_world_t *world, ecs_entity_t system)
         ///</code>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Bool IsEnabled(EntityId system)
+        public bool IsEnabled(EntityId system)
         {
             return ecs.is_enabled( this, system);
         }

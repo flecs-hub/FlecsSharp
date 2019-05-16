@@ -5,7 +5,7 @@ using SharpC;
 
 namespace FlecsSharp
 {
-    public unsafe partial struct Vector
+    unsafe partial struct Vector
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Free()

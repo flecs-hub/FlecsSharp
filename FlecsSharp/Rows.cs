@@ -5,102 +5,108 @@ using SharpC;
 
 namespace FlecsSharp
 {
-    public unsafe partial struct Rows
+    unsafe partial struct Rows
     {
-        //public static Rows New(in Data val = default) => new Rows(Alloc(in val));
-        //public void Dispose()
-        //{
-            //if(ptr != null) Free(ptr);
-        //}
-
         public World World
         {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)] get => ptr->world;
-            //[MethodImpl(MethodImplOptions.AggressiveInlining)]  set => ptr->world = value; }
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => ptr->world;
+            //[MethodImpl(MethodImplOptions.AggressiveInlining)]
+            //set => ptr->world = value; }
         }
 
         public EntityId System
         {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)] get => ptr->system;
-            //[MethodImpl(MethodImplOptions.AggressiveInlining)]  set => ptr->system = value; }
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => ptr->system;
+            //[MethodImpl(MethodImplOptions.AggressiveInlining)]
+            //set => ptr->system = value; }
         }
 
         public int* Columns
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)] get => ptr->columns;
-            [MethodImpl(MethodImplOptions.AggressiveInlining)] set => ptr->columns = value;
+            //[MethodImpl(MethodImplOptions.AggressiveInlining)] set => ptr->columns = value;
         }
 
         public ushort ColumnCount
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)] get => ptr->columnCount;
-            [MethodImpl(MethodImplOptions.AggressiveInlining)] set => ptr->columnCount = value;
+            //[MethodImpl(MethodImplOptions.AggressiveInlining)] set => ptr->columnCount = value;
         }
 
         public IntPtr Table
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)] get => ptr->table;
-            [MethodImpl(MethodImplOptions.AggressiveInlining)] set => ptr->table = value;
+            //[MethodImpl(MethodImplOptions.AggressiveInlining)] set => ptr->table = value;
         }
 
         public IntPtr TableColumns
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)] get => ptr->tableColumns;
-            [MethodImpl(MethodImplOptions.AggressiveInlining)] set => ptr->tableColumns = value;
+            //[MethodImpl(MethodImplOptions.AggressiveInlining)] set => ptr->tableColumns = value;
         }
 
         public ComponentReference References
         {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)] get => ptr->references;
-            //[MethodImpl(MethodImplOptions.AggressiveInlining)]  set => ptr->references = value; }
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => ptr->references;
+            //[MethodImpl(MethodImplOptions.AggressiveInlining)]
+            //set => ptr->references = value; }
         }
 
         public EntityId* Components
         {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)] get => ptr->components;
-            //[MethodImpl(MethodImplOptions.AggressiveInlining)]  set => ptr->components = value; }
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => ptr->components;
+            //[MethodImpl(MethodImplOptions.AggressiveInlining)]
+            //set => ptr->components = value; }
         }
 
         public EntityId* Entities
         {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)] get => ptr->entities;
-            //[MethodImpl(MethodImplOptions.AggressiveInlining)]  set => ptr->entities = value; }
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => ptr->entities;
+            //[MethodImpl(MethodImplOptions.AggressiveInlining)]
+            //set => ptr->entities = value; }
         }
 
         public IntPtr Param
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)] get => ptr->param;
-            [MethodImpl(MethodImplOptions.AggressiveInlining)] set => ptr->param = value;
+            //[MethodImpl(MethodImplOptions.AggressiveInlining)] set => ptr->param = value;
         }
 
         public float DeltaTime
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)] get => ptr->deltaTime;
-            [MethodImpl(MethodImplOptions.AggressiveInlining)] set => ptr->deltaTime = value;
+            //[MethodImpl(MethodImplOptions.AggressiveInlining)] set => ptr->deltaTime = value;
         }
 
         public uint FrameOffset
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)] get => ptr->frameOffset;
-            [MethodImpl(MethodImplOptions.AggressiveInlining)] set => ptr->frameOffset = value;
+            //[MethodImpl(MethodImplOptions.AggressiveInlining)] set => ptr->frameOffset = value;
         }
 
         public uint Offset
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)] get => ptr->offset;
-            [MethodImpl(MethodImplOptions.AggressiveInlining)] set => ptr->offset = value;
+            //[MethodImpl(MethodImplOptions.AggressiveInlining)] set => ptr->offset = value;
         }
 
         public uint Count
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)] get => ptr->count;
-            [MethodImpl(MethodImplOptions.AggressiveInlining)] set => ptr->count = value;
+            //[MethodImpl(MethodImplOptions.AggressiveInlining)] set => ptr->count = value;
         }
 
         public EntityId InterruptedBy
         {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)] get => ptr->interruptedBy;
-            //[MethodImpl(MethodImplOptions.AggressiveInlining)]  set => ptr->interruptedBy = value; }
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => ptr->interruptedBy;
+            //[MethodImpl(MethodImplOptions.AggressiveInlining)]
+            //set => ptr->interruptedBy = value; }
         }
 
         ///<summary>
@@ -110,7 +116,7 @@ namespace FlecsSharp
         ///void *_ecs_column(ecs_rows_t *rows, uint32_t index, bool test)
         ///</code>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public IntPtr Column(uint index, Bool test)
+        public IntPtr Column(uint index, bool test)
         {
             return _ecs.column( this, index, test);
         }
@@ -122,7 +128,7 @@ namespace FlecsSharp
         ///void *_ecs_shared(ecs_rows_t *rows, uint32_t index, bool test)
         ///</code>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public IntPtr Shared(uint index, Bool test)
+        public IntPtr Shared(uint index, bool test)
         {
             return _ecs.shared( this, index, test);
         }
@@ -138,7 +144,7 @@ namespace FlecsSharp
         ///void *_ecs_field(ecs_rows_t *rows, uint32_t index, uint32_t column, bool test)
         ///</code>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public IntPtr Field(uint index, uint column, Bool test)
+        public IntPtr Field(uint index, uint column, bool test)
         {
             return _ecs.field( this, index, column, test);
         }
@@ -159,7 +165,7 @@ namespace FlecsSharp
         ///ecs_entity_t _ecs_column_source(ecs_rows_t *rows, uint32_t column, bool test)
         ///</code>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public EntityId ColumnSource(uint column, Bool test)
+        public EntityId ColumnSource(uint column, bool test)
         {
             return _ecs.column_source( this, column, test);
         }
@@ -181,7 +187,7 @@ namespace FlecsSharp
         ///ecs_entity_t _ecs_column_entity(ecs_rows_t *rows, uint32_t column, bool test)
         ///</code>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public EntityId ColumnEntity(uint column, Bool test)
+        public EntityId ColumnEntity(uint column, bool test)
         {
             return _ecs.column_entity( this, column, test);
         }
@@ -205,7 +211,7 @@ namespace FlecsSharp
         ///ecs_type_t _ecs_column_type(ecs_rows_t *rows, uint32_t column, bool test)
         ///</code>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public TypeId ColumnType(uint column, Bool test)
+        public TypeId ColumnType(uint column, bool test)
         {
             return _ecs.column_type( this, column, test);
         }

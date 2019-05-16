@@ -5,7 +5,7 @@ using SharpC;
 
 namespace FlecsSharp
 {
-    public unsafe partial struct Map
+    unsafe partial struct Map
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Free()
@@ -56,7 +56,7 @@ namespace FlecsSharp
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Bool Has(ulong keyHash, ulong* valueOut)
+        public bool Has(ulong keyHash, ulong* valueOut)
         {
             return ecs.map_has( this, keyHash, valueOut);
         }

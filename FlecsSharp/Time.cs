@@ -5,18 +5,18 @@ using SharpC;
 
 namespace FlecsSharp
 {
-    public unsafe partial struct Time
+    unsafe partial struct Time
     {
         public int Sec
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)] get => this.sec;
-            [MethodImpl(MethodImplOptions.AggressiveInlining)] set => this.sec = value;
+            //[MethodImpl(MethodImplOptions.AggressiveInlining)] set => this.sec = value;
         }
 
         public uint Nanosec
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)] get => this.nanosec;
-            [MethodImpl(MethodImplOptions.AggressiveInlining)] set => this.nanosec = value;
+            //[MethodImpl(MethodImplOptions.AggressiveInlining)] set => this.nanosec = value;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

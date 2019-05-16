@@ -5,7 +5,7 @@ using SharpC;
 
 namespace FlecsSharp
 {
-    public unsafe static partial class EcsFunctions
+    public unsafe static partial class Functions
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void OsSetApi(OsApi osApi)
@@ -47,7 +47,7 @@ namespace FlecsSharp
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void OsEnableDbg(Bool enable)
+        public static void OsEnableDbg(bool enable)
         {
             ecs.os_enable_dbg(enable);
         }
@@ -152,7 +152,7 @@ namespace FlecsSharp
         ///                 const char *condition_str, const char *file, uint32_t line)
         ///</code>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Assert(Bool condition, uint errorCode, ReadOnlySpan<char> param, ReadOnlySpan<char> conditionStr, ReadOnlySpan<char> file, uint line)
+        public static void Assert(bool condition, uint errorCode, ReadOnlySpan<char> param, ReadOnlySpan<char> conditionStr, ReadOnlySpan<char> file, uint line)
         {
             using(var paramStr = param.ToAnsiString())
             using(var conditionStrStr = conditionStr.ToAnsiString())
