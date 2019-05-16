@@ -5,9 +5,9 @@ using SharpC;
 
 namespace FlecsSharp
 {
-    public unsafe partial struct Total
+    public unsafe partial struct MemStat
     {
-        //public static Total New(in Data val = default) => new Total(Alloc(in val));
+        //public static MemStat New(in Data val = default) => new MemStat(Alloc(in val));
         //public void Dispose()
         //{
             //if(ptr != null) Free(ptr);

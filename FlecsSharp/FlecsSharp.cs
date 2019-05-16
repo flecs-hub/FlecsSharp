@@ -47,27 +47,9 @@ namespace FlecsSharp
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void OsEnableDbg(Enable enable)
+        public static void OsEnableDbg(Bool enable)
         {
             ecs.os_enable_dbg(enable);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Enable IterHasnext(Iter* iter)
-        {
-            return ecs.iter_hasnext(iter);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IntPtr IterNext(Iter* iter)
-        {
-            return ecs.iter_next(iter);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void IterRelease(Iter* iter)
-        {
-            ecs.iter_release(iter);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -86,12 +68,6 @@ namespace FlecsSharp
         public static Map MapNew(uint size)
         {
             return ecs.map_new(size);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ulong MapNext(Iter* it, ulong* keyOut)
-        {
-            return ecs.map_next(it, keyOut);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -161,7 +137,7 @@ namespace FlecsSharp
         ///                uint32_t line)
         ///</code>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void EcsAbort(uint errorCode, ReadOnlySpan<char> param, ReadOnlySpan<char> file, uint line)
+        public static void Abort(uint errorCode, ReadOnlySpan<char> param, ReadOnlySpan<char> file, uint line)
         {
             using(var paramStr = param.ToAnsiString())
             using(var fileStr = file.ToAnsiString())
@@ -176,7 +152,7 @@ namespace FlecsSharp
         ///                 const char *condition_str, const char *file, uint32_t line)
         ///</code>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void EcsAssert(Enable condition, uint errorCode, ReadOnlySpan<char> param, ReadOnlySpan<char> conditionStr, ReadOnlySpan<char> file, uint line)
+        public static void Assert(Bool condition, uint errorCode, ReadOnlySpan<char> param, ReadOnlySpan<char> conditionStr, ReadOnlySpan<char> file, uint line)
         {
             using(var paramStr = param.ToAnsiString())
             using(var conditionStrStr = conditionStr.ToAnsiString())

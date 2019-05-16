@@ -7,12 +7,12 @@ namespace FlecsSharp
 {
     internal unsafe static partial class _ecs
     {
-        const string DLL = "flecs";
+        const string DLL = "FlecsSharp";
     }
 
     internal unsafe static partial class ecs
     {
-        const string DLL = "flecs";
+        const string DLL = "FlecsSharp";
     }
 
 }

@@ -67,7 +67,7 @@ namespace FlecsSharp
             [MethodImpl(MethodImplOptions.AggressiveInlining)] set => ptr->mergeTime = value;
         }
 
-        public Memory Memory
+        public MemoryStats Memory
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)] get => ptr->memory;
             //[MethodImpl(MethodImplOptions.AggressiveInlining)]  set => ptr->memory = value; }
@@ -169,13 +169,13 @@ namespace FlecsSharp
             //[MethodImpl(MethodImplOptions.AggressiveInlining)]  set => ptr->components = value; }
         }
 
-        public Enable FrameProfiling
+        public Bool FrameProfiling
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)] get => ptr->frameProfiling;
             //[MethodImpl(MethodImplOptions.AggressiveInlining)]  set => ptr->frameProfiling = value; }
         }
 
-        public Enable SystemProfiling
+        public Bool SystemProfiling
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)] get => ptr->systemProfiling;
             //[MethodImpl(MethodImplOptions.AggressiveInlining)]  set => ptr->systemProfiling = value; }

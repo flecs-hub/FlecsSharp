@@ -56,7 +56,7 @@ namespace FlecsSharp
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Enable Has(ulong keyHash, ulong* valueOut)
+        public Bool Has(ulong keyHash, ulong* valueOut)
         {
             return ecs.map_has( this, keyHash, valueOut);
         }
@@ -68,7 +68,7 @@ namespace FlecsSharp
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Iter EcsMapIter(MapIter iterData)
+        public Iterator Iter(MapIter iterData)
         {
             return _ecs.map_iter( this, iterData);
         }

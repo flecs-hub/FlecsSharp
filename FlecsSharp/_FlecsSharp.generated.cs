@@ -7,8 +7,8 @@ namespace FlecsSharp
 {
     using System.Security;
 #region Enums
-    //kind
-    public enum Kind : Int32
+    //EcsSystemKind
+    public enum SystemKind : Int32
     {
         OnLoad = 0,
         PostLoad = 1,
@@ -27,9 +27,9 @@ namespace FlecsSharp
 #endregion
 
 #region Typedefs
-    unsafe partial struct OsApiThreadNew
+    unsafe partial struct OsThread
     {
-        public OsApiThreadNew(UInt64 value)
+        public OsThread(UInt64 value)
         {
             Value = value;
         }
@@ -37,9 +37,9 @@ namespace FlecsSharp
         public UInt64 Value;
     }
 
-    unsafe partial struct OsApiMutexNew
+    unsafe partial struct OsMutex
     {
-        public OsApiMutexNew(UInt64 value)
+        public OsMutex(UInt64 value)
         {
             Value = value;
         }
@@ -47,9 +47,9 @@ namespace FlecsSharp
         public UInt64 Value;
     }
 
-    unsafe partial struct OsApiCondNew
+    unsafe partial struct OsCond
     {
-        public OsApiCondNew(UInt64 value)
+        public OsCond(UInt64 value)
         {
             Value = value;
         }
@@ -57,9 +57,9 @@ namespace FlecsSharp
         public UInt64 Value;
     }
 
-    unsafe partial struct Enable
+    unsafe partial struct Bool
     {
-        public Enable(sbyte value)
+        public Bool(sbyte value)
         {
             Value = value;
         }
@@ -67,9 +67,9 @@ namespace FlecsSharp
         public sbyte Value;
     }
 
-    unsafe partial struct Entity
+    unsafe partial struct EntityId
     {
-        public Entity(UInt64 value)
+        public EntityId(UInt64 value)
         {
             Value = value;
         }
@@ -77,9 +77,9 @@ namespace FlecsSharp
         public UInt64 Value;
     }
 
-    unsafe partial struct Type
+    unsafe partial struct TypeId
     {
-        public Type(UInt32 value)
+        public TypeId(UInt32 value)
         {
             Value = value;
         }
@@ -137,9 +137,9 @@ namespace FlecsSharp
 
     //EcsIter
     [StructLayout(LayoutKind.Sequential)]
-    unsafe partial struct Iter
+    unsafe partial struct Iterator
     {
-        public Iter* Ptr() { fixed(Iter* ptr = &this) return ptr; }
+        public Iterator* Ptr() { fixed(Iterator* ptr = &this) return ptr; }
         internal IntPtr ctx;
         internal IntPtr data;
         internal IntPtr _hasnext;
@@ -203,7 +203,7 @@ namespace FlecsSharp
             internal float systemTime;
             internal float frameTime;
             internal float mergeTime;
-            internal Memory.Data memory;
+            internal MemoryStats.Data memory;
             internal Vector features;
             internal Vector onLoadSystems;
             internal Vector postLoadSystems;
@@ -220,46 +220,46 @@ namespace FlecsSharp
             internal Vector onRemoveSystems;
             internal Vector onSetSystems;
             internal Vector components;
-            internal Enable frameProfiling;
-            internal Enable systemProfiling;
+            internal Bool frameProfiling;
+            internal Bool systemProfiling;
         }
 
     }
 
     //memory
-    unsafe partial struct Memory
+    unsafe partial struct MemoryStats
     {
         internal Data* ptr;
-        internal Memory(Data* ptr) => this.ptr = ptr;
+        internal MemoryStats(Data* ptr) => this.ptr = ptr;
         [StructLayout(LayoutKind.Sequential)]
         internal unsafe struct Data
         {
-            public static implicit operator Memory(Data data) => data.Ptr();
-            public static implicit operator Data(Memory _ref) => *_ref.ptr;
-            public Memory Ptr() { fixed(Data* ptr = &this) return new Memory(ptr); }
-            internal Total.Data total;
-            internal Total.Data components;
-            internal Total.Data entities;
-            internal Total.Data systems;
-            internal Total.Data families;
-            internal Total.Data tables;
-            internal Total.Data stage;
-            internal Total.Data world;
+            public static implicit operator MemoryStats(Data data) => data.Ptr();
+            public static implicit operator Data(MemoryStats _ref) => *_ref.ptr;
+            public MemoryStats Ptr() { fixed(Data* ptr = &this) return new MemoryStats(ptr); }
+            internal MemStat.Data total;
+            internal MemStat.Data components;
+            internal MemStat.Data entities;
+            internal MemStat.Data systems;
+            internal MemStat.Data families;
+            internal MemStat.Data tables;
+            internal MemStat.Data stage;
+            internal MemStat.Data world;
         }
 
     }
 
     //total
-    unsafe partial struct Total
+    unsafe partial struct MemStat
     {
         internal Data* ptr;
-        internal Total(Data* ptr) => this.ptr = ptr;
+        internal MemStat(Data* ptr) => this.ptr = ptr;
         [StructLayout(LayoutKind.Sequential)]
         internal unsafe struct Data
         {
-            public static implicit operator Total(Data data) => data.Ptr();
-            public static implicit operator Data(Total _ref) => *_ref.ptr;
-            public Total Ptr() { fixed(Data* ptr = &this) return new Total(ptr); }
+            public static implicit operator MemStat(Data data) => data.Ptr();
+            public static implicit operator Data(MemStat _ref) => *_ref.ptr;
+            public MemStat Ptr() { fixed(Data* ptr = &this) return new MemStat(ptr); }
             internal uint allocd;
             internal uint used;
         }
@@ -278,37 +278,37 @@ namespace FlecsSharp
             public static implicit operator Data(Rows _ref) => *_ref.ptr;
             public Rows Ptr() { fixed(Data* ptr = &this) return new Rows(ptr); }
             internal World world;
-            internal Entity system;
+            internal EntityId system;
             internal int* columns;
             internal ushort columnCount;
             internal IntPtr table;
             internal IntPtr tableColumns;
-            internal Reference references;
-            internal Entity* components;
-            internal Entity* entities;
+            internal ComponentReference references;
+            internal EntityId* components;
+            internal EntityId* entities;
             internal IntPtr param;
             internal float deltaTime;
             internal uint frameOffset;
             internal uint offset;
             internal uint count;
-            internal Entity interruptedBy;
+            internal EntityId interruptedBy;
         }
 
     }
 
     //ecs_reference_t
-    unsafe partial struct Reference
+    unsafe partial struct ComponentReference
     {
         internal Data* ptr;
-        internal Reference(Data* ptr) => this.ptr = ptr;
+        internal ComponentReference(Data* ptr) => this.ptr = ptr;
         [StructLayout(LayoutKind.Sequential)]
         internal unsafe struct Data
         {
-            public static implicit operator Reference(Data data) => data.Ptr();
-            public static implicit operator Data(Reference _ref) => *_ref.ptr;
-            public Reference Ptr() { fixed(Data* ptr = &this) return new Reference(ptr); }
-            internal Entity entity;
-            internal Entity component;
+            public static implicit operator ComponentReference(Data data) => data.Ptr();
+            public static implicit operator Data(ComponentReference _ref) => *_ref.ptr;
+            public ComponentReference Ptr() { fixed(Data* ptr = &this) return new ComponentReference(ptr); }
+            internal EntityId entity;
+            internal EntityId component;
             internal IntPtr cachedPtr;
         }
 
@@ -357,37 +357,37 @@ namespace FlecsSharp
     internal unsafe delegate void OsApiFreeDelegate(IntPtr ptr);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal unsafe delegate OsApiThreadNew OsApiThreadNewDelegate(OsApiThreadNew ecsOsThreadT, OsThreadCallbackDelegate callback, IntPtr param);
+    internal unsafe delegate OsThread OsApiThreadNewDelegate(OsThread ecsOsThreadT, OsThreadCallbackDelegate callback, IntPtr param);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     internal unsafe delegate IntPtr OsThreadCallbackDelegate(IntPtr param0);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal unsafe delegate IntPtr OsApiThreadJoinDelegate(OsApiThreadNew thread);
+    internal unsafe delegate IntPtr OsApiThreadJoinDelegate(OsThread thread);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal unsafe delegate OsApiMutexNew OsApiMutexNewDelegate(OsApiMutexNew ecsOsMutexT);
+    internal unsafe delegate OsMutex OsApiMutexNewDelegate(OsMutex ecsOsMutexT);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal unsafe delegate void OsApiMutexFreeDelegate(OsApiMutexNew mutex);
+    internal unsafe delegate void OsApiMutexFreeDelegate(OsMutex mutex);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal unsafe delegate void OsApiMutexLockDelegate(OsApiMutexNew mutex);
+    internal unsafe delegate void OsApiMutexLockDelegate(OsMutex mutex);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal unsafe delegate OsApiCondNew OsApiCondNewDelegate(OsApiCondNew ecsOsCondT);
+    internal unsafe delegate OsCond OsApiCondNewDelegate(OsCond ecsOsCondT);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal unsafe delegate void OsApiCondFreeDelegate(OsApiCondNew cond);
+    internal unsafe delegate void OsApiCondFreeDelegate(OsCond cond);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal unsafe delegate void OsApiCondSignalDelegate(OsApiCondNew cond);
+    internal unsafe delegate void OsApiCondSignalDelegate(OsCond cond);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal unsafe delegate void OsApiCondBroadcastDelegate(OsApiCondNew cond);
+    internal unsafe delegate void OsApiCondBroadcastDelegate(OsCond cond);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal unsafe delegate void OsApiCondWaitDelegate(OsApiCondNew cond, OsApiMutexNew mutex);
+    internal unsafe delegate void OsApiCondWaitDelegate(OsCond cond, OsMutex mutex);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     internal unsafe delegate void OsApiSleepDelegate(uint sec, uint nanosec);
@@ -402,13 +402,13 @@ namespace FlecsSharp
     internal unsafe delegate void OsApiAbortDelegate();
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal unsafe delegate Enable HasnextDelegate(Enable @bool, Iter* param1);
+    internal unsafe delegate Bool HasnextDelegate(Bool @bool, Iterator* param1);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal unsafe delegate IntPtr NextDelegate(Iter* param0);
+    internal unsafe delegate IntPtr NextDelegate(Iterator* param0);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal unsafe delegate void ReleaseDelegate(Iter* param0);
+    internal unsafe delegate void ReleaseDelegate(Iterator* param0);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     internal unsafe delegate void MoveDelegate(Vector array, VectorParams @params, IntPtr to, IntPtr @from, IntPtr ctx);
@@ -448,16 +448,16 @@ namespace FlecsSharp
         public static extern void os_dbg(CharPtr fmt);
 
         [DllImport(DLL, EntryPoint = "ecs_os_enable_dbg", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern void os_enable_dbg(Enable enable);
+        public static extern void os_enable_dbg(Bool enable);
 
         [DllImport(DLL, EntryPoint = "ecs_iter_hasnext", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern Enable iter_hasnext(Iter* iter);
+        public static extern Bool iter_hasnext(Iterator* iter);
 
         [DllImport(DLL, EntryPoint = "ecs_iter_next", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern IntPtr iter_next(Iter* iter);
+        public static extern IntPtr iter_next(Iterator* iter);
 
         [DllImport(DLL, EntryPoint = "ecs_iter_release", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern void iter_release(Iter* iter);
+        public static extern void iter_release(Iterator* iter);
 
         [DllImport(DLL, EntryPoint = "ecs_vector_new", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern Vector vector_new(VectorParams @params, uint size);
@@ -550,13 +550,13 @@ namespace FlecsSharp
         public static extern ulong map_get64(Map map, ulong keyHash);
 
         [DllImport(DLL, EntryPoint = "ecs_map_has", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern Enable map_has(Map map, ulong keyHash, ulong* valueOut);
+        public static extern Bool map_has(Map map, ulong keyHash, ulong* valueOut);
 
         [DllImport(DLL, EntryPoint = "ecs_map_remove", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern int map_remove(Map map, ulong keyHash);
 
         [DllImport(DLL, EntryPoint = "ecs_map_next", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern ulong map_next(Iter* it, ulong* keyOut);
+        public static extern ulong map_next(Iterator* it, ulong* keyOut);
 
         [DllImport(DLL, EntryPoint = "ecs_get_stats", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void get_stats(World world, WorldStats stats);
@@ -565,10 +565,10 @@ namespace FlecsSharp
         public static extern void free_stats(WorldStats stats);
 
         [DllImport(DLL, EntryPoint = "ecs_measure_frame_time", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern void measure_frame_time(World world, Enable enable);
+        public static extern void measure_frame_time(World world, Bool enable);
 
         [DllImport(DLL, EntryPoint = "ecs_measure_system_time", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern void measure_system_time(World world, Enable enable);
+        public static extern void measure_system_time(World world, Bool enable);
 
         [DllImport(DLL, EntryPoint = "ecs_sleepf", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void sleepf(double t);
@@ -648,7 +648,7 @@ namespace FlecsSharp
         ///                                     const char *module_name, int flags)
         ///</code>
         [DllImport(DLL, EntryPoint = "ecs_import_from_library", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern Entity import_from_library(World world, CharPtr libraryName, CharPtr moduleName, int flags);
+        public static extern EntityId import_from_library(World world, CharPtr libraryName, CharPtr moduleName, int flags);
 
         ///<summary>
         /// Progress a world. This operation progresses the world by running all systems that are both enabled and periodic on their matching entities.
@@ -670,7 +670,7 @@ namespace FlecsSharp
         ///bool ecs_progress(ecs_world_t *world, float delta_time)
         ///</code>
         [DllImport(DLL, EntryPoint = "ecs_progress", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern Enable progress(World world, float deltaTime);
+        public static extern Bool progress(World world, float deltaTime);
 
         ///<summary>
         /// Merge staged data. This operation merges data from one or more stages (if there are multiple threads) to the world state. By default, this happens every time ecs_progress is called. To change this to manual merging, call ecs_set_automerge.
@@ -699,7 +699,7 @@ namespace FlecsSharp
         ///void ecs_set_automerge(ecs_world_t *world, bool auto_merge)
         ///</code>
         [DllImport(DLL, EntryPoint = "ecs_set_automerge", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern void set_automerge(World world, Enable autoMerge);
+        public static extern void set_automerge(World world, Bool autoMerge);
 
         ///<summary>
         /// Set number of worker threads. This operation sets the number of worker threads to which to distribute the processing load. If this function is called multiple times, the total number of threads running will reflect the number specified in the last call.
@@ -827,7 +827,7 @@ namespace FlecsSharp
         ///                          ecs_entity_t id_end)
         ///</code>
         [DllImport(DLL, EntryPoint = "ecs_set_entity_range", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern void set_entity_range(World world, Entity idStart, Entity idEnd);
+        public static extern void set_entity_range(World world, EntityId idStart, EntityId idEnd);
 
         ///<summary>
         /// Create new entity with same components as specified entity. This operation creates a new entity which has the same components as the specified entity. This includes prefabs and entity-components (entities to which the EcsComponent component has been added manually).
@@ -845,7 +845,7 @@ namespace FlecsSharp
         ///ecs_entity_t ecs_clone(ecs_world_t *world, ecs_entity_t entity, bool copy_value)
         ///</code>
         [DllImport(DLL, EntryPoint = "ecs_clone", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern Entity clone(World world, Entity entity, Enable copyValue);
+        public static extern EntityId clone(World world, EntityId entity, Bool copyValue);
 
         ///<summary>
         /// Delete components for an entity. This operation will delete all components from the specified entity. As entities in Flecs do not have an explicit lifecycle, this operation will not invalidate the entity id.
@@ -860,7 +860,7 @@ namespace FlecsSharp
         ///void ecs_delete(ecs_world_t *world, ecs_entity_t entity)
         ///</code>
         [DllImport(DLL, EntryPoint = "ecs_delete", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern void delete(World world, Entity entity);
+        public static extern void delete(World world, EntityId entity);
 
         ///<summary>
         /// Adopt a child entity by a parent. This operation adds the specified parent entity to the type of the specified entity, which effectively establishes a parent-child relationship. The parent entity, when added, behaves like a normal component in that it becomes part of the entity type.
@@ -876,7 +876,7 @@ namespace FlecsSharp
         ///void ecs_adopt(ecs_world_t *world, ecs_entity_t entity, ecs_entity_t parent)
         ///</code>
         [DllImport(DLL, EntryPoint = "ecs_adopt", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern void adopt(World world, Entity entity, Entity parent);
+        public static extern void adopt(World world, EntityId entity, EntityId parent);
 
         ///<summary>
         /// Orphan a child by a parent.  This operation removes the specified parent entity from the type of the specified entity. If the parent was not added to the entity, this operation has no effect.
@@ -891,7 +891,7 @@ namespace FlecsSharp
         ///void ecs_orphan(ecs_world_t *world, ecs_entity_t child, ecs_entity_t parent)
         ///</code>
         [DllImport(DLL, EntryPoint = "ecs_orphan", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern void orphan(World world, Entity child, Entity parent);
+        public static extern void orphan(World world, EntityId child, EntityId parent);
 
         ///<summary>
         /// Check if parent entity contains child entity. This function tests if the specified parent entity has been added to the specified child entity.
@@ -909,7 +909,7 @@ namespace FlecsSharp
         ///bool ecs_contains(ecs_world_t *world, ecs_entity_t parent, ecs_entity_t child)
         ///</code>
         [DllImport(DLL, EntryPoint = "ecs_contains", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern Enable contains(World world, Entity parent, Entity child);
+        public static extern Bool contains(World world, EntityId parent, EntityId child);
 
         ///<summary>
         /// Return container for component. This function allows the application to query for a container of the specified entity that has the specified component. If there are multiple containers with this component, the function will return the first one it encounters.
@@ -922,7 +922,7 @@ namespace FlecsSharp
         ///                            ecs_entity_t component)
         ///</code>
         [DllImport(DLL, EntryPoint = "ecs_get_parent", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern Entity get_parent(World world, Entity entity, Entity component);
+        public static extern EntityId get_parent(World world, EntityId entity, EntityId component);
 
         ///<summary>
         /// Get type of entity. This operation returns the entity type, which is a handle to the a list of the current components an entity has.
@@ -940,7 +940,7 @@ namespace FlecsSharp
         ///ecs_type_t ecs_get_type(ecs_world_t *world, ecs_entity_t entity)
         ///</code>
         [DllImport(DLL, EntryPoint = "ecs_get_type", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern Type get_type(World world, Entity entity);
+        public static extern TypeId get_type(World world, EntityId entity);
 
         ///<summary>
         /// Return the entity id. This returns the string identifier of an entity, if the entity has the EcsId component. By default, all component, type, system and prefab entities add the EcsId component if they have been created with the ecs_new_* functions.
@@ -957,7 +957,7 @@ namespace FlecsSharp
         ///const char *ecs_get_id(ecs_world_t *world, ecs_entity_t entity)
         ///</code>
         [DllImport(DLL, EntryPoint = "ecs_get_id", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern CharPtr get_id(World world, Entity entity);
+        public static extern CharPtr get_id(World world, EntityId entity);
 
         ///<summary>
         /// Return if the entity is empty. This returns whether the provided entity handle is empty. An entity that is empty has no components.
@@ -971,7 +971,7 @@ namespace FlecsSharp
         ///bool ecs_is_empty(ecs_world_t *world, ecs_entity_t entity)
         ///</code>
         [DllImport(DLL, EntryPoint = "ecs_is_empty", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern Enable is_empty(World world, Entity entity);
+        public static extern Bool is_empty(World world, EntityId entity);
 
         ///<summary>
         /// Lookup an entity by id. This operation is a convenient way to lookup entities by string identifier that have the EcsId component. It is recommended to cache the result of this function, as the function must iterates over all entities and all components in an entity.
@@ -985,7 +985,7 @@ namespace FlecsSharp
         ///ecs_entity_t ecs_lookup(ecs_world_t *world, const char *id)
         ///</code>
         [DllImport(DLL, EntryPoint = "ecs_lookup", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern Entity lookup(World world, CharPtr id);
+        public static extern EntityId lookup(World world, CharPtr id);
 
         ///<summary>
         /// Lookup child of parent by id. This operation is the same as ecs_lookup, except for that it only searches entities that are children of the specified parent.
@@ -1006,7 +1006,7 @@ namespace FlecsSharp
         ///                              const char *id)
         ///</code>
         [DllImport(DLL, EntryPoint = "ecs_lookup_child", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern Entity lookup_child(World world, Entity parent, CharPtr id);
+        public static extern EntityId lookup_child(World world, EntityId parent, CharPtr id);
 
         ///<summary>
         /// Get a type from an entity. This function returns a type that can be added/removed to entities. If you create a new component, type or prefab with the ecs_new_* function, you get an ecs_entity_t handle which provides access to builtin components associated with the component, type or prefab.
@@ -1020,7 +1020,7 @@ namespace FlecsSharp
         ///ecs_type_t ecs_type_from_entity(ecs_world_t *world, ecs_entity_t entity)
         ///</code>
         [DllImport(DLL, EntryPoint = "ecs_type_from_entity", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern Type type_from_entity(World world, Entity entity);
+        public static extern TypeId type_from_entity(World world, EntityId entity);
 
         ///<summary>
         /// Get an entity from a type. This function is the reverse of ecs_type_from_entity. It only works for types that contain exactly one entity. 
@@ -1037,7 +1037,7 @@ namespace FlecsSharp
         ///ecs_entity_t ecs_entity_from_type(ecs_world_t *world, ecs_type_t type)
         ///</code>
         [DllImport(DLL, EntryPoint = "ecs_entity_from_type", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern Entity entity_from_type(World world, Type type);
+        public static extern EntityId entity_from_type(World world, TypeId type);
 
         ///<summary>
         /// Get component from type at index.  This operation returns the components (or entities) that are contained in the type at the specified index.
@@ -1053,7 +1053,7 @@ namespace FlecsSharp
         ///                                    uint32_t index)
         ///</code>
         [DllImport(DLL, EntryPoint = "ecs_type_get_component", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern Entity type_get_component(World world, Type type, uint index);
+        public static extern EntityId type_get_component(World world, TypeId type, uint index);
 
         ///<summary>
         /// Enable or disable a system. This operation enables or disables a system. A disabled system will not be ran during ecs_progress or when components must be initialized or deinitialized. Systems are enabled by default.
@@ -1071,7 +1071,7 @@ namespace FlecsSharp
         ///void ecs_enable(ecs_world_t *world, ecs_entity_t system, bool enabled)
         ///</code>
         [DllImport(DLL, EntryPoint = "ecs_enable", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern void enable(World world, Entity system, Enable enabled);
+        public static extern void enable(World world, EntityId system, Bool enabled);
 
         ///<summary>
         /// Configure how often a system should be invoked. This operation lets an application control how often a system should be invoked. The provided period is the minimum interval between two invocations.
@@ -1088,7 +1088,7 @@ namespace FlecsSharp
         ///void ecs_set_period(ecs_world_t *world, ecs_entity_t system, float period)
         ///</code>
         [DllImport(DLL, EntryPoint = "ecs_set_period", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern void set_period(World world, Entity system, float period);
+        public static extern void set_period(World world, EntityId system, float period);
 
         ///<summary>
         /// Returns the enabled status for a system / entity. This operation will return whether a system is enabled or disabled. Currently only systems can be enabled or disabled, but this operation does not fail when a handle to an entity is provided that is not a system. If this operation is called on a non-system entity, the operation will return true.
@@ -1102,7 +1102,7 @@ namespace FlecsSharp
         ///bool ecs_is_enabled(ecs_world_t *world, ecs_entity_t system)
         ///</code>
         [DllImport(DLL, EntryPoint = "ecs_is_enabled", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern Enable is_enabled(World world, Entity system);
+        public static extern Bool is_enabled(World world, EntityId system);
 
         ///<summary>
         /// Run a specific system manually. This operation runs a single system on demand. It is an efficient way to invoke logic on a set of entities, as on demand systems are only matched to tables at creation time or after creation time, when a new table is created.
@@ -1127,7 +1127,7 @@ namespace FlecsSharp
         ///                     void *param)
         ///</code>
         [DllImport(DLL, EntryPoint = "ecs_run", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern Entity run(World world, Entity system, float deltaTime, IntPtr param);
+        public static extern EntityId run(World world, EntityId system, float deltaTime, IntPtr param);
 
         ///<summary>
         /// Convenience function to create an entity with id and component expression. This is equivalent to calling ecs_new with a type that contains all  components provided in the 'component' expression. In addition, this function also adds the EcsId component, which will be set to the provided id string.
@@ -1147,7 +1147,7 @@ namespace FlecsSharp
         ///                            const char *components)
         ///</code>
         [DllImport(DLL, EntryPoint = "ecs_new_entity", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern Entity new_entity(World world, CharPtr id, CharPtr components);
+        public static extern EntityId new_entity(World world, CharPtr id, CharPtr components);
 
         ///<summary>
         /// Create a new component. This operation creates a new component with a specified id and size. After this operation is called, the component can be added to entities by using the returned handle with ecs_add.
@@ -1167,7 +1167,7 @@ namespace FlecsSharp
         ///ecs_entity_t ecs_new_component(ecs_world_t *world, const char *id, size_t size)
         ///</code>
         [DllImport(DLL, EntryPoint = "ecs_new_component", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern Entity new_component(World world, CharPtr id, UIntPtr size);
+        public static extern EntityId new_component(World world, CharPtr id, UIntPtr size);
 
         ///<summary>
         /// Create a new system. This operation creates a new system with a specified id, kind and action. After this operation is called, the system will be active. Systems can be created with three different kinds:
@@ -1193,7 +1193,7 @@ namespace FlecsSharp
         ///                            ecs_system_action_t action)
         ///</code>
         [DllImport(DLL, EntryPoint = "ecs_new_system", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern Entity new_system(World world, CharPtr id, Kind kind, CharPtr sig, SystemActionDelegate action);
+        public static extern EntityId new_system(World world, CharPtr id, SystemKind kind, CharPtr sig, SystemActionDelegate action);
 
         ///<summary>
         /// Get handle to type. This operation obtains a handle to a type that can be used with ecs_new. Predefining types has performance benefits over using ecs_add/ecs_remove multiple times, as it provides constant creation time regardless of the number of components. This function will internally create a table for the type.
@@ -1212,7 +1212,7 @@ namespace FlecsSharp
         ///                          const char *components)
         ///</code>
         [DllImport(DLL, EntryPoint = "ecs_new_type", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern Entity new_type(World world, CharPtr id, CharPtr components);
+        public static extern EntityId new_type(World world, CharPtr id, CharPtr components);
 
         ///<summary>
         /// Create a new prefab entity. Prefab entities allow entities to share a set of components. Components of the prefab will appear on the specified entity when using any of the API functions and ECS systems.
@@ -1232,7 +1232,7 @@ namespace FlecsSharp
         ///ecs_entity_t ecs_new_prefab(ecs_world_t *world, const char *id, const char *sig)
         ///</code>
         [DllImport(DLL, EntryPoint = "ecs_new_prefab", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern Entity new_prefab(World world, CharPtr id, CharPtr sig);
+        public static extern EntityId new_prefab(World world, CharPtr id, CharPtr sig);
 
         ///<summary>
         /// Get description for error code 
@@ -1248,7 +1248,7 @@ namespace FlecsSharp
     internal unsafe static partial class _ecs
     {
         [DllImport(DLL, EntryPoint = "_ecs_map_iter", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern Iter map_iter(Map map, MapIter iterData);
+        public static extern Iterator map_iter(Map map, MapIter iterData);
 
         ///<summary>
         /// Import a flecs module. Flecs modules enable reusing components and systems across projects. To use a module, a project needs to link with its library and include its header file.
@@ -1271,7 +1271,7 @@ namespace FlecsSharp
         ///                         size_t handles_size)
         ///</code>
         [DllImport(DLL, EntryPoint = "_ecs_import", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern Entity import(World world, ModuleInitActionDelegate module, CharPtr moduleName, int flags, IntPtr handlesOut, UIntPtr handlesSize);
+        public static extern EntityId import(World world, ModuleInitActionDelegate module, CharPtr moduleName, int flags, IntPtr handlesOut, UIntPtr handlesSize);
 
         ///<summary>
         /// Dimension a type for a specified number of entities. This operation will preallocate memory for a type (table) for the specified number of entites. Specifying a number lower than the current number of entities in the table will have no effect.
@@ -1287,7 +1287,7 @@ namespace FlecsSharp
         ///void _ecs_dim_type(ecs_world_t *world, ecs_type_t type, uint32_t entity_count)
         ///</code>
         [DllImport(DLL, EntryPoint = "_ecs_dim_type", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern void dim_type(World world, Type type, uint entityCount);
+        public static extern void dim_type(World world, TypeId type, uint entityCount);
 
         ///<summary>
         /// Create a new entity. Entities are light-weight objects that represent "things" in the application. Entities themselves do not have any state or logic, but instead are composed out of a set of zero or more components.
@@ -1306,7 +1306,7 @@ namespace FlecsSharp
         ///ecs_entity_t _ecs_new(ecs_world_t *world, ecs_type_t type)
         ///</code>
         [DllImport(DLL, EntryPoint = "_ecs_new", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern Entity @new(World world, Type type);
+        public static extern EntityId @new(World world, TypeId type);
 
         ///<summary>
         /// Create new entities in a batch. This operation creates the number of specified entities with one API call which is a more efficient alternative to calling ecs_new in a loop.
@@ -1323,7 +1323,7 @@ namespace FlecsSharp
         ///                              uint32_t count)
         ///</code>
         [DllImport(DLL, EntryPoint = "_ecs_new_w_count", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern Entity new_w_count(World world, Type type, uint count);
+        public static extern EntityId new_w_count(World world, TypeId type, uint count);
 
         ///<summary>
         /// Add a type to an entity. This operation will add one or more components (as per the specified type) to an entity. If the entity already contains a subset of the components in the type, only components that are not contained by the entity will be added. If the entity already contains all components, this operation has no effect.
@@ -1338,7 +1338,7 @@ namespace FlecsSharp
         ///void _ecs_add(ecs_world_t *world, ecs_entity_t entity, ecs_type_t type)
         ///</code>
         [DllImport(DLL, EntryPoint = "_ecs_add", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern void @add(World world, Entity entity, Type type);
+        public static extern void @add(World world, EntityId entity, TypeId type);
 
         ///<summary>
         /// Remove a type from an entity. This operation will remove one or more components (as per the specified type) from an entity. If the entity contained a subset of the components in the type, only that subset will be removed. If the entity contains none of the components in the type, the operation has no effect.
@@ -1353,7 +1353,7 @@ namespace FlecsSharp
         ///void _ecs_remove(ecs_world_t *world, ecs_entity_t entity, ecs_type_t type)
         ///</code>
         [DllImport(DLL, EntryPoint = "_ecs_remove", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern void @remove(World world, Entity entity, Type type);
+        public static extern void @remove(World world, EntityId entity, TypeId type);
 
         ///<summary>
         /// Get pointer to component data. This operation obtains a pointer to the component data of an entity. If the component was not added for the specified entity, the operation will return NULL.
@@ -1373,7 +1373,7 @@ namespace FlecsSharp
         ///void *_ecs_get_ptr(ecs_world_t *world, ecs_entity_t entity, ecs_type_t type)
         ///</code>
         [DllImport(DLL, EntryPoint = "_ecs_get_ptr", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern IntPtr get_ptr(World world, Entity entity, Type type);
+        public static extern IntPtr get_ptr(World world, EntityId entity, TypeId type);
 
         ///<summary>
         /// Set value of component. This function sets the value of a component on the specified entity. If the component does not yet exist, it will be added to the entity.
@@ -1391,10 +1391,10 @@ namespace FlecsSharp
         ///                          ecs_type_t type, size_t size, void *ptr)
         ///</code>
         [DllImport(DLL, EntryPoint = "_ecs_set_ptr", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern Entity set_ptr(World world, Entity entity, Type type, UIntPtr size, IntPtr ptr);
+        public static extern EntityId set_ptr(World world, EntityId entity, TypeId type, UIntPtr size, IntPtr ptr);
 
         [DllImport(DLL, EntryPoint = "_ecs_set_singleton_ptr", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern Entity set_singleton_ptr(World world, Type type, UIntPtr size, IntPtr ptr);
+        public static extern EntityId set_singleton_ptr(World world, TypeId type, UIntPtr size, IntPtr ptr);
 
         ///<summary>
         /// Create a new child entity. Child entities are equivalent to normal entities, but can additionally be  created with a container entity. Container entities allow for the creation of entity hierarchies.
@@ -1415,7 +1415,7 @@ namespace FlecsSharp
         ///                            ecs_type_t type)
         ///</code>
         [DllImport(DLL, EntryPoint = "_ecs_new_child", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern Entity new_child(World world, Entity parent, Type type);
+        public static extern EntityId new_child(World world, EntityId parent, TypeId type);
 
         ///<summary>
         /// Create new child entities in batch. This operation is similar to ecs_new_w_count, with as only difference that the parent is added to the type of the new entities.
@@ -1429,7 +1429,7 @@ namespace FlecsSharp
         ///                                    ecs_type_t type, uint32_t count)
         ///</code>
         [DllImport(DLL, EntryPoint = "_ecs_new_child_w_count", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern Entity new_child_w_count(World world, Entity parent, Type type, uint count);
+        public static extern EntityId new_child_w_count(World world, EntityId parent, TypeId type, uint count);
 
         ///<summary>
         /// Check if entity has the specified type. This operation checks if the entity has the components associated with the specified type. It accepts component handles, families and prefabs.
@@ -1447,7 +1447,7 @@ namespace FlecsSharp
         ///bool _ecs_has(ecs_world_t *world, ecs_entity_t entity, ecs_type_t type)
         ///</code>
         [DllImport(DLL, EntryPoint = "_ecs_has", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern Enable has(World world, Entity entity, Type type);
+        public static extern Bool has(World world, EntityId entity, TypeId type);
 
         ///<summary>
         /// Check if entity has any of the components in the specified type. This operation checks if the entity has any of the components associated with the specified type. It accepts component handles, families and prefabs.
@@ -1465,7 +1465,7 @@ namespace FlecsSharp
         ///bool _ecs_has_any(ecs_world_t *world, ecs_entity_t entity, ecs_type_t type)
         ///</code>
         [DllImport(DLL, EntryPoint = "_ecs_has_any", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern Enable has_any(World world, Entity entity, Type type);
+        public static extern Bool has_any(World world, EntityId entity, TypeId type);
 
         ///<summary>
         /// Returns number of entities that have a given type.  This operation will count the number of entities that have all of the components in the specified type.
@@ -1479,7 +1479,7 @@ namespace FlecsSharp
         ///uint32_t _ecs_count(ecs_world_t *world, ecs_type_t type)
         ///</code>
         [DllImport(DLL, EntryPoint = "_ecs_count", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern uint count(World world, Type type);
+        public static extern uint count(World world, TypeId type);
 
         ///<summary>
         /// Merge two types.  This operation will return a type that contains exactly the components in the specified type, plus the components in type_add, and not the components in type_remove.
@@ -1496,7 +1496,7 @@ namespace FlecsSharp
         ///                           ecs_type_t type_add, ecs_type_t type_remove)
         ///</code>
         [DllImport(DLL, EntryPoint = "_ecs_merge_type", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern Type merge_type(World world, Type type, Type typeAdd, Type typeRemove);
+        public static extern TypeId merge_type(World world, TypeId type, TypeId typeAdd, TypeId typeRemove);
 
         ///<summary>
         /// Run system with offset/limit and type filter 
@@ -1507,7 +1507,7 @@ namespace FlecsSharp
         ///                               uint32_t limit, ecs_type_t filter, void *param)
         ///</code>
         [DllImport(DLL, EntryPoint = "_ecs_run_w_filter", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern Entity run_w_filter(World world, Entity system, float deltaTime, uint offset, uint limit, Type filter, IntPtr param);
+        public static extern EntityId run_w_filter(World world, EntityId system, float deltaTime, uint offset, uint limit, TypeId filter, IntPtr param);
 
         ///<summary>
         /// Obtain a column from inside a system 
@@ -1516,7 +1516,7 @@ namespace FlecsSharp
         ///void *_ecs_column(ecs_rows_t *rows, uint32_t index, bool test)
         ///</code>
         [DllImport(DLL, EntryPoint = "_ecs_column", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern IntPtr column(Rows rows, uint index, Enable test);
+        public static extern IntPtr column(Rows rows, uint index, Bool test);
 
         ///<summary>
         /// Obtain a reference to a shared component 
@@ -1525,7 +1525,7 @@ namespace FlecsSharp
         ///void *_ecs_shared(ecs_rows_t *rows, uint32_t index, bool test)
         ///</code>
         [DllImport(DLL, EntryPoint = "_ecs_shared", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern IntPtr shared(Rows rows, uint index, Enable test);
+        public static extern IntPtr shared(Rows rows, uint index, Bool test);
 
         ///<summary>
         /// Obtain a single field.  This is an alternative method to ecs_column to access data in a system, which accesses data from individual fields (one column per row). This method is slower than iterating over a column array, but has the added benefit that it automatically abstracts between shared components and owned components. 
@@ -1538,7 +1538,7 @@ namespace FlecsSharp
         ///void *_ecs_field(ecs_rows_t *rows, uint32_t index, uint32_t column, bool test)
         ///</code>
         [DllImport(DLL, EntryPoint = "_ecs_field", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern IntPtr field(Rows rows, uint index, uint column, Enable test);
+        public static extern IntPtr field(Rows rows, uint index, uint column, Bool test);
 
         ///<summary>
         /// Obtain the source of a column from inside a system. This operation lets you obtain the entity from which the column data was resolved. In most cases a component will come from the entities being iterated over, but when using prefabs or containers, the component can be shared between entities. For shared components, this function will return the original entity on which the component is stored.
@@ -1556,7 +1556,7 @@ namespace FlecsSharp
         ///ecs_entity_t _ecs_column_source(ecs_rows_t *rows, uint32_t column, bool test)
         ///</code>
         [DllImport(DLL, EntryPoint = "_ecs_column_source", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern Entity column_source(Rows rows, uint column, Enable test);
+        public static extern EntityId column_source(Rows rows, uint column, Bool test);
 
         ///<summary>
         /// Obtain the component for a column inside a system. This operation obtains the component handle for a column in the system. This function wraps around the 'components' array in the ecs_rows_t type.
@@ -1575,7 +1575,7 @@ namespace FlecsSharp
         ///ecs_entity_t _ecs_column_entity(ecs_rows_t *rows, uint32_t column, bool test)
         ///</code>
         [DllImport(DLL, EntryPoint = "_ecs_column_entity", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern Entity column_entity(Rows rows, uint column, Enable test);
+        public static extern EntityId column_entity(Rows rows, uint column, Bool test);
 
         ///<summary>
         /// Obtain the type of a column from inside a system.  This operation is equivalent to ecs_column_entity, except that it returns a type, instead of an entity handle. Invoking this function is the same as doing:
@@ -1596,7 +1596,7 @@ namespace FlecsSharp
         ///ecs_type_t _ecs_column_type(ecs_rows_t *rows, uint32_t column, bool test)
         ///</code>
         [DllImport(DLL, EntryPoint = "_ecs_column_type", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern Type column_type(Rows rows, uint column, Enable test);
+        public static extern TypeId column_type(Rows rows, uint column, Bool test);
 
         ///<summary>
         /// Abort 
@@ -1616,7 +1616,7 @@ namespace FlecsSharp
         ///                 const char *condition_str, const char *file, uint32_t line)
         ///</code>
         [DllImport(DLL, EntryPoint = "_ecs_assert", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern void assert(Enable condition, uint errorCode, CharPtr param, CharPtr conditionStr, CharPtr file, uint line);
+        public static extern void assert(Bool condition, uint errorCode, CharPtr param, CharPtr conditionStr, CharPtr file, uint line);
 
     }
 

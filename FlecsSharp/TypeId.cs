@@ -5,7 +5,7 @@ using SharpC;
 
 namespace FlecsSharp
 {
-    public unsafe partial struct OsApiThreadNew
+    public unsafe partial struct TypeId
     {
     }
 

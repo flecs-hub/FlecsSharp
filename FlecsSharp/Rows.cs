@@ -19,7 +19,7 @@ namespace FlecsSharp
             //[MethodImpl(MethodImplOptions.AggressiveInlining)]  set => ptr->world = value; }
         }
 
-        public Entity System
+        public EntityId System
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)] get => ptr->system;
             //[MethodImpl(MethodImplOptions.AggressiveInlining)]  set => ptr->system = value; }
@@ -49,19 +49,19 @@ namespace FlecsSharp
             [MethodImpl(MethodImplOptions.AggressiveInlining)] set => ptr->tableColumns = value;
         }
 
-        public Reference References
+        public ComponentReference References
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)] get => ptr->references;
             //[MethodImpl(MethodImplOptions.AggressiveInlining)]  set => ptr->references = value; }
         }
 
-        public Entity* Components
+        public EntityId* Components
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)] get => ptr->components;
             //[MethodImpl(MethodImplOptions.AggressiveInlining)]  set => ptr->components = value; }
         }
 
-        public Entity* Entities
+        public EntityId* Entities
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)] get => ptr->entities;
             //[MethodImpl(MethodImplOptions.AggressiveInlining)]  set => ptr->entities = value; }
@@ -97,7 +97,7 @@ namespace FlecsSharp
             [MethodImpl(MethodImplOptions.AggressiveInlining)] set => ptr->count = value;
         }
 
-        public Entity InterruptedBy
+        public EntityId InterruptedBy
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)] get => ptr->interruptedBy;
             //[MethodImpl(MethodImplOptions.AggressiveInlining)]  set => ptr->interruptedBy = value; }
@@ -110,7 +110,7 @@ namespace FlecsSharp
         ///void *_ecs_column(ecs_rows_t *rows, uint32_t index, bool test)
         ///</code>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public IntPtr EcsColumn(uint index, Enable test)
+        public IntPtr Column(uint index, Bool test)
         {
             return _ecs.column( this, index, test);
         }
@@ -122,7 +122,7 @@ namespace FlecsSharp
         ///void *_ecs_shared(ecs_rows_t *rows, uint32_t index, bool test)
         ///</code>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public IntPtr EcsShared(uint index, Enable test)
+        public IntPtr Shared(uint index, Bool test)
         {
             return _ecs.shared( this, index, test);
         }
@@ -138,7 +138,7 @@ namespace FlecsSharp
         ///void *_ecs_field(ecs_rows_t *rows, uint32_t index, uint32_t column, bool test)
         ///</code>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public IntPtr EcsField(uint index, uint column, Enable test)
+        public IntPtr Field(uint index, uint column, Bool test)
         {
             return _ecs.field( this, index, column, test);
         }
@@ -159,7 +159,7 @@ namespace FlecsSharp
         ///ecs_entity_t _ecs_column_source(ecs_rows_t *rows, uint32_t column, bool test)
         ///</code>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Entity EcsColumnSource(uint column, Enable test)
+        public EntityId ColumnSource(uint column, Bool test)
         {
             return _ecs.column_source( this, column, test);
         }
@@ -181,7 +181,7 @@ namespace FlecsSharp
         ///ecs_entity_t _ecs_column_entity(ecs_rows_t *rows, uint32_t column, bool test)
         ///</code>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Entity EcsColumnEntity(uint column, Enable test)
+        public EntityId ColumnEntity(uint column, Bool test)
         {
             return _ecs.column_entity( this, column, test);
         }
@@ -205,7 +205,7 @@ namespace FlecsSharp
         ///ecs_type_t _ecs_column_type(ecs_rows_t *rows, uint32_t column, bool test)
         ///</code>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Type EcsColumnType(uint column, Enable test)
+        public TypeId ColumnType(uint column, Bool test)
         {
             return _ecs.column_type( this, column, test);
         }

@@ -5,21 +5,21 @@ using SharpC;
 
 namespace FlecsSharp
 {
-    public unsafe partial struct Reference
+    public unsafe partial struct ComponentReference
     {
-        //public static Reference New(in Data val = default) => new Reference(Alloc(in val));
+        //public static ComponentReference New(in Data val = default) => new ComponentReference(Alloc(in val));
         //public void Dispose()
         //{
             //if(ptr != null) Free(ptr);
         //}
 
-        public Entity Entity
+        public EntityId Entity
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)] get => ptr->entity;
             //[MethodImpl(MethodImplOptions.AggressiveInlining)]  set => ptr->entity = value; }
         }
 
-        public Entity Component
+        public EntityId Component
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)] get => ptr->component;
             //[MethodImpl(MethodImplOptions.AggressiveInlining)]  set => ptr->component = value; }

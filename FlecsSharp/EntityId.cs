@@ -5,7 +5,7 @@ using SharpC;
 
 namespace FlecsSharp
 {
-    public unsafe partial struct Type
+    public unsafe partial struct EntityId
     {
     }
 

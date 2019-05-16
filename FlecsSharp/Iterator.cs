@@ -5,7 +5,7 @@ using SharpC;
 
 namespace FlecsSharp
 {
-    public unsafe partial struct Iter
+    public unsafe partial struct Iterator
     {
         public IntPtr Ctx
         {
@@ -35,6 +35,34 @@ namespace FlecsSharp
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)] get => Marshal.GetDelegateForFunctionPointer<ReleaseDelegate>(this._release);
             [MethodImpl(MethodImplOptions.AggressiveInlining)] set =>  this._release = Marshal.GetFunctionPointerForDelegate(value);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Bool IterHasnext()
+        {
+            fixed(Iterator* thisPtr = &this)
+            return ecs.iter_hasnext( thisPtr);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public IntPtr IterNext()
+        {
+            fixed(Iterator* thisPtr = &this)
+            return ecs.iter_next( thisPtr);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void IterRelease()
+        {
+            fixed(Iterator* thisPtr = &this)
+            ecs.iter_release( thisPtr);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ulong MapNext(ulong* keyOut)
+        {
+            fixed(Iterator* thisPtr = &this)
+            return ecs.map_next( thisPtr, keyOut);
         }
 
     }

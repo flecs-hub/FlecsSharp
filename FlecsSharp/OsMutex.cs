@@ -5,7 +5,7 @@ using SharpC;
 
 namespace FlecsSharp
 {
-    public unsafe partial struct Enable
+    public unsafe partial struct OsMutex
     {
     }
 
