@@ -1366,7 +1366,7 @@ namespace FlecsSharp
         ///void _ecs_add(ecs_world_t *world, ecs_entity_t entity, ecs_type_t type)
         ///</code>
         [DllImport(DLL, EntryPoint = "_ecs_add", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern void @add(World world, EntityId entity, TypeId type);
+        public static extern void add(World world, EntityId entity, TypeId type);
 
         ///<summary>
         /// Remove a type from an entity. This operation will remove one or more components (as per the specified type) from an entity. If the entity contained a subset of the components in the type, only that subset will be removed. If the entity contains none of the components in the type, the operation has no effect.
@@ -1381,7 +1381,7 @@ namespace FlecsSharp
         ///void _ecs_remove(ecs_world_t *world, ecs_entity_t entity, ecs_type_t type)
         ///</code>
         [DllImport(DLL, EntryPoint = "_ecs_remove", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern void @remove(World world, EntityId entity, TypeId type);
+        public static extern void remove(World world, EntityId entity, TypeId type);
 
         ///<summary>
         /// Get pointer to component data. This operation obtains a pointer to the component data of an entity. If the component was not added for the specified entity, the operation will return NULL.

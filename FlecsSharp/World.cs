@@ -444,7 +444,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Add(EntityId entity, TypeId type)
         {
-            _ecs.@add( this, entity, type);
+            _ecs.add( this, entity, type);
         }
 
         ///<summary>
@@ -462,7 +462,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Remove(EntityId entity, TypeId type)
         {
-            _ecs.@remove( this, entity, type);
+            _ecs.remove( this, entity, type);
         }
 
         ///<summary>

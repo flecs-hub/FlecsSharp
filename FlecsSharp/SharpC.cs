@@ -37,7 +37,7 @@ namespace SharpC
         public static implicit operator CBool(bool b) => new CBool { val = (b ? 1 : 0) };
     }
 
-    internal unsafe static class CStringExtensions
+    internal unsafe static class Extensions
     {
         public static AnsiString ToAnsiString(this string val) => new AnsiString(val);
         public static AnsiString ToAnsiString(this ReadOnlySpan<char> val) => new AnsiString(val);
