@@ -124,7 +124,7 @@ namespace FlecsSharp
 
         public CharPtr AddString(ReadOnlySpan<char> str, Encoding encoding)
         {
-            const int STR_ALIGN = 2;
+            const int STR_ALIGN = 8; // 8 bytes alignment for string would be better to compute hashes
 
             var availlable = GetAvaillableSpan(STR_ALIGN);
             var len = encoding.GetBytes(str, availlable);
@@ -133,10 +133,7 @@ namespace FlecsSharp
             return (CharPtr)charPtr;
         }
 
-        public override string ToString()
-        {
-            return System.Text.Encoding.UTF8.GetString(AsSpan());
-        }
+        public override string ToString() => System.Text.Encoding.UTF8.GetString(AsSpan());
     }
 
     public unsafe static class Heap

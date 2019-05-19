@@ -13,16 +13,16 @@ namespace HelloWorld
 
         public struct Speed
         {
-            public int Value { get; set; }
+            public int SpeedValue { get; set; }
         }
 
-        static void MoveSystem(EntitySet ids, Set<Position> position, Set<Speed> speed)
+        static void MoveSystem(EntitySet rows, Set<Position> position, Set<Speed> speed)
         {
-            for(uint i = 0; i < ids.Count; i++)
+            for(uint i = 0; i < rows.Count; i++)
             {
-                EntityId id = ids[i];
-                position[i].X += speed[i].Value * ids.DeltaTime;
-                position[i].Y += speed[i].Value * ids.DeltaTime;
+                EntityId id = rows[i];
+                position[i].X += speed[i].SpeedValue * rows.DeltaTime;
+                position[i].Y += speed[i].SpeedValue * rows.DeltaTime;
             }
         }
 
@@ -32,7 +32,7 @@ namespace HelloWorld
             {
                 world.AddSystem<Position, Speed>(MoveSystem, SystemKind.OnUpdate);
 
-                var myEntity = world.NewEntity("MyEntity", new Position { X = 1, Y = 2 }, new Speed { Value = 5 });
+                var myEntity = world.NewEntity("MyEntity", new Position { X = 1, Y = 2 }, new Speed { SpeedValue = 5 });
 
                 while (world.Progress(1))
                 {

@@ -7,6 +7,10 @@ using System.Text;
 
 namespace FlecsSharp
 {
+
+    public delegate void SystemAction<T>(EntitySet ids, Set<T> comp) where T : unmanaged;
+    public delegate void SystemAction<T1, T2>(EntitySet ids, Set<T1> comp1, Set<T2> comp2) where T1 : unmanaged where T2 : unmanaged;
+
     unsafe partial struct World : IDisposable
     {
 
@@ -103,8 +107,7 @@ namespace FlecsSharp
          => AddSystem(kind, systemImpl.Method.Name, systemImpl, componentTypes);
 
 
-        public delegate void SystemAction<T>(EntitySet ids, Set<T> comp) where T : unmanaged;
-        public delegate void SystemAction<T1, T2>(EntitySet ids, Set<T1> comp1, Set<T2> comp2) where T1 : unmanaged where T2 : unmanaged;
+
 
         public void AddSystem<T1>(SystemAction<T1> systemImpl, SystemKind kind) where T1 : unmanaged
         {
