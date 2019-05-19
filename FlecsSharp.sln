@@ -5,6 +5,10 @@ VisualStudioVersion = 15.0.28307.421
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FlecsSharp", "FlecsSharp\FlecsSharp.csproj", "{81E49A16-4FC0-42A6-8B9A-866E5638BA24}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HelloWorld", "Examples\HelloWorld\HelloWorld.csproj", "{B7A947E7-B936-4A8C-8F27-E57EA78D38D9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{E0C8EA16-EA0E-44D4-AB76-F9F585352FC0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,9 +19,16 @@ Global
 		{81E49A16-4FC0-42A6-8B9A-866E5638BA24}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{81E49A16-4FC0-42A6-8B9A-866E5638BA24}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{81E49A16-4FC0-42A6-8B9A-866E5638BA24}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7A947E7-B936-4A8C-8F27-E57EA78D38D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7A947E7-B936-4A8C-8F27-E57EA78D38D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7A947E7-B936-4A8C-8F27-E57EA78D38D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7A947E7-B936-4A8C-8F27-E57EA78D38D9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B7A947E7-B936-4A8C-8F27-E57EA78D38D9} = {E0C8EA16-EA0E-44D4-AB76-F9F585352FC0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9A4A684D-5DAC-4871-990D-7E646774E502}

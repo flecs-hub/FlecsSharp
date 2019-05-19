@@ -1,12 +1,34 @@
 using System;
-using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
-using SharpC;
+using System.Runtime.InteropServices;
+using System.Security;
 
 namespace FlecsSharp
 {
-    using System.Security;
-#region Enums
+    public readonly struct CharPtr
+    {
+        readonly IntPtr _ptr;
+        public CharPtr(IntPtr ptr) => this._ptr = ptr;
+        public static explicit operator CharPtr(IntPtr ptr) => new CharPtr(ptr);
+        public static implicit operator IntPtr(CharPtr charPtr) => charPtr._ptr;
+
+        public unsafe ReadOnlySpan<byte> AsSpan()
+        {
+            byte* start = (byte*)_ptr;
+            byte* current = start;
+
+            while (*current != 0)
+                current++;
+
+            return new ReadOnlySpan<byte>(start, (int)(current - start));
+        }
+
+        public unsafe override string ToString() =>
+            System.Text.Encoding.UTF8.GetString(AsSpan());
+
+    }
+
+    #region Enums
     //EcsSystemKind
     public enum SystemKind : Int32
     {
@@ -24,9 +46,9 @@ namespace FlecsSharp
         OnSet = 11,
     }
 
-#endregion
+    #endregion
 
-#region Typedefs
+    #region Typedefs
     public unsafe partial struct OsThread
     {
         public OsThread(UInt64 value)
@@ -115,20 +137,20 @@ namespace FlecsSharp
         public static explicit operator UInt32(TypeId val) => val.Value;
     }
 
-#endregion
+    #endregion
 
-#region Structs
+    #region Structs
     //ecs_os_api_t
-    public unsafe partial struct OsApi
+    public readonly unsafe partial struct OsApi
     {
-        internal Data* ptr;
+        internal readonly Data* ptr;
         internal OsApi(Data* ptr) => this.ptr = ptr;
         [StructLayout(LayoutKind.Sequential)]
         internal unsafe struct Data
         {
             public static implicit operator OsApi(Data data) => data.Ptr();
             public static implicit operator Data(OsApi _ref) => *_ref.ptr;
-            public OsApi Ptr() { fixed(Data* ptr = &this) return new OsApi(ptr); }
+            public OsApi Ptr() { fixed (Data* ptr = &this) return new OsApi(ptr); }
             internal IntPtr _malloc;
             internal IntPtr _realloc;
             internal IntPtr _calloc;
@@ -158,7 +180,7 @@ namespace FlecsSharp
     [StructLayout(LayoutKind.Sequential)]
     public unsafe partial struct Time
     {
-        public Time* Ptr() { fixed(Time* ptr = &this) return ptr; }
+        public Time* Ptr() { fixed (Time* ptr = &this) return ptr; }
         internal int sec;
         internal uint nanosec;
     }
@@ -167,7 +189,7 @@ namespace FlecsSharp
     [StructLayout(LayoutKind.Sequential)]
     public unsafe partial struct Iterator
     {
-        public Iterator* Ptr() { fixed(Iterator* ptr = &this) return ptr; }
+        public Iterator* Ptr() { fixed (Iterator* ptr = &this) return ptr; }
         internal IntPtr ctx;
         internal IntPtr data;
         internal IntPtr _hasnext;
@@ -176,16 +198,16 @@ namespace FlecsSharp
     }
 
     //ecs_vector_params_t
-    public unsafe partial struct VectorParams
+    public readonly unsafe partial struct VectorParams
     {
-        internal Data* ptr;
+        internal readonly Data* ptr;
         internal VectorParams(Data* ptr) => this.ptr = ptr;
         [StructLayout(LayoutKind.Sequential)]
         internal unsafe struct Data
         {
             public static implicit operator VectorParams(Data data) => data.Ptr();
             public static implicit operator Data(VectorParams _ref) => *_ref.ptr;
-            public VectorParams Ptr() { fixed(Data* ptr = &this) return new VectorParams(ptr); }
+            public VectorParams Ptr() { fixed (Data* ptr = &this) return new VectorParams(ptr); }
             internal IntPtr _moveAction;
             internal IntPtr moveCtx;
             internal IntPtr ctx;
@@ -195,16 +217,16 @@ namespace FlecsSharp
     }
 
     //EcsMapIter
-    public unsafe partial struct MapIter
+    public readonly unsafe partial struct MapIter
     {
-        internal Data* ptr;
+        internal readonly Data* ptr;
         internal MapIter(Data* ptr) => this.ptr = ptr;
         [StructLayout(LayoutKind.Sequential)]
         internal unsafe struct Data
         {
             public static implicit operator MapIter(Data data) => data.Ptr();
             public static implicit operator Data(MapIter _ref) => *_ref.ptr;
-            public MapIter Ptr() { fixed(Data* ptr = &this) return new MapIter(ptr); }
+            public MapIter Ptr() { fixed (Data* ptr = &this) return new MapIter(ptr); }
             internal uint bucketIndex;
             internal uint node;
         }
@@ -212,16 +234,16 @@ namespace FlecsSharp
     }
 
     //ecs_world_stats_t
-    public unsafe partial struct WorldStats
+    public readonly unsafe partial struct WorldStats
     {
-        internal Data* ptr;
+        internal readonly Data* ptr;
         internal WorldStats(Data* ptr) => this.ptr = ptr;
         [StructLayout(LayoutKind.Sequential)]
         internal unsafe struct Data
         {
             public static implicit operator WorldStats(Data data) => data.Ptr();
             public static implicit operator Data(WorldStats _ref) => *_ref.ptr;
-            public WorldStats Ptr() { fixed(Data* ptr = &this) return new WorldStats(ptr); }
+            public WorldStats Ptr() { fixed (Data* ptr = &this) return new WorldStats(ptr); }
             internal uint systemCount;
             internal uint tableCount;
             internal uint componentCount;
@@ -255,16 +277,16 @@ namespace FlecsSharp
     }
 
     //memory
-    public unsafe partial struct MemoryStats
+    public readonly unsafe partial struct MemoryStats
     {
-        internal Data* ptr;
+        internal readonly Data* ptr;
         internal MemoryStats(Data* ptr) => this.ptr = ptr;
         [StructLayout(LayoutKind.Sequential)]
         internal unsafe struct Data
         {
             public static implicit operator MemoryStats(Data data) => data.Ptr();
             public static implicit operator Data(MemoryStats _ref) => *_ref.ptr;
-            public MemoryStats Ptr() { fixed(Data* ptr = &this) return new MemoryStats(ptr); }
+            public MemoryStats Ptr() { fixed (Data* ptr = &this) return new MemoryStats(ptr); }
             internal MemStat.Data total;
             internal MemStat.Data components;
             internal MemStat.Data entities;
@@ -278,16 +300,16 @@ namespace FlecsSharp
     }
 
     //total
-    public unsafe partial struct MemStat
+    public readonly unsafe partial struct MemStat
     {
-        internal Data* ptr;
+        internal readonly Data* ptr;
         internal MemStat(Data* ptr) => this.ptr = ptr;
         [StructLayout(LayoutKind.Sequential)]
         internal unsafe struct Data
         {
             public static implicit operator MemStat(Data data) => data.Ptr();
             public static implicit operator Data(MemStat _ref) => *_ref.ptr;
-            public MemStat Ptr() { fixed(Data* ptr = &this) return new MemStat(ptr); }
+            public MemStat Ptr() { fixed (Data* ptr = &this) return new MemStat(ptr); }
             internal uint allocd;
             internal uint used;
         }
@@ -295,23 +317,23 @@ namespace FlecsSharp
     }
 
     //ecs_rows_t
-    public unsafe partial struct Rows
+    public readonly unsafe partial struct EntitySet
     {
-        internal Data* ptr;
-        internal Rows(Data* ptr) => this.ptr = ptr;
+        internal readonly Data* ptr;
+        internal EntitySet(Data* ptr) => this.ptr = ptr;
         [StructLayout(LayoutKind.Sequential)]
         internal unsafe struct Data
         {
-            public static implicit operator Rows(Data data) => data.Ptr();
-            public static implicit operator Data(Rows _ref) => *_ref.ptr;
-            public Rows Ptr() { fixed(Data* ptr = &this) return new Rows(ptr); }
+            public static implicit operator EntitySet(Data data) => data.Ptr();
+            public static implicit operator Data(EntitySet _ref) => *_ref.ptr;
+            public EntitySet Ptr() { fixed (Data* ptr = &this) return new EntitySet(ptr); }
             internal World world;
             internal EntityId system;
             internal int* columns;
             internal ushort columnCount;
             internal IntPtr table;
             internal IntPtr tableColumns;
-            internal ComponentReference references;
+            internal Reference references;
             internal EntityId* components;
             internal EntityId* entities;
             internal IntPtr param;
@@ -325,16 +347,16 @@ namespace FlecsSharp
     }
 
     //ecs_reference_t
-    public unsafe partial struct ComponentReference
+    public readonly unsafe partial struct Reference
     {
-        internal Data* ptr;
-        internal ComponentReference(Data* ptr) => this.ptr = ptr;
+        internal readonly Data* ptr;
+        internal Reference(Data* ptr) => this.ptr = ptr;
         [StructLayout(LayoutKind.Sequential)]
         internal unsafe struct Data
         {
-            public static implicit operator ComponentReference(Data data) => data.Ptr();
-            public static implicit operator Data(ComponentReference _ref) => *_ref.ptr;
-            public ComponentReference Ptr() { fixed(Data* ptr = &this) return new ComponentReference(ptr); }
+            public static implicit operator Reference(Data data) => data.Ptr();
+            public static implicit operator Data(Reference _ref) => *_ref.ptr;
+            public Reference Ptr() { fixed (Data* ptr = &this) return new Reference(ptr); }
             internal EntityId entity;
             internal EntityId component;
             internal IntPtr cachedPtr;
@@ -342,122 +364,122 @@ namespace FlecsSharp
 
     }
 
-#endregion
+    #endregion
 
-#region OpaquePtrs
+    #region OpaquePtrs
     //ecs_vector_t
     public unsafe partial struct Vector
     {
-        IntPtr ptr;
+        readonly IntPtr ptr;
         public Vector(IntPtr ptr) => this.ptr = ptr;
-        internal Vector* Ptr => (Vector*) ptr;
+        internal Vector* Ptr => (Vector*)ptr;
     }
 
     //ecs_map_t
     public unsafe partial struct Map
     {
-        IntPtr ptr;
+        readonly IntPtr ptr;
         public Map(IntPtr ptr) => this.ptr = ptr;
-        internal Map* Ptr => (Map*) ptr;
+        internal Map* Ptr => (Map*)ptr;
     }
 
     //ecs_world_t
     public unsafe partial struct World
     {
-        IntPtr ptr;
+        readonly IntPtr ptr;
         public World(IntPtr ptr) => this.ptr = ptr;
-        internal World* Ptr => (World*) ptr;
+        internal World* Ptr => (World*)ptr;
     }
 
-#endregion
+    #endregion
 
-#region Delegates
+    #region Delegates
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal unsafe delegate IntPtr OsApiMallocDelegate(UIntPtr size);
-
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal unsafe delegate IntPtr OsApiReallocDelegate(IntPtr ptr, UIntPtr size);
+    public unsafe delegate IntPtr OsApiMallocDelegate(UIntPtr size);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal unsafe delegate IntPtr OsApiCallocDelegate(UIntPtr num, UIntPtr size);
+    public unsafe delegate IntPtr OsApiReallocDelegate(IntPtr ptr, UIntPtr size);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal unsafe delegate void OsApiFreeDelegate(IntPtr ptr);
+    public unsafe delegate IntPtr OsApiCallocDelegate(UIntPtr num, UIntPtr size);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal unsafe delegate OsThread OsApiThreadNewDelegate(OsThread ecsOsThreadT, OsThreadCallbackDelegate callback, IntPtr param);
+    public unsafe delegate void OsApiFreeDelegate(IntPtr ptr);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal unsafe delegate IntPtr OsThreadCallbackDelegate(IntPtr param0);
+    public unsafe delegate OsThread OsApiThreadNewDelegate(OsThread ecsOsThreadT, OsThreadCallbackDelegate callback, IntPtr param);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal unsafe delegate IntPtr OsApiThreadJoinDelegate(OsThread thread);
+    public unsafe delegate IntPtr OsThreadCallbackDelegate(IntPtr param0);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal unsafe delegate OsMutex OsApiMutexNewDelegate(OsMutex ecsOsMutexT);
+    public unsafe delegate IntPtr OsApiThreadJoinDelegate(OsThread thread);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal unsafe delegate void OsApiMutexFreeDelegate(OsMutex mutex);
+    public unsafe delegate OsMutex OsApiMutexNewDelegate(OsMutex ecsOsMutexT);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal unsafe delegate void OsApiMutexLockDelegate(OsMutex mutex);
+    public unsafe delegate void OsApiMutexFreeDelegate(OsMutex mutex);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal unsafe delegate OsCond OsApiCondNewDelegate(OsCond ecsOsCondT);
+    public unsafe delegate void OsApiMutexLockDelegate(OsMutex mutex);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal unsafe delegate void OsApiCondFreeDelegate(OsCond cond);
+    public unsafe delegate OsCond OsApiCondNewDelegate(OsCond ecsOsCondT);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal unsafe delegate void OsApiCondSignalDelegate(OsCond cond);
+    public unsafe delegate void OsApiCondFreeDelegate(OsCond cond);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal unsafe delegate void OsApiCondBroadcastDelegate(OsCond cond);
+    public unsafe delegate void OsApiCondSignalDelegate(OsCond cond);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal unsafe delegate void OsApiCondWaitDelegate(OsCond cond, OsMutex mutex);
+    public unsafe delegate void OsApiCondBroadcastDelegate(OsCond cond);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal unsafe delegate void OsApiSleepDelegate(uint sec, uint nanosec);
+    public unsafe delegate void OsApiCondWaitDelegate(OsCond cond, OsMutex mutex);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal unsafe delegate void OsApiGetTimeDelegate(Time* timeOut);
+    public unsafe delegate void OsApiSleepDelegate(uint sec, uint nanosec);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal unsafe delegate void OsApiLogDelegate(CharPtr fmt, IntPtr args);
+    public unsafe delegate void OsApiGetTimeDelegate(Time* timeOut);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal unsafe delegate void OsApiAbortDelegate();
+    public unsafe delegate void OsApiLogDelegate(CharPtr fmt, IntPtr args);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal unsafe delegate Bool HasnextDelegate(Bool @bool, Iterator* param1);
+    public unsafe delegate void OsApiAbortDelegate();
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal unsafe delegate IntPtr NextDelegate(Iterator* param0);
+    public unsafe delegate Bool HasnextDelegate(Bool @bool, Iterator* param1);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal unsafe delegate void ReleaseDelegate(Iterator* param0);
+    public unsafe delegate IntPtr NextDelegate(Iterator* param0);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal unsafe delegate void MoveDelegate(Vector array, VectorParams @params, IntPtr to, IntPtr @from, IntPtr ctx);
+    public unsafe delegate void ReleaseDelegate(Iterator* param0);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal unsafe delegate int ComparatorDelegate(IntPtr p1, IntPtr p2);
+    public unsafe delegate void MoveDelegate(Vector array, VectorParams @params, IntPtr to, IntPtr @from, IntPtr ctx);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal unsafe delegate void ModuleInitActionDelegate(World world, int flags);
+    public unsafe delegate int ComparatorDelegate(IntPtr p1, IntPtr p2);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal unsafe delegate void SystemActionDelegate(Rows data);
+    public unsafe delegate void ModuleInitActionDelegate(World world, int flags);
 
-#endregion
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public unsafe delegate void SystemActionDelegate(EntitySet data);
+
+    #endregion
 
     internal unsafe static partial class ecs
     {
-        [DllImport(DLL, EntryPoint = "ecs_os_set_api", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_os_set_api", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void os_set_api(OsApi osApi);
 
-        [DllImport(DLL, EntryPoint = "ecs_os_set_api_defaults", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_os_set_api_defaults", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void os_set_api_defaults();
 
         ///<summary>
@@ -466,148 +488,148 @@ namespace FlecsSharp
         ///<code>
         ///void ecs_os_log(const char *fmt, ...)
         ///</code>
-        [DllImport(DLL, EntryPoint = "ecs_os_log", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_os_log", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void os_log(CharPtr fmt);
 
-        [DllImport(DLL, EntryPoint = "ecs_os_err", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_os_err", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void os_err(CharPtr fmt);
 
-        [DllImport(DLL, EntryPoint = "ecs_os_dbg", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_os_dbg", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void os_dbg(CharPtr fmt);
 
-        [DllImport(DLL, EntryPoint = "ecs_os_enable_dbg", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_os_enable_dbg", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void os_enable_dbg(Bool enable);
 
-        [DllImport(DLL, EntryPoint = "ecs_iter_hasnext", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_iter_hasnext", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern Bool iter_hasnext(Iterator* iter);
 
-        [DllImport(DLL, EntryPoint = "ecs_iter_next", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_iter_next", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern IntPtr iter_next(Iterator* iter);
 
-        [DllImport(DLL, EntryPoint = "ecs_iter_release", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_iter_release", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void iter_release(Iterator* iter);
 
-        [DllImport(DLL, EntryPoint = "ecs_vector_new", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_vector_new", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern Vector vector_new(VectorParams @params, uint size);
 
-        [DllImport(DLL, EntryPoint = "ecs_vector_new_from_buffer", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_vector_new_from_buffer", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern Vector vector_new_from_buffer(VectorParams @params, uint size, IntPtr buffer);
 
-        [DllImport(DLL, EntryPoint = "ecs_vector_free", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_vector_free", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void vector_free(Vector array);
 
-        [DllImport(DLL, EntryPoint = "ecs_vector_clear", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_vector_clear", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void vector_clear(Vector array);
 
-        [DllImport(DLL, EntryPoint = "ecs_vector_add", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_vector_add", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern IntPtr vector_add(Vector* arrayInout, VectorParams @params);
 
-        [DllImport(DLL, EntryPoint = "ecs_vector_addn", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_vector_addn", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern IntPtr vector_addn(Vector* arrayInout, VectorParams @params, uint count);
 
-        [DllImport(DLL, EntryPoint = "ecs_vector_get", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_vector_get", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern IntPtr vector_get(Vector array, VectorParams @params, uint index);
 
-        [DllImport(DLL, EntryPoint = "ecs_vector_get_index", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_vector_get_index", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern uint vector_get_index(Vector array, VectorParams @params, IntPtr elem);
 
-        [DllImport(DLL, EntryPoint = "ecs_vector_last", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_vector_last", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern IntPtr vector_last(Vector array, VectorParams @params);
 
-        [DllImport(DLL, EntryPoint = "ecs_vector_remove", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_vector_remove", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern uint vector_remove(Vector array, VectorParams @params, IntPtr elem);
 
-        [DllImport(DLL, EntryPoint = "ecs_vector_remove_last", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_vector_remove_last", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void vector_remove_last(Vector array);
 
-        [DllImport(DLL, EntryPoint = "ecs_vector_move_index", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_vector_move_index", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern uint vector_move_index(Vector* dstArray, Vector srcArray, VectorParams @params, uint index);
 
-        [DllImport(DLL, EntryPoint = "ecs_vector_remove_index", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_vector_remove_index", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern uint vector_remove_index(Vector array, VectorParams @params, uint index);
 
-        [DllImport(DLL, EntryPoint = "ecs_vector_reclaim", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_vector_reclaim", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void vector_reclaim(Vector* array, VectorParams @params);
 
-        [DllImport(DLL, EntryPoint = "ecs_vector_set_size", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_vector_set_size", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern uint vector_set_size(Vector* array, VectorParams @params, uint size);
 
-        [DllImport(DLL, EntryPoint = "ecs_vector_set_count", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_vector_set_count", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern uint vector_set_count(Vector* array, VectorParams @params, uint size);
 
-        [DllImport(DLL, EntryPoint = "ecs_vector_count", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_vector_count", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern uint vector_count(Vector array);
 
-        [DllImport(DLL, EntryPoint = "ecs_vector_size", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_vector_size", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern uint vector_size(Vector array);
 
-        [DllImport(DLL, EntryPoint = "ecs_vector_first", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_vector_first", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern IntPtr vector_first(Vector array);
 
-        [DllImport(DLL, EntryPoint = "ecs_vector_sort", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_vector_sort", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void vector_sort(Vector array, VectorParams @params, ComparatorDelegate compareAction);
 
-        [DllImport(DLL, EntryPoint = "ecs_vector_memory", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_vector_memory", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void vector_memory(Vector array, VectorParams @params, uint* allocd, uint* used);
 
-        [DllImport(DLL, EntryPoint = "ecs_map_new", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_map_new", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern Map map_new(uint size);
 
-        [DllImport(DLL, EntryPoint = "ecs_map_free", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_map_free", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void map_free(Map map);
 
-        [DllImport(DLL, EntryPoint = "ecs_map_memory", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_map_memory", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void map_memory(Map map, uint* total, uint* used);
 
-        [DllImport(DLL, EntryPoint = "ecs_map_count", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_map_count", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern uint map_count(Map map);
 
-        [DllImport(DLL, EntryPoint = "ecs_map_set_size", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_map_set_size", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern uint map_set_size(Map map, uint size);
 
-        [DllImport(DLL, EntryPoint = "ecs_map_bucket_count", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_map_bucket_count", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern uint map_bucket_count(Map map);
 
-        [DllImport(DLL, EntryPoint = "ecs_map_clear", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_map_clear", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void map_clear(Map map);
 
-        [DllImport(DLL, EntryPoint = "ecs_map_set64", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_map_set64", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void map_set64(Map map, ulong keyHash, ulong data);
 
-        [DllImport(DLL, EntryPoint = "ecs_map_get64", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_map_get64", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern ulong map_get64(Map map, ulong keyHash);
 
-        [DllImport(DLL, EntryPoint = "ecs_map_has", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_map_has", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern Bool map_has(Map map, ulong keyHash, ulong* valueOut);
 
-        [DllImport(DLL, EntryPoint = "ecs_map_remove", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_map_remove", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern int map_remove(Map map, ulong keyHash);
 
-        [DllImport(DLL, EntryPoint = "ecs_map_next", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_map_next", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern ulong map_next(Iterator* it, ulong* keyOut);
 
-        [DllImport(DLL, EntryPoint = "ecs_get_stats", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_get_stats", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void get_stats(World world, WorldStats stats);
 
-        [DllImport(DLL, EntryPoint = "ecs_free_stats", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_free_stats", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void free_stats(WorldStats stats);
 
-        [DllImport(DLL, EntryPoint = "ecs_measure_frame_time", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_measure_frame_time", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void measure_frame_time(World world, Bool enable);
 
-        [DllImport(DLL, EntryPoint = "ecs_measure_system_time", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_measure_system_time", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void measure_system_time(World world, Bool enable);
 
-        [DllImport(DLL, EntryPoint = "ecs_sleepf", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_sleepf", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void sleepf(double t);
 
-        [DllImport(DLL, EntryPoint = "ecs_time_to_double", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_time_to_double", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern double time_to_double(Time t);
 
-        [DllImport(DLL, EntryPoint = "ecs_time_sub", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_time_sub", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern Time time_sub(Time t1, Time t2);
 
-        [DllImport(DLL, EntryPoint = "ecs_time_measure", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_time_measure", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern double time_measure(Time* start);
 
         ///<summary>
@@ -619,7 +641,7 @@ namespace FlecsSharp
         ///<code>
         ///ecs_world_t *ecs_init()
         ///</code>
-        [DllImport(DLL, EntryPoint = "ecs_init", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_init", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern World init();
 
         ///<summary>
@@ -636,7 +658,7 @@ namespace FlecsSharp
         ///<code>
         ///ecs_world_t *ecs_init_w_args(int argc, char *argv[])
         ///</code>
-        [DllImport(DLL, EntryPoint = "ecs_init_w_args", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_init_w_args", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern World init_w_args(int argc, sbyte* argv);
 
         ///<summary>
@@ -646,7 +668,7 @@ namespace FlecsSharp
         ///<code>
         ///int ecs_fini(ecs_world_t *world)
         ///</code>
-        [DllImport(DLL, EntryPoint = "ecs_fini", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_fini", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern int fini(World world);
 
         ///<summary>
@@ -656,7 +678,7 @@ namespace FlecsSharp
         ///<code>
         ///void ecs_quit(ecs_world_t *world)
         ///</code>
-        [DllImport(DLL, EntryPoint = "ecs_quit", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_quit", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void quit(World world);
 
         ///<summary>
@@ -675,7 +697,7 @@ namespace FlecsSharp
         ///                                     const char *library_name,
         ///                                     const char *module_name, int flags)
         ///</code>
-        [DllImport(DLL, EntryPoint = "ecs_import_from_library", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_import_from_library", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern EntityId import_from_library(World world, CharPtr libraryName, CharPtr moduleName, int flags);
 
         ///<summary>
@@ -697,7 +719,7 @@ namespace FlecsSharp
         ///<code>
         ///bool ecs_progress(ecs_world_t *world, float delta_time)
         ///</code>
-        [DllImport(DLL, EntryPoint = "ecs_progress", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_progress", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern Bool progress(World world, float deltaTime);
 
         ///<summary>
@@ -711,7 +733,7 @@ namespace FlecsSharp
         ///<code>
         ///void ecs_merge(ecs_world_t *world)
         ///</code>
-        [DllImport(DLL, EntryPoint = "ecs_merge", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_merge", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void merge(World world);
 
         ///<summary>
@@ -726,7 +748,7 @@ namespace FlecsSharp
         ///<code>
         ///void ecs_set_automerge(ecs_world_t *world, bool auto_merge)
         ///</code>
-        [DllImport(DLL, EntryPoint = "ecs_set_automerge", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_set_automerge", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void set_automerge(World world, Bool autoMerge);
 
         ///<summary>
@@ -744,7 +766,7 @@ namespace FlecsSharp
         ///<code>
         ///void ecs_set_threads(ecs_world_t *world, uint32_t threads)
         ///</code>
-        [DllImport(DLL, EntryPoint = "ecs_set_threads", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_set_threads", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void set_threads(World world, uint threads);
 
         ///<summary>
@@ -759,7 +781,7 @@ namespace FlecsSharp
         ///<code>
         ///void ecs_set_target_fps(ecs_world_t *world, float fps)
         ///</code>
-        [DllImport(DLL, EntryPoint = "ecs_set_target_fps", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_set_target_fps", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void set_target_fps(World world, float fps);
 
         ///<summary>
@@ -773,7 +795,7 @@ namespace FlecsSharp
         ///<code>
         ///int ecs_enable_admin(ecs_world_t *world, uint16_t port)
         ///</code>
-        [DllImport(DLL, EntryPoint = "ecs_enable_admin", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_enable_admin", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern int enable_admin(World world, ushort port);
 
         ///<summary>
@@ -782,7 +804,7 @@ namespace FlecsSharp
         ///<code>
         ///float ecs_get_delta_time(ecs_world_t *world)
         ///</code>
-        [DllImport(DLL, EntryPoint = "ecs_get_delta_time", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_get_delta_time", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern float get_delta_time(World world);
 
         ///<summary>
@@ -796,7 +818,7 @@ namespace FlecsSharp
         ///<code>
         ///void ecs_set_context(ecs_world_t *world, void *ctx)
         ///</code>
-        [DllImport(DLL, EntryPoint = "ecs_set_context", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_set_context", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void set_context(World world, IntPtr ctx);
 
         ///<summary>
@@ -809,7 +831,7 @@ namespace FlecsSharp
         ///<code>
         ///void *ecs_get_context(ecs_world_t *world)
         ///</code>
-        [DllImport(DLL, EntryPoint = "ecs_get_context", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_get_context", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern IntPtr get_context(World world);
 
         ///<summary>
@@ -822,7 +844,7 @@ namespace FlecsSharp
         ///<code>
         ///uint32_t ecs_get_tick(ecs_world_t *world)
         ///</code>
-        [DllImport(DLL, EntryPoint = "ecs_get_tick", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_get_tick", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern uint get_tick(World world);
 
         ///<summary>
@@ -837,7 +859,7 @@ namespace FlecsSharp
         ///<code>
         ///void ecs_dim(ecs_world_t *world, uint32_t entity_count)
         ///</code>
-        [DllImport(DLL, EntryPoint = "ecs_dim", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_dim", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void dim(World world, uint entityCount);
 
         ///<summary>
@@ -854,7 +876,7 @@ namespace FlecsSharp
         ///void ecs_set_entity_range(ecs_world_t *world, ecs_entity_t id_start,
         ///                          ecs_entity_t id_end)
         ///</code>
-        [DllImport(DLL, EntryPoint = "ecs_set_entity_range", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_set_entity_range", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void set_entity_range(World world, EntityId idStart, EntityId idEnd);
 
         ///<summary>
@@ -872,7 +894,7 @@ namespace FlecsSharp
         ///<code>
         ///ecs_entity_t ecs_clone(ecs_world_t *world, ecs_entity_t entity, bool copy_value)
         ///</code>
-        [DllImport(DLL, EntryPoint = "ecs_clone", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_clone", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern EntityId clone(World world, EntityId entity, Bool copyValue);
 
         ///<summary>
@@ -887,7 +909,7 @@ namespace FlecsSharp
         ///<code>
         ///void ecs_delete(ecs_world_t *world, ecs_entity_t entity)
         ///</code>
-        [DllImport(DLL, EntryPoint = "ecs_delete", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_delete", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void delete(World world, EntityId entity);
 
         ///<summary>
@@ -903,7 +925,7 @@ namespace FlecsSharp
         ///<code>
         ///void ecs_adopt(ecs_world_t *world, ecs_entity_t entity, ecs_entity_t parent)
         ///</code>
-        [DllImport(DLL, EntryPoint = "ecs_adopt", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_adopt", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void adopt(World world, EntityId entity, EntityId parent);
 
         ///<summary>
@@ -918,7 +940,7 @@ namespace FlecsSharp
         ///<code>
         ///void ecs_orphan(ecs_world_t *world, ecs_entity_t child, ecs_entity_t parent)
         ///</code>
-        [DllImport(DLL, EntryPoint = "ecs_orphan", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_orphan", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void orphan(World world, EntityId child, EntityId parent);
 
         ///<summary>
@@ -936,7 +958,7 @@ namespace FlecsSharp
         ///<code>
         ///bool ecs_contains(ecs_world_t *world, ecs_entity_t parent, ecs_entity_t child)
         ///</code>
-        [DllImport(DLL, EntryPoint = "ecs_contains", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_contains", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern Bool contains(World world, EntityId parent, EntityId child);
 
         ///<summary>
@@ -949,7 +971,7 @@ namespace FlecsSharp
         ///ecs_entity_t ecs_get_parent(ecs_world_t *world, ecs_entity_t entity,
         ///                            ecs_entity_t component)
         ///</code>
-        [DllImport(DLL, EntryPoint = "ecs_get_parent", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_get_parent", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern EntityId get_parent(World world, EntityId entity, EntityId component);
 
         ///<summary>
@@ -967,7 +989,7 @@ namespace FlecsSharp
         ///<code>
         ///ecs_type_t ecs_get_type(ecs_world_t *world, ecs_entity_t entity)
         ///</code>
-        [DllImport(DLL, EntryPoint = "ecs_get_type", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_get_type", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern TypeId get_type(World world, EntityId entity);
 
         ///<summary>
@@ -984,7 +1006,7 @@ namespace FlecsSharp
         ///<code>
         ///const char *ecs_get_id(ecs_world_t *world, ecs_entity_t entity)
         ///</code>
-        [DllImport(DLL, EntryPoint = "ecs_get_id", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_get_id", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern CharPtr get_id(World world, EntityId entity);
 
         ///<summary>
@@ -998,7 +1020,7 @@ namespace FlecsSharp
         ///<code>
         ///bool ecs_is_empty(ecs_world_t *world, ecs_entity_t entity)
         ///</code>
-        [DllImport(DLL, EntryPoint = "ecs_is_empty", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_is_empty", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern Bool is_empty(World world, EntityId entity);
 
         ///<summary>
@@ -1012,7 +1034,7 @@ namespace FlecsSharp
         ///<code>
         ///ecs_entity_t ecs_lookup(ecs_world_t *world, const char *id)
         ///</code>
-        [DllImport(DLL, EntryPoint = "ecs_lookup", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_lookup", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern EntityId lookup(World world, CharPtr id);
 
         ///<summary>
@@ -1033,7 +1055,7 @@ namespace FlecsSharp
         ///ecs_entity_t ecs_lookup_child(ecs_world_t *world, ecs_entity_t parent,
         ///                              const char *id)
         ///</code>
-        [DllImport(DLL, EntryPoint = "ecs_lookup_child", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_lookup_child", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern EntityId lookup_child(World world, EntityId parent, CharPtr id);
 
         ///<summary>
@@ -1047,7 +1069,7 @@ namespace FlecsSharp
         ///<code>
         ///ecs_type_t ecs_type_from_entity(ecs_world_t *world, ecs_entity_t entity)
         ///</code>
-        [DllImport(DLL, EntryPoint = "ecs_type_from_entity", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_type_from_entity", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern TypeId type_from_entity(World world, EntityId entity);
 
         ///<summary>
@@ -1064,7 +1086,7 @@ namespace FlecsSharp
         ///<code>
         ///ecs_entity_t ecs_entity_from_type(ecs_world_t *world, ecs_type_t type)
         ///</code>
-        [DllImport(DLL, EntryPoint = "ecs_entity_from_type", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_entity_from_type", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern EntityId entity_from_type(World world, TypeId type);
 
         ///<summary>
@@ -1080,7 +1102,7 @@ namespace FlecsSharp
         ///ecs_entity_t ecs_type_get_component(ecs_world_t *world, ecs_type_t type,
         ///                                    uint32_t index)
         ///</code>
-        [DllImport(DLL, EntryPoint = "ecs_type_get_component", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_type_get_component", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern EntityId type_get_component(World world, TypeId type, uint index);
 
         ///<summary>
@@ -1098,7 +1120,7 @@ namespace FlecsSharp
         ///<code>
         ///void ecs_enable(ecs_world_t *world, ecs_entity_t system, bool enabled)
         ///</code>
-        [DllImport(DLL, EntryPoint = "ecs_enable", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_enable", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void enable(World world, EntityId system, Bool enabled);
 
         ///<summary>
@@ -1115,7 +1137,7 @@ namespace FlecsSharp
         ///<code>
         ///void ecs_set_period(ecs_world_t *world, ecs_entity_t system, float period)
         ///</code>
-        [DllImport(DLL, EntryPoint = "ecs_set_period", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_set_period", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void set_period(World world, EntityId system, float period);
 
         ///<summary>
@@ -1129,7 +1151,7 @@ namespace FlecsSharp
         ///<code>
         ///bool ecs_is_enabled(ecs_world_t *world, ecs_entity_t system)
         ///</code>
-        [DllImport(DLL, EntryPoint = "ecs_is_enabled", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_is_enabled", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern Bool is_enabled(World world, EntityId system);
 
         ///<summary>
@@ -1154,7 +1176,7 @@ namespace FlecsSharp
         ///ecs_entity_t ecs_run(ecs_world_t *world, ecs_entity_t system, float delta_time,
         ///                     void *param)
         ///</code>
-        [DllImport(DLL, EntryPoint = "ecs_run", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_run", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern EntityId run(World world, EntityId system, float deltaTime, IntPtr param);
 
         ///<summary>
@@ -1174,7 +1196,7 @@ namespace FlecsSharp
         ///ecs_entity_t ecs_new_entity(ecs_world_t *world, const char *id,
         ///                            const char *components)
         ///</code>
-        [DllImport(DLL, EntryPoint = "ecs_new_entity", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_new_entity", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern EntityId new_entity(World world, CharPtr id, CharPtr components);
 
         ///<summary>
@@ -1194,7 +1216,7 @@ namespace FlecsSharp
         ///<code>
         ///ecs_entity_t ecs_new_component(ecs_world_t *world, const char *id, size_t size)
         ///</code>
-        [DllImport(DLL, EntryPoint = "ecs_new_component", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_new_component", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern EntityId new_component(World world, CharPtr id, UIntPtr size);
 
         ///<summary>
@@ -1220,7 +1242,7 @@ namespace FlecsSharp
         ///                            EcsSystemKind kind, const char *sig,
         ///                            ecs_system_action_t action)
         ///</code>
-        [DllImport(DLL, EntryPoint = "ecs_new_system", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_new_system", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern EntityId new_system(World world, CharPtr id, SystemKind kind, CharPtr sig, SystemActionDelegate action);
 
         ///<summary>
@@ -1239,7 +1261,7 @@ namespace FlecsSharp
         ///ecs_entity_t ecs_new_type(ecs_world_t *world, const char *id,
         ///                          const char *components)
         ///</code>
-        [DllImport(DLL, EntryPoint = "ecs_new_type", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_new_type", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern EntityId new_type(World world, CharPtr id, CharPtr components);
 
         ///<summary>
@@ -1259,7 +1281,7 @@ namespace FlecsSharp
         ///<code>
         ///ecs_entity_t ecs_new_prefab(ecs_world_t *world, const char *id, const char *sig)
         ///</code>
-        [DllImport(DLL, EntryPoint = "ecs_new_prefab", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_new_prefab", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern EntityId new_prefab(World world, CharPtr id, CharPtr sig);
 
         ///<summary>
@@ -1268,14 +1290,14 @@ namespace FlecsSharp
         ///<code>
         ///const char *ecs_strerror(uint32_t error_code)
         ///</code>
-        [DllImport(DLL, EntryPoint = "ecs_strerror", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "ecs_strerror", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern CharPtr strerror(uint errorCode);
 
     }
 
     internal unsafe static partial class _ecs
     {
-        [DllImport(DLL, EntryPoint = "_ecs_map_iter", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "_ecs_map_iter", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern Iterator map_iter(Map map, MapIter iterData);
 
         ///<summary>
@@ -1298,7 +1320,7 @@ namespace FlecsSharp
         ///                         const char *module_name, int flags, void *handles_out,
         ///                         size_t handles_size)
         ///</code>
-        [DllImport(DLL, EntryPoint = "_ecs_import", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "_ecs_import", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern EntityId import(World world, ModuleInitActionDelegate module, CharPtr moduleName, int flags, IntPtr handlesOut, UIntPtr handlesSize);
 
         ///<summary>
@@ -1314,7 +1336,7 @@ namespace FlecsSharp
         ///<code>
         ///void _ecs_dim_type(ecs_world_t *world, ecs_type_t type, uint32_t entity_count)
         ///</code>
-        [DllImport(DLL, EntryPoint = "_ecs_dim_type", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "_ecs_dim_type", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void dim_type(World world, TypeId type, uint entityCount);
 
         ///<summary>
@@ -1333,7 +1355,7 @@ namespace FlecsSharp
         ///<code>
         ///ecs_entity_t _ecs_new(ecs_world_t *world, ecs_type_t type)
         ///</code>
-        [DllImport(DLL, EntryPoint = "_ecs_new", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "_ecs_new", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern EntityId @new(World world, TypeId type);
 
         ///<summary>
@@ -1350,7 +1372,7 @@ namespace FlecsSharp
         ///ecs_entity_t _ecs_new_w_count(ecs_world_t *world, ecs_type_t type,
         ///                              uint32_t count)
         ///</code>
-        [DllImport(DLL, EntryPoint = "_ecs_new_w_count", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "_ecs_new_w_count", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern EntityId new_w_count(World world, TypeId type, uint count);
 
         ///<summary>
@@ -1365,7 +1387,7 @@ namespace FlecsSharp
         ///<code>
         ///void _ecs_add(ecs_world_t *world, ecs_entity_t entity, ecs_type_t type)
         ///</code>
-        [DllImport(DLL, EntryPoint = "_ecs_add", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "_ecs_add", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void add(World world, EntityId entity, TypeId type);
 
         ///<summary>
@@ -1380,7 +1402,7 @@ namespace FlecsSharp
         ///<code>
         ///void _ecs_remove(ecs_world_t *world, ecs_entity_t entity, ecs_type_t type)
         ///</code>
-        [DllImport(DLL, EntryPoint = "_ecs_remove", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "_ecs_remove", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void remove(World world, EntityId entity, TypeId type);
 
         ///<summary>
@@ -1400,7 +1422,7 @@ namespace FlecsSharp
         ///<code>
         ///void *_ecs_get_ptr(ecs_world_t *world, ecs_entity_t entity, ecs_type_t type)
         ///</code>
-        [DllImport(DLL, EntryPoint = "_ecs_get_ptr", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "_ecs_get_ptr", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern IntPtr get_ptr(World world, EntityId entity, TypeId type);
 
         ///<summary>
@@ -1418,10 +1440,10 @@ namespace FlecsSharp
         ///ecs_entity_t _ecs_set_ptr(ecs_world_t *world, ecs_entity_t entity,
         ///                          ecs_type_t type, size_t size, void *ptr)
         ///</code>
-        [DllImport(DLL, EntryPoint = "_ecs_set_ptr", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "_ecs_set_ptr", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern EntityId set_ptr(World world, EntityId entity, TypeId type, UIntPtr size, IntPtr ptr);
 
-        [DllImport(DLL, EntryPoint = "_ecs_set_singleton_ptr", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "_ecs_set_singleton_ptr", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern EntityId set_singleton_ptr(World world, TypeId type, UIntPtr size, IntPtr ptr);
 
         ///<summary>
@@ -1442,7 +1464,7 @@ namespace FlecsSharp
         ///ecs_entity_t _ecs_new_child(ecs_world_t *world, ecs_entity_t parent,
         ///                            ecs_type_t type)
         ///</code>
-        [DllImport(DLL, EntryPoint = "_ecs_new_child", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "_ecs_new_child", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern EntityId new_child(World world, EntityId parent, TypeId type);
 
         ///<summary>
@@ -1456,7 +1478,7 @@ namespace FlecsSharp
         ///ecs_entity_t _ecs_new_child_w_count(ecs_world_t *world, ecs_entity_t parent,
         ///                                    ecs_type_t type, uint32_t count)
         ///</code>
-        [DllImport(DLL, EntryPoint = "_ecs_new_child_w_count", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "_ecs_new_child_w_count", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern EntityId new_child_w_count(World world, EntityId parent, TypeId type, uint count);
 
         ///<summary>
@@ -1474,7 +1496,7 @@ namespace FlecsSharp
         ///<code>
         ///bool _ecs_has(ecs_world_t *world, ecs_entity_t entity, ecs_type_t type)
         ///</code>
-        [DllImport(DLL, EntryPoint = "_ecs_has", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "_ecs_has", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern Bool has(World world, EntityId entity, TypeId type);
 
         ///<summary>
@@ -1492,7 +1514,7 @@ namespace FlecsSharp
         ///<code>
         ///bool _ecs_has_any(ecs_world_t *world, ecs_entity_t entity, ecs_type_t type)
         ///</code>
-        [DllImport(DLL, EntryPoint = "_ecs_has_any", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "_ecs_has_any", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern Bool has_any(World world, EntityId entity, TypeId type);
 
         ///<summary>
@@ -1506,7 +1528,7 @@ namespace FlecsSharp
         ///<code>
         ///uint32_t _ecs_count(ecs_world_t *world, ecs_type_t type)
         ///</code>
-        [DllImport(DLL, EntryPoint = "_ecs_count", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "_ecs_count", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern uint count(World world, TypeId type);
 
         ///<summary>
@@ -1523,7 +1545,7 @@ namespace FlecsSharp
         ///ecs_type_t _ecs_merge_type(ecs_world_t *world, ecs_type_t type,
         ///                           ecs_type_t type_add, ecs_type_t type_remove)
         ///</code>
-        [DllImport(DLL, EntryPoint = "_ecs_merge_type", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "_ecs_merge_type", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern TypeId merge_type(World world, TypeId type, TypeId typeAdd, TypeId typeRemove);
 
         ///<summary>
@@ -1534,7 +1556,7 @@ namespace FlecsSharp
         ///                               float delta_time, uint32_t offset,
         ///                               uint32_t limit, ecs_type_t filter, void *param)
         ///</code>
-        [DllImport(DLL, EntryPoint = "_ecs_run_w_filter", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "_ecs_run_w_filter", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern EntityId run_w_filter(World world, EntityId system, float deltaTime, uint offset, uint limit, TypeId filter, IntPtr param);
 
         ///<summary>
@@ -1543,8 +1565,8 @@ namespace FlecsSharp
         ///<code>
         ///void *_ecs_column(ecs_rows_t *rows, uint32_t index, bool test)
         ///</code>
-        [DllImport(DLL, EntryPoint = "_ecs_column", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern IntPtr column(Rows rows, uint index, Bool test);
+        [DllImport(DLL, EntryPoint = "_ecs_column", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        public static extern IntPtr column(EntitySet rows, uint index, Bool test);
 
         ///<summary>
         /// Obtain a reference to a shared component 
@@ -1552,8 +1574,8 @@ namespace FlecsSharp
         ///<code>
         ///void *_ecs_shared(ecs_rows_t *rows, uint32_t index, bool test)
         ///</code>
-        [DllImport(DLL, EntryPoint = "_ecs_shared", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern IntPtr shared(Rows rows, uint index, Bool test);
+        [DllImport(DLL, EntryPoint = "_ecs_shared", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        public static extern IntPtr shared(EntitySet rows, uint index, Bool test);
 
         ///<summary>
         /// Obtain a single field.  This is an alternative method to ecs_column to access data in a system, which accesses data from individual fields (one column per row). This method is slower than iterating over a column array, but has the added benefit that it automatically abstracts between shared components and owned components. 
@@ -1565,8 +1587,8 @@ namespace FlecsSharp
         ///<code>
         ///void *_ecs_field(ecs_rows_t *rows, uint32_t index, uint32_t column, bool test)
         ///</code>
-        [DllImport(DLL, EntryPoint = "_ecs_field", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern IntPtr field(Rows rows, uint index, uint column, Bool test);
+        [DllImport(DLL, EntryPoint = "_ecs_field", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        public static extern IntPtr field(EntitySet rows, uint index, uint column, Bool test);
 
         ///<summary>
         /// Obtain the source of a column from inside a system. This operation lets you obtain the entity from which the column data was resolved. In most cases a component will come from the entities being iterated over, but when using prefabs or containers, the component can be shared between entities. For shared components, this function will return the original entity on which the component is stored.
@@ -1583,8 +1605,8 @@ namespace FlecsSharp
         ///<code>
         ///ecs_entity_t _ecs_column_source(ecs_rows_t *rows, uint32_t column, bool test)
         ///</code>
-        [DllImport(DLL, EntryPoint = "_ecs_column_source", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern EntityId column_source(Rows rows, uint column, Bool test);
+        [DllImport(DLL, EntryPoint = "_ecs_column_source", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        public static extern EntityId column_source(EntitySet rows, uint column, Bool test);
 
         ///<summary>
         /// Obtain the component for a column inside a system. This operation obtains the component handle for a column in the system. This function wraps around the 'components' array in the ecs_rows_t type.
@@ -1602,8 +1624,8 @@ namespace FlecsSharp
         ///<code>
         ///ecs_entity_t _ecs_column_entity(ecs_rows_t *rows, uint32_t column, bool test)
         ///</code>
-        [DllImport(DLL, EntryPoint = "_ecs_column_entity", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern EntityId column_entity(Rows rows, uint column, Bool test);
+        [DllImport(DLL, EntryPoint = "_ecs_column_entity", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        public static extern EntityId column_entity(EntitySet rows, uint column, Bool test);
 
         ///<summary>
         /// Obtain the type of a column from inside a system.  This operation is equivalent to ecs_column_entity, except that it returns a type, instead of an entity handle. Invoking this function is the same as doing:
@@ -1623,8 +1645,8 @@ namespace FlecsSharp
         ///<code>
         ///ecs_type_t _ecs_column_type(ecs_rows_t *rows, uint32_t column, bool test)
         ///</code>
-        [DllImport(DLL, EntryPoint = "_ecs_column_type", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-        public static extern TypeId column_type(Rows rows, uint column, Bool test);
+        [DllImport(DLL, EntryPoint = "_ecs_column_type", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        public static extern TypeId column_type(EntitySet rows, uint column, Bool test);
 
         ///<summary>
         /// Abort 
@@ -1633,7 +1655,7 @@ namespace FlecsSharp
         ///void _ecs_abort(uint32_t error_code, const char *param, const char *file,
         ///                uint32_t line)
         ///</code>
-        [DllImport(DLL, EntryPoint = "_ecs_abort", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "_ecs_abort", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void abort(uint errorCode, CharPtr param, CharPtr file, uint line);
 
         ///<summary>
@@ -1643,7 +1665,7 @@ namespace FlecsSharp
         ///void _ecs_assert(bool condition, uint32_t error_code, const char *param,
         ///                 const char *condition_str, const char *file, uint32_t line)
         ///</code>
-        [DllImport(DLL, EntryPoint = "_ecs_assert", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(DLL, EntryPoint = "_ecs_assert", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void assert(Bool condition, uint errorCode, CharPtr param, CharPtr conditionStr, CharPtr file, uint line);
 
     }
