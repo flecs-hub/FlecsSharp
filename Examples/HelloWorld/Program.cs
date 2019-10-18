@@ -18,6 +18,7 @@ namespace HelloWorld
 
         static void PositionSystem(ref Rows rows, Span<Position> position)
         {
+            Console.WriteLine($"total positions: {rows.Count}");
             for (int i = 0; i < (int)rows.Count; i++)
             {
                 EntityId id = rows[i];
@@ -61,7 +62,7 @@ namespace HelloWorld
                 var i = 0;
                 while (world.Progress(1))
                 {
-                    if (i++ > 10)
+                    if (i++ > 3)
                         break;
                 }
             }

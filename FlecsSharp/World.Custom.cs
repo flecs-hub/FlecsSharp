@@ -72,7 +72,6 @@ namespace FlecsSharp
             }
 
             return val;
-
         }
 
         public EntityId AddSystem(SystemKind kind, ReadOnlySpan<char> name, SystemActionDelegate systemImpl, params Type[] componentTypes)
@@ -175,11 +174,8 @@ namespace FlecsSharp
         {
             var type = GetTypeId(typeof(T));
             T* val = &value;
-            var ret = _ecs.set_ptr(this, entity, new EntityId((ulong)type.Ptr), (UIntPtr)Marshal.SizeOf<T>(), (IntPtr)val);
-
-            var hasIt =_ecs.has(this, entity, type);
-
-            return ret;
+            return _ecs.set_ptr(this, entity, TypeToEntity(type), (UIntPtr)Marshal.SizeOf<T>(), (IntPtr)val);
+            //return _ecs.set_ptr(this, entity, new EntityId((ulong)type.Ptr), (UIntPtr)Marshal.SizeOf<T>(), (IntPtr)val);
         }
 
         public void Add<T>(EntityId entity)
