@@ -49,8 +49,13 @@ namespace HelloWorld
 
                 world.NewEntity("MyEntity3", new Position { X = 1, Y = 2 });
                 world.NewEntity("MyEntity4", new Position { X = 1, Y = 2 });
+                world.NewEntity("MyEntity5", new Position { X = 1, Y = 2 });
+                world.NewEntity("MyEntity6", new Position { X = 1, Y = 2 });
+                world.NewEntity("MyEntity7", new Position { X = 1, Y = 2 });
+                world.NewEntity("MyEntity8", new Position { X = 1, Y = 2 });
 
                 world.GetStats(out var stats);
+                Console.WriteLine($"component count: {stats.ComponentCount}");
                 stats.FreeStats();
 
                 var i = 0;

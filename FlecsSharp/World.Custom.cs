@@ -60,14 +60,13 @@ namespace FlecsSharp
         //    return componentId;
         //}
 
-        TypeId getTypeId(Type compType)
+        TypeId GetTypeId(Type compType)
         {
             if (!typeMap.TryGetValue((this, compType), out var val))
             {
-                var name = compType.Name;
-                var charPtr = StringBuffer.AddUTF8String(name);
-                var componentId = ecs.new_component(this, charPtr, (UIntPtr)Marshal.SizeOf(compType));
-                var typeId = TypeFromEntity(componentId);
+                var charPtr = StringBuffer.AddUTF8String(compType.Name);
+                var entityId = ecs.new_component(this, charPtr, (UIntPtr)Marshal.SizeOf(compType));
+                var typeId = TypeFromEntity(entityId);
                 typeMap.Add((this, compType), typeId);
                 return typeId;
             }
@@ -81,9 +80,9 @@ namespace FlecsSharp
             var systemNamePtr = StringBuffer.AddUTF8String(name);
             var components = BuildComponentQuery(componentTypes);
             var signaturePtr = StringBuffer.AddUTF8String(components);
-            var componentId = ecs.new_system(this, systemNamePtr, kind, signaturePtr, systemImpl);
-            systemActions[(this, componentId)] = systemImpl;
-            return componentId;
+            var entityId = ecs.new_system(this, systemNamePtr, kind, signaturePtr, systemImpl);
+            systemActions[(this, entityId)] = systemImpl;
+            return entityId;
         }
 
         public EntityId AddSystem(SystemKind kind, SystemActionDelegate systemImpl, params Type[] componentTypes)
@@ -121,7 +120,7 @@ namespace FlecsSharp
             var sb = new StringBuilder(64);
             for (int i = 0; i < componentTypes.Length; i++)
             {
-                getTypeId(componentTypes[i]);
+                GetTypeId(componentTypes[i]);
                 sb.Append(componentTypes[i].Name);
 
                 if (i != componentTypes.Length - 1)
@@ -137,8 +136,8 @@ namespace FlecsSharp
             var entityNamePtr = StringBuffer.AddUTF8String(entityName);
             var components = BuildComponentQuery(componentTypes);
             var componentsQueryPtr = StringBuffer.AddUTF8String(components);
-            var componentId = ecs.new_entity(this, entityNamePtr, componentsQueryPtr);
-            return componentId;
+            var entityId = ecs.new_entity(this, entityNamePtr, componentsQueryPtr);
+            return entityId;
         }
 
         public unsafe EntityId NewEntity<T1>(string entityName, T1 comp1 = default) where T1 : unmanaged
@@ -174,9 +173,18 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public EntityId Set<T>(EntityId entity, T value) where T : unmanaged
         {
-            var type = getTypeId(typeof(T));
+            var type = GetTypeId(typeof(T));
             T* val = &value;
-            return _ecs.set_ptr(this, entity, new EntityId((ulong)type.Ptr), (UIntPtr)Marshal.SizeOf<T>(), (IntPtr)val);
+            var ret = _ecs.set_ptr(this, entity, new EntityId((ulong)type.Ptr), (UIntPtr)Marshal.SizeOf<T>(), (IntPtr)val);
+
+            var hasIt =_ecs.has(this, entity, type);
+
+            return ret;
+        }
+
+        public void Add<T>(EntityId entity)
+        {
+            _ecs.add(this, entity, GetTypeId(typeof(T)));
         }
 
     }
