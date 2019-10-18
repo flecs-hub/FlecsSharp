@@ -1,5 +1,4 @@
 using System;
-using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 
 namespace FlecsSharp
@@ -9,19 +8,19 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void GetStats(out WorldStats stats)
         {
-            ecs.get_stats( this, out stats);
+            ecs.get_stats(this, out stats);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void MeasureFrameTime(bool enable)
         {
-            ecs.measure_frame_time( this, enable);
+            ecs.measure_frame_time(this, enable);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void MeasureSystemTime(bool enable)
         {
-            ecs.measure_system_time( this, enable);
+            ecs.measure_system_time(this, enable);
         }
 
         ///<summary>
@@ -34,7 +33,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int Fini()
         {
-            return ecs.fini( this);
+            return ecs.fini(this);
         }
 
         ///<summary>
@@ -47,7 +46,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Quit()
         {
-            ecs.quit( this);
+            ecs.quit(this);
         }
 
         ///<summary>
@@ -73,7 +72,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public EntityId Import(ModuleInitActionDelegate module, CharPtr moduleName, int flags, IntPtr handlesOut, UIntPtr handlesSize)
         {
-            return _ecs.import( this, module, moduleName, flags, handlesOut, handlesSize);
+            return _ecs.import(this, module, moduleName, flags, handlesOut, handlesSize);
         }
 
         ///<summary>
@@ -95,7 +94,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public EntityId ImportFromLibrary(CharPtr libraryName, CharPtr moduleName, int flags)
         {
-            return ecs.import_from_library( this, libraryName, moduleName, flags);
+            return ecs.import_from_library(this, libraryName, moduleName, flags);
         }
 
         ///<summary>
@@ -120,7 +119,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Progress(float deltaTime)
         {
-            return ecs.progress( this, deltaTime);
+            return ecs.progress(this, deltaTime);
         }
 
         ///<summary>
@@ -137,7 +136,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Merge()
         {
-            ecs.merge( this);
+            ecs.merge(this);
         }
 
         ///<summary>
@@ -155,7 +154,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetAutomerge(bool autoMerge)
         {
-            ecs.set_automerge( this, autoMerge);
+            ecs.set_automerge(this, autoMerge);
         }
 
         ///<summary>
@@ -176,7 +175,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetThreads(uint threads)
         {
-            ecs.set_threads( this, threads);
+            ecs.set_threads(this, threads);
         }
 
         ///<summary>
@@ -190,7 +189,7 @@ namespace FlecsSharp
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                return ecs.get_threads( this);
+                return ecs.get_threads(this);
             }
 
         }
@@ -206,7 +205,7 @@ namespace FlecsSharp
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                return ecs.get_thread_index( this);
+                return ecs.get_thread_index(this);
             }
 
         }
@@ -226,7 +225,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetTargetFps(float fps)
         {
-            ecs.set_target_fps( this, fps);
+            ecs.set_target_fps(this, fps);
         }
 
         ///<summary>
@@ -240,7 +239,7 @@ namespace FlecsSharp
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                return ecs.get_target_fps( this);
+                return ecs.get_target_fps(this);
             }
 
         }
@@ -259,7 +258,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int EnableAdmin(ushort port)
         {
-            return ecs.enable_admin( this, port);
+            return ecs.enable_admin(this, port);
         }
 
         ///<summary>
@@ -273,7 +272,7 @@ namespace FlecsSharp
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                return ecs.get_delta_time( this);
+                return ecs.get_delta_time(this);
             }
 
         }
@@ -292,7 +291,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetContext(IntPtr ctx)
         {
-            ecs.set_context( this, ctx);
+            ecs.set_context(this, ctx);
         }
 
         ///<summary>
@@ -310,7 +309,7 @@ namespace FlecsSharp
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                return ecs.get_context( this);
+                return ecs.get_context(this);
             }
 
         }
@@ -330,7 +329,7 @@ namespace FlecsSharp
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                return ecs.get_tick( this);
+                return ecs.get_tick(this);
             }
 
         }
@@ -350,7 +349,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Dim(uint entityCount)
         {
-            ecs.dim( this, entityCount);
+            ecs.dim(this, entityCount);
         }
 
         ///<summary>
@@ -369,7 +368,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void DimType(TypeId type, uint entityCount)
         {
-            _ecs.dim_type( this, type, entityCount);
+            _ecs.dim_type(this, type, entityCount);
         }
 
         ///<summary>
@@ -389,7 +388,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetEntityRange(EntityId idStart, EntityId idEnd)
         {
-            ecs.set_entity_range( this, idStart, idEnd);
+            ecs.set_entity_range(this, idStart, idEnd);
         }
 
         ///<summary>
@@ -404,7 +403,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool EnableRangeCheck(bool enable)
         {
-            return ecs.enable_range_check( this, enable);
+            return ecs.enable_range_check(this, enable);
         }
 
         ///<summary>
@@ -426,7 +425,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public EntityId New(TypeId type)
         {
-            return _ecs.@new( this, type);
+            return _ecs.@new(this, type);
         }
 
         ///<summary>
@@ -446,7 +445,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public EntityId NewWCount(TypeId type, uint count)
         {
-            return _ecs.new_w_count( this, type, count);
+            return _ecs.new_w_count(this, type, count);
         }
 
         ///<summary>
@@ -466,7 +465,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public EntityId SetWData(out TableData data)
         {
-            return ecs.set_w_data( this, out data);
+            return ecs.set_w_data(this, out data);
         }
 
         ///<summary>
@@ -489,7 +488,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public EntityId NewChild(EntityId parent, TypeId type)
         {
-            return _ecs.new_child( this, parent, type);
+            return _ecs.new_child(this, parent, type);
         }
 
         ///<summary>
@@ -506,7 +505,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public EntityId NewChildWCount(EntityId parent, TypeId type, uint count)
         {
-            return _ecs.new_child_w_count( this, parent, type, count);
+            return _ecs.new_child_w_count(this, parent, type, count);
         }
 
         ///<summary>
@@ -524,7 +523,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public EntityId NewInstance(EntityId @base, TypeId type)
         {
-            return _ecs.new_instance( this, @base, type);
+            return _ecs.new_instance(this, @base, type);
         }
 
         ///<summary>
@@ -542,7 +541,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public EntityId NewInstanceWCount(EntityId @base, TypeId type, uint count)
         {
-            return _ecs.new_instance_w_count( this, @base, type, count);
+            return _ecs.new_instance_w_count(this, @base, type, count);
         }
 
         ///<summary>
@@ -563,7 +562,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public EntityId Clone(EntityId entity, bool copyValue)
         {
-            return ecs.clone( this, entity, copyValue);
+            return ecs.clone(this, entity, copyValue);
         }
 
         ///<summary>
@@ -581,7 +580,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Delete(EntityId entity)
         {
-            ecs.delete( this, entity);
+            ecs.delete(this, entity);
         }
 
         ///<summary>
@@ -595,7 +594,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void DeleteWFilter(out TypeFilter filter)
         {
-            ecs.delete_w_filter( this, out filter);
+            ecs.delete_w_filter(this, out filter);
         }
 
         ///<summary>
@@ -613,7 +612,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Add(EntityId entity, TypeId type)
         {
-            _ecs.add( this, entity, type);
+            _ecs.add(this, entity, type);
         }
 
         ///<summary>
@@ -631,7 +630,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Remove(EntityId entity, TypeId type)
         {
-            _ecs.remove( this, entity, type);
+            _ecs.remove(this, entity, type);
         }
 
         ///<summary>
@@ -648,7 +647,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void AddRemove(EntityId entity, TypeId toAdd, TypeId toRemove)
         {
-            _ecs.add_remove( this, entity, toAdd, toRemove);
+            _ecs.add_remove(this, entity, toAdd, toRemove);
         }
 
         ///<summary>
@@ -667,7 +666,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Adopt(EntityId entity, EntityId parent)
         {
-            ecs.adopt( this, entity, parent);
+            ecs.adopt(this, entity, parent);
         }
 
         ///<summary>
@@ -685,7 +684,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Orphan(EntityId entity, EntityId parent)
         {
-            ecs.orphan( this, entity, parent);
+            ecs.orphan(this, entity, parent);
         }
 
         ///<summary>
@@ -700,7 +699,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Inherit(EntityId entity, EntityId @base)
         {
-            ecs.inherit( this, entity, @base);
+            ecs.inherit(this, entity, @base);
         }
 
         ///<summary>
@@ -715,7 +714,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Disinherit(EntityId entity, EntityId @base)
         {
-            ecs.disinherit( this, entity, @base);
+            ecs.disinherit(this, entity, @base);
         }
 
         ///<summary>
@@ -736,7 +735,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void AddRemoveWFilter(TypeId toAdd, TypeId toRemove, out TypeFilter filter)
         {
-            _ecs.add_remove_w_filter( this, toAdd, toRemove, out filter);
+            _ecs.add_remove_w_filter(this, toAdd, toRemove, out filter);
         }
 
         ///<summary>
@@ -759,7 +758,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IntPtr GetPtr(EntityId entity, TypeId type)
         {
-            return _ecs.get_ptr( this, entity, type);
+            return _ecs.get_ptr(this, entity, type);
         }
 
         ///<summary>
@@ -780,13 +779,13 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public EntityId SetPtr(EntityId entity, EntityId component, UIntPtr size, IntPtr ptr)
         {
-            return _ecs.set_ptr( this, entity, component, size, ptr);
+            return _ecs.set_ptr(this, entity, component, size, ptr);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public EntityId SetSingletonPtr(EntityId component, UIntPtr size, IntPtr ptr)
         {
-            return _ecs.set_singleton_ptr( this, component, size, ptr);
+            return _ecs.set_singleton_ptr(this, component, size, ptr);
         }
 
         ///<summary>
@@ -807,7 +806,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Has(EntityId entity, TypeId type)
         {
-            return _ecs.has( this, entity, type);
+            return _ecs.has(this, entity, type);
         }
 
         ///<summary>
@@ -819,7 +818,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool HasOwned(EntityId entity, TypeId type)
         {
-            return _ecs.has_owned( this, entity, type);
+            return _ecs.has_owned(this, entity, type);
         }
 
         ///<summary>
@@ -840,7 +839,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool HasAny(EntityId entity, TypeId type)
         {
-            return _ecs.has_any( this, entity, type);
+            return _ecs.has_any(this, entity, type);
         }
 
         ///<summary>
@@ -853,13 +852,13 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool HasAnyOwned(EntityId entity, TypeId type)
         {
-            return _ecs.has_any_owned( this, entity, type);
+            return _ecs.has_any_owned(this, entity, type);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool HasEntity(EntityId entity, EntityId component)
         {
-            return ecs.has_entity( this, entity, component);
+            return ecs.has_entity(this, entity, component);
         }
 
         ///<summary>
@@ -880,7 +879,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Contains(EntityId parent, EntityId child)
         {
-            return ecs.contains( this, parent, child);
+            return ecs.contains(this, parent, child);
         }
 
         ///<summary>
@@ -896,7 +895,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public EntityId GetParent(EntityId entity, EntityId component)
         {
-            return _ecs.get_parent( this, entity, component);
+            return _ecs.get_parent(this, entity, component);
         }
 
         ///<summary>
@@ -917,7 +916,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public TypeId GetType(EntityId entity)
         {
-            return ecs.get_type( this, entity);
+            return ecs.get_type(this, entity);
         }
 
         ///<summary>
@@ -937,7 +936,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public CharPtr GetId(EntityId entity)
         {
-            return ecs.get_id( this, entity);
+            return ecs.get_id(this, entity);
         }
 
         ///<summary>
@@ -954,7 +953,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool IsEmpty(EntityId entity)
         {
-            return ecs.is_empty( this, entity);
+            return ecs.is_empty(this, entity);
         }
 
         ///<summary>
@@ -971,7 +970,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public uint Count(TypeId type)
         {
-            return _ecs.count( this, type);
+            return _ecs.count(this, type);
         }
 
         ///<summary>
@@ -988,7 +987,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public EntityId Lookup(CharPtr id)
         {
-            return ecs.lookup( this, id);
+            return ecs.lookup(this, id);
         }
 
         ///<summary>
@@ -1012,7 +1011,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public EntityId LookupChild(EntityId parent, CharPtr id)
         {
-            return ecs.lookup_child( this, parent, id);
+            return ecs.lookup_child(this, parent, id);
         }
 
         ///<summary>
@@ -1029,7 +1028,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public TypeId TypeFromEntity(EntityId entity)
         {
-            return ecs.type_from_entity( this, entity);
+            return ecs.type_from_entity(this, entity);
         }
 
         ///<summary>
@@ -1049,7 +1048,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public EntityId TypeToEntity(TypeId type)
         {
-            return ecs.type_to_entity( this, type);
+            return ecs.type_to_entity(this, type);
         }
 
         ///<summary>
@@ -1068,7 +1067,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public TypeId TypeAdd(TypeId type, EntityId entity)
         {
-            return ecs.type_add( this, type, entity);
+            return ecs.type_add(this, type, entity);
         }
 
         ///<summary>
@@ -1088,7 +1087,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public TypeId TypeMerge(TypeId type, TypeId typeAdd, TypeId typeRemove)
         {
-            return ecs.type_merge( this, type, typeAdd, typeRemove);
+            return ecs.type_merge(this, type, typeAdd, typeRemove);
         }
 
         ///<summary>
@@ -1107,7 +1106,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public TypeId TypeFind(out EntityId array, uint count)
         {
-            return ecs.type_find( this, out array, count);
+            return ecs.type_find(this, out array, count);
         }
 
         ///<summary>
@@ -1126,7 +1125,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public EntityId TypeGetEntity(TypeId type, uint index)
         {
-            return ecs.type_get_entity( this, type, index);
+            return ecs.type_get_entity(this, type, index);
         }
 
         ///<summary>
@@ -1145,7 +1144,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool TypeHasEntity(TypeId type, EntityId entity)
         {
-            return ecs.type_has_entity( this, type, entity);
+            return ecs.type_has_entity(this, type, entity);
         }
 
         ///<summary>
@@ -1172,7 +1171,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public TypeId ExprToType(CharPtr expr)
         {
-            return ecs.expr_to_type( this, expr);
+            return ecs.expr_to_type(this, expr);
         }
 
         ///<summary>
@@ -1189,13 +1188,13 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public CharPtr TypeToExpr(TypeId type)
         {
-            return ecs.type_to_expr( this, type);
+            return ecs.type_to_expr(this, type);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool TypeMatchWFilter(TypeId type, out TypeFilter filter)
         {
-            return ecs.type_match_w_filter( this, type, out filter);
+            return ecs.type_match_w_filter(this, type, out filter);
         }
 
         ///<summary>
@@ -1216,7 +1215,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Enable(EntityId system, bool enabled)
         {
-            ecs.enable( this, system, enabled);
+            ecs.enable(this, system, enabled);
         }
 
         ///<summary>
@@ -1236,7 +1235,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetPeriod(EntityId system, float period)
         {
-            ecs.set_period( this, system, period);
+            ecs.set_period(this, system, period);
         }
 
         ///<summary>
@@ -1253,7 +1252,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool IsEnabled(EntityId system)
         {
-            return ecs.is_enabled( this, system);
+            return ecs.is_enabled(this, system);
         }
 
         ///<summary>
@@ -1278,7 +1277,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public EntityId Run(EntityId system, float deltaTime, IntPtr param)
         {
-            return ecs.run( this, system, deltaTime, param);
+            return ecs.run(this, system, deltaTime, param);
         }
 
         ///<summary>
@@ -1304,7 +1303,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public EntityId RunWFilter(EntityId system, float deltaTime, uint offset, uint limit, TypeId filter, IntPtr param)
         {
-            return _ecs.run_w_filter( this, system, deltaTime, offset, limit, filter, param);
+            return _ecs.run_w_filter(this, system, deltaTime, offset, limit, filter, param);
         }
 
         ///<summary>
@@ -1320,7 +1319,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetSystemContext(EntityId system, IntPtr ctx)
         {
-            ecs.set_system_context( this, system, ctx);
+            ecs.set_system_context(this, system, ctx);
         }
 
         ///<summary>
@@ -1337,7 +1336,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IntPtr GetSystemContext(EntityId system)
         {
-            return ecs.get_system_context( this, system);
+            return ecs.get_system_context(this, system);
         }
 
         ///<summary>
@@ -1360,7 +1359,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public EntityId NewEntity(CharPtr id, CharPtr components)
         {
-            return ecs.new_entity( this, id, components);
+            return ecs.new_entity(this, id, components);
         }
 
         ///<summary>
@@ -1383,7 +1382,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public EntityId NewComponent(CharPtr id, UIntPtr size)
         {
-            return ecs.new_component( this, id, size);
+            return ecs.new_component(this, id, size);
         }
 
         ///<summary>
@@ -1412,7 +1411,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public EntityId NewSystem(CharPtr id, SystemKind kind, CharPtr sig, SystemActionDelegate action)
         {
-            return ecs.new_system( this, id, kind, sig, action);
+            return ecs.new_system(this, id, kind, sig, action);
         }
 
         ///<summary>
@@ -1434,7 +1433,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public EntityId NewType(CharPtr id, CharPtr components)
         {
-            return ecs.new_type( this, id, components);
+            return ecs.new_type(this, id, components);
         }
 
         ///<summary>
@@ -1457,7 +1456,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public EntityId NewPrefab(CharPtr id, CharPtr sig)
         {
-            return ecs.new_prefab( this, id, sig);
+            return ecs.new_prefab(this, id, sig);
         }
 
         ///<summary>

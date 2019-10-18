@@ -44,11 +44,14 @@ namespace HelloWorld
                 world.AddSystem<Position, Speed>(MoveSystem, SystemKind.OnUpdate);
                 world.AddSystem<Position>(PositionSystem, SystemKind.OnUpdate);
 
-                var myEntity = world.NewEntity("MyEntity1", new Position { X = 1, Y = 2 }, new Speed { SpeedValue = 5 });
+                world.NewEntity("MyEntity1", new Position { X = 1, Y = 2 }, new Speed { SpeedValue = 5 });
                 world.NewEntity("MyEntity2", new Position { X = 1, Y = 2 }, new Speed { SpeedValue = 5 });
 
                 world.NewEntity("MyEntity3", new Position { X = 1, Y = 2 });
                 world.NewEntity("MyEntity4", new Position { X = 1, Y = 2 });
+
+                world.GetStats(out var stats);
+                stats.FreeStats();
 
                 var i = 0;
                 while (world.Progress(1))

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -13,9 +12,9 @@ namespace FlecsSharp
 
     unsafe partial struct World : IDisposable
     {
-
         static Dictionary<(World, Type), TypeId> typeMap = new Dictionary<(World, Type), TypeId>();
         static Dictionary<(World, EntityId), SystemActionDelegate> systemActions = new Dictionary<(World, EntityId), SystemActionDelegate>();
+
         public struct ContextData
         {
             internal DynamicBuffer stringBuffer;
