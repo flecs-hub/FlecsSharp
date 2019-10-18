@@ -1,40 +1,28 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Text;
+using System.Runtime.CompilerServices;
 
 namespace FlecsSharp
 {
-
-    public delegate void SystemAction<T>(EntitySet ids, Set<T> comp) where T : unmanaged;
-    public delegate void SystemAction<T1, T2>(EntitySet ids, Set<T1> comp1, Set<T2> comp2) where T1 : unmanaged where T2 : unmanaged;
-
-    unsafe partial struct World : IDisposable
+    unsafe partial struct World
     {
-
-        static Dictionary<(World, Type), TypeId> typeMap = new Dictionary<(World, Type), TypeId>();
-        static Dictionary<(World, EntityId), SystemActionDelegate> systemActions = new Dictionary<(World, EntityId), SystemActionDelegate>();
-        public struct ContextData
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void GetStats(out WorldStats stats)
         {
-            internal DynamicBuffer stringBuffer;
+            ecs.get_stats( this, out stats);
         }
-
-        ContextData* ctx => (ContextData*)ecs.get_context(this);
-        public DynamicBuffer StringBuffer => ctx->stringBuffer;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static World Create()
+        public void MeasureFrameTime(bool enable)
         {
-            var w = ecs.init();
-            var context = Heap.Alloc<ContextData>();
-            context->stringBuffer = DynamicBuffer.Create();
-
-            ecs.set_context(w, (IntPtr)context);
-            return w;
+            ecs.measure_frame_time( this, enable);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void MeasureSystemTime(bool enable)
+        {
+            ecs.measure_system_time( this, enable);
+        }
 
         ///<summary>
         /// Delete a world. This operation deletes the world, and all entities, components and systems within the world.
@@ -44,158 +32,10 @@ namespace FlecsSharp
         ///int ecs_fini(ecs_world_t *world)
         ///</code>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Dispose()
+        public int Fini()
         {
-            StringBuffer.Dispose();
-            Heap.Free(ctx);
-            ecs.fini(this);
+            return ecs.fini( this);
         }
-
-
-        //public EntityId NewComponent<T>() where T : unmanaged
-        //{
-        //    var name = typeof(T).Name;
-        //    var charPtr = StringBuffer.AddUTF8String(name);
-        //    var componentId = ecs.new_component(this, charPtr, (UIntPtr)Marshal.SizeOf<T>());
-        //    typeMap.Add((this, typeof(T)), TypeFromEntity(componentId));
-        //    return componentId;
-        //}
-
-        TypeId getTypeId(Type compType)
-        {
-            if (!typeMap.TryGetValue((this, compType), out var val))
-            {
-                var name = compType.Name;
-                var charPtr = StringBuffer.AddUTF8String(name);
-                var componentId = ecs.new_component(this, charPtr, (UIntPtr)Marshal.SizeOf(compType));
-                var typeId = TypeFromEntity(componentId);
-                typeMap.Add((this, compType), typeId);
-                return typeId;
-            }
-
-            var str = StringBuffer.ToString();
-
-            return val;
-
-        }
-
-        //TypeId getTypeId(params Type[] compType)
-        //{
-        //    var _this = this;
-
-        //    uint* tmp = stackalloc uint[compType.Length];
-
-        //    for(int i = 0; i < compType.Length; i++)
-        //    {
-        //        tmp[i] = (uint)_this.getTypeId(compType[i]);
-        //    }
-            
-        //    _ecs.merge_type(this, default, )
-
-        //}
-
-        public EntityId AddSystem(SystemKind kind, ReadOnlySpan<char> name, SystemActionDelegate systemImpl, params Type[] componentTypes)
-        {
-            var systemNamePtr = StringBuffer.AddUTF8String(name);
-            string components = BuildComponentQuery(componentTypes);
-            var signaturePtr = StringBuffer.AddUTF8String(components);
-            var componentId = ecs.new_system(this, systemNamePtr, kind, signaturePtr, systemImpl);
-            systemActions[(this, componentId)] = systemImpl;
-            return componentId;
-        }
-        public EntityId AddSystem(SystemKind kind, SystemActionDelegate systemImpl, params Type[] componentTypes)
-         => AddSystem(kind, systemImpl.Method.Name, systemImpl, componentTypes);
-
-
-
-
-        public void AddSystem<T1>(SystemAction<T1> systemImpl, SystemKind kind) where T1 : unmanaged
-        {
-            SystemActionDelegate del = delegate (EntitySet e)
-            {
-                var set1 = (T1*)_ecs.column(e, 1, false);
-                systemImpl(e, new Set<T1>(set1));
-            };
-
-            AddSystem(kind, systemImpl.Method.Name, del, typeof(T1));
-        }
-
-        public void AddSystem<T1, T2>(SystemAction<T1, T2> systemImpl, SystemKind kind)
-            where T1 : unmanaged
-            where T2 : unmanaged
-        {
-            SystemActionDelegate del = delegate (EntitySet e)
-            {
-                var set1 = (T1*)_ecs.column(e, 1, false);
-                var set2 = (T2*)_ecs.column(e, 2, false);
-                systemImpl(e, new Set<T1>(set1), new Set<T2>(set2));
-            };
-
-            AddSystem(kind, systemImpl.Method.Name, del, typeof(T1), typeof(T2));
-        }
-
-
-        private string BuildComponentQuery(params Type[] componentTypes)
-        {
-            StringBuilder sb = new StringBuilder(64);
-            for (int i = 0; i < componentTypes.Length; i++)
-            {
-                getTypeId(componentTypes[i]);
-                sb.Append(componentTypes[i].Name);
-
-                if (i != componentTypes.Length - 1)
-                    sb.Append(", ");
-            }
-            var components = sb.ToString();
-            return components;
-        }
-
-      //  static class TypeQuery { }
-
-        EntityId NewEntity(string entityName, params Type[] componentTypes)
-        {
-            // var componentNamesPtr = StringBuffer.AddUTF8String(string.Join(", ", componentTypes.Select(t => t.Name)));
-            var entityNamePtr = StringBuffer.AddUTF8String(entityName);
-            string components = BuildComponentQuery(componentTypes);
-            var componentsQueryPtr = StringBuffer.AddUTF8String(components);
-            var componentId = ecs.new_entity(this, entityNamePtr, componentsQueryPtr);
-            return componentId;
-        }
-
-        public unsafe EntityId NewEntity<T1>(string entityName, T1 comp1 = default) where T1 : unmanaged
-        {
-            var entt = NewEntity(entityName, typeof(T1));
-            Set(entt, comp1);
-            return entt;
-        }
-
-        public unsafe EntityId NewEntity<T1, T2>(string entityName, T1 comp1 = default, T2 comp2 = default) where T1 : unmanaged where T2 : unmanaged
-        {
-            var entt = NewEntity(entityName, typeof(T1), typeof(T2));
-            Set(entt, comp1);
-            Set(entt, comp2);
-            return entt;
-        }
-
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void GetStats(WorldStats stats)
-        {
-            ecs.get_stats(this, stats);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void MeasureFrameTime(bool enable)
-        {
-            ecs.measure_frame_time(this, enable);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void MeasureSystemTime(bool enable)
-        {
-            ecs.measure_system_time(this, enable);
-        }
-
 
         ///<summary>
         /// Signal exit This operation signals that the application should quit. It will cause ecs_progress to return false.
@@ -207,7 +47,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Quit()
         {
-            ecs.quit(this);
+            ecs.quit( this);
         }
 
         ///<summary>
@@ -233,7 +73,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public EntityId Import(ModuleInitActionDelegate module, CharPtr moduleName, int flags, IntPtr handlesOut, UIntPtr handlesSize)
         {
-            return _ecs.import(this, module, moduleName, flags, handlesOut, handlesSize);
+            return _ecs.import( this, module, moduleName, flags, handlesOut, handlesSize);
         }
 
         ///<summary>
@@ -255,7 +95,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public EntityId ImportFromLibrary(CharPtr libraryName, CharPtr moduleName, int flags)
         {
-            return ecs.import_from_library(this, libraryName, moduleName, flags);
+            return ecs.import_from_library( this, libraryName, moduleName, flags);
         }
 
         ///<summary>
@@ -280,7 +120,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Progress(float deltaTime)
         {
-            return ecs.progress(this, deltaTime);
+            return ecs.progress( this, deltaTime);
         }
 
         ///<summary>
@@ -297,7 +137,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Merge()
         {
-            ecs.merge(this);
+            ecs.merge( this);
         }
 
         ///<summary>
@@ -315,7 +155,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetAutomerge(bool autoMerge)
         {
-            ecs.set_automerge(this, autoMerge);
+            ecs.set_automerge( this, autoMerge);
         }
 
         ///<summary>
@@ -336,7 +176,39 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetThreads(uint threads)
         {
-            ecs.set_threads(this, threads);
+            ecs.set_threads( this, threads);
+        }
+
+        ///<summary>
+        /// Get number of configured threads 
+        ///</summary>
+        ///<code>
+        ///uint32_t ecs_get_threads(ecs_world_t *world)
+        ///</code>
+        public uint Threads
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                return ecs.get_threads( this);
+            }
+
+        }
+
+        ///<summary>
+        /// Get index of current worker thread 
+        ///</summary>
+        ///<code>
+        ///uint16_t ecs_get_thread_index(ecs_world_t *world)
+        ///</code>
+        public ushort ThreadIndex
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                return ecs.get_thread_index( this);
+            }
+
         }
 
         ///<summary>
@@ -354,7 +226,23 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetTargetFps(float fps)
         {
-            ecs.set_target_fps(this, fps);
+            ecs.set_target_fps( this, fps);
+        }
+
+        ///<summary>
+        /// Get number of configured threads 
+        ///</summary>
+        ///<code>
+        ///uint32_t ecs_get_target_fps(ecs_world_t *world)
+        ///</code>
+        public uint TargetFps
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                return ecs.get_target_fps( this);
+            }
+
         }
 
         ///<summary>
@@ -363,7 +251,7 @@ namespace FlecsSharp
         ///<param name="world"> [in]  The world. </param>
         ///<param name="port"> [in]  A port number for server.</param>
         ///<returns>
-        /// The error code          0 - success          1 - failed to dynamically load `flecs.systems.civetweb` module          2 - failed to dynamically load `lecs.systems.admin` module
+        /// The error code          0 - success          1 - failed to dynamically load `flecs.systems.civetweb` module          2 - failed to dynamically load `flecs.systems.admin` module
         ///</returns>
         ///<code>
         ///int ecs_enable_admin(ecs_world_t *world, uint16_t port)
@@ -371,7 +259,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int EnableAdmin(ushort port)
         {
-            return ecs.enable_admin(this, port);
+            return ecs.enable_admin( this, port);
         }
 
         ///<summary>
@@ -385,12 +273,47 @@ namespace FlecsSharp
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                return ecs.get_delta_time(this);
+                return ecs.get_delta_time( this);
             }
 
         }
 
+        ///<summary>
+        /// Set a world context. This operation allows an application to register custom data with a world that can be accessed anywhere where the application has the world object.
+        ///</summary>
+        ///<param name="world"> [in]  The world. </param>
+        ///<param name="ctx"> [in]  A pointer to a user defined structure.</param>
+        ///<remarks>
+        /// A typical usecase is to register a struct with handles to the application entities, components and systems.
+        ///</remarks>
+        ///<code>
+        ///void ecs_set_context(ecs_world_t *world, void *ctx)
+        ///</code>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void SetContext(IntPtr ctx)
+        {
+            ecs.set_context( this, ctx);
+        }
 
+        ///<summary>
+        /// Get the world context. This operation retrieves a previously set world context.
+        ///</summary>
+        ///<param name="world"> [in]  The world. </param>
+        ///<returns>
+        /// The context set with ecs_set_context. If no context was set, the          function returns NULL.
+        ///</returns>
+        ///<code>
+        ///void *ecs_get_context(ecs_world_t *world)
+        ///</code>
+        public IntPtr Context
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                return ecs.get_context( this);
+            }
+
+        }
 
         ///<summary>
         /// Get the world tick. This operation retrieves the tick count (frame number). The tick count is 0 when ecs_process is called for the first time, and increases by one for every subsequent call.
@@ -407,7 +330,7 @@ namespace FlecsSharp
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                return ecs.get_tick(this);
+                return ecs.get_tick( this);
             }
 
         }
@@ -427,7 +350,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Dim(uint entityCount)
         {
-            ecs.dim(this, entityCount);
+            ecs.dim( this, entityCount);
         }
 
         ///<summary>
@@ -446,7 +369,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void DimType(TypeId type, uint entityCount)
         {
-            _ecs.dim_type(this, type, entityCount);
+            _ecs.dim_type( this, type, entityCount);
         }
 
         ///<summary>
@@ -466,7 +389,22 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetEntityRange(EntityId idStart, EntityId idEnd)
         {
-            ecs.set_entity_range(this, idStart, idEnd);
+            ecs.set_entity_range( this, idStart, idEnd);
+        }
+
+        ///<summary>
+        /// Temporarily enable/disable range limits. When an application is both a receiver of range-limited entities and a producer of range-limited entities, range checking needs to be temporarily disabled when receiving entities.
+        ///</summary>
+        ///<remarks>
+        /// Range checking is disabled on a stage, so setting this value is thread safe.
+        ///</remarks>
+        ///<code>
+        ///bool ecs_enable_range_check(ecs_world_t *world, bool enable)
+        ///</code>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool EnableRangeCheck(bool enable)
+        {
+            return ecs.enable_range_check( this, enable);
         }
 
         ///<summary>
@@ -488,7 +426,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public EntityId New(TypeId type)
         {
-            return _ecs.@new(this, type);
+            return _ecs.@new( this, type);
         }
 
         ///<summary>
@@ -508,7 +446,103 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public EntityId NewWCount(TypeId type, uint count)
         {
-            return _ecs.new_w_count(this, type, count);
+            return _ecs.new_w_count( this, type, count);
+        }
+
+        ///<summary>
+        /// Insert data in bulk. This operation allows applications to insert data in bulk by providing the entity and component data as arrays. The data is passed in using the ecs_table_data_t type, which has to be populated with the data that has to be inserted.
+        ///</summary>
+        ///<remarks>
+        /// The application must at least provide the row_count, column_count and  components fields. The latter is an array of component identifiers that identifies the components to be added to the entitiy.
+        /// The entities array must be populated with the entity identifiers to set. If this field is left NULL, Flecs will create row_count new entities.
+        /// The component data must be provided in the columns field. This is an array of component arrays. The component arrays must be provided in the same order as the components have been provided in the components array. For example, if the components array is set to {ecs_entity(Position), ecs_entity(Velocity)}, the columns must first specify the Position, and then the Velocity array. If no component data is provided, the components will be left uninitialized.
+        /// Both the entities array and the component data arrays in columns must contain exactly row_count elements. The columns array must contain exactly  column_count elements.
+        /// The operation allows for efficient insertion of data for the same set of entities, provided that the entities are specified in the same order for every invocation of this function. After executing this operation, entities will be ordered in the same order specified in the entities array.
+        /// If entities already exist in another table, they will be deleted from that table and inserted into the new table. 
+        ///</remarks>
+        ///<code>
+        ///ecs_entity_t ecs_set_w_data(ecs_world_t *world, ecs_table_data_t *data)
+        ///</code>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public EntityId SetWData(out TableData data)
+        {
+            return ecs.set_w_data( this, out data);
+        }
+
+        ///<summary>
+        /// Create a new child entity. Child entities are equivalent to normal entities, but can additionally be  created with a container entity. Container entities allow for the creation of entity hierarchies.
+        ///</summary>
+        ///<param name="world"> [in]  The world. </param>
+        ///<param name="parent"> [in]  The container to which to add the child entity. </param>
+        ///<param name="type"> [in]  The type with which to create the child entity. </param>
+        ///<returns>
+        /// A handle to the created entity. 
+        ///</returns>
+        ///<remarks>
+        /// This function is equivalent to calling ecs_new with a type that combines both the type specified in this function and the type id for the container.
+        /// ecs_new_entity ecs_new_component ecs_new_system ecs_new_prefab ecs_new_type ecs_new ecs_new_w_count
+        ///</remarks>
+        ///<code>
+        ///ecs_entity_t _ecs_new_child(ecs_world_t *world, ecs_entity_t parent,
+        ///                            ecs_type_t type)
+        ///</code>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public EntityId NewChild(EntityId parent, TypeId type)
+        {
+            return _ecs.new_child( this, parent, type);
+        }
+
+        ///<summary>
+        /// Create new child entities in batch. This operation is similar to ecs_new_w_count, with as only difference that the parent is added to the type of the new entities.
+        ///</summary>
+        ///<param name="world"> [in]  The world. </param>
+        ///<param name="parent"> [in]  The parent. </param>
+        ///<param name="type"> [in]  The type to create the new entities with. </param>
+        ///<param name="count"> [in]  The number of entities to create.</param>
+        ///<code>
+        ///ecs_entity_t _ecs_new_child_w_count(ecs_world_t *world, ecs_entity_t parent,
+        ///                                    ecs_type_t type, uint32_t count)
+        ///</code>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public EntityId NewChildWCount(EntityId parent, TypeId type, uint count)
+        {
+            return _ecs.new_child_w_count( this, parent, type, count);
+        }
+
+        ///<summary>
+        /// Instantiate entity from a base entity. This operation returns a new entity that shares components with the provided  base entity.
+        ///</summary>
+        ///<param name="world"> [in]  The world. </param>
+        ///<param name="base"> [in]  The base entity. </param>
+        ///<returns>
+        /// A new entity that is an instance of base.
+        ///</returns>
+        ///<code>
+        ///ecs_entity_t _ecs_new_instance(ecs_world_t *world, ecs_entity_t base,
+        ///                               ecs_type_t type)
+        ///</code>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public EntityId NewInstance(EntityId @base, TypeId type)
+        {
+            return _ecs.new_instance( this, @base, type);
+        }
+
+        ///<summary>
+        /// Instantiate entities from a base entity in batch. This operation returns a specified number of new entities that share  components with the provided base entity.
+        ///</summary>
+        ///<param name="world"> [in]  The world. </param>
+        ///<param name="base"> [in]  The base entity. </param>
+        ///<returns>
+        /// The id to the first new entity.
+        ///</returns>
+        ///<code>
+        ///ecs_entity_t _ecs_new_instance_w_count(ecs_world_t *world, ecs_entity_t base,
+        ///                                       ecs_type_t type, uint32_t count)
+        ///</code>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public EntityId NewInstanceWCount(EntityId @base, TypeId type, uint count)
+        {
+            return _ecs.new_instance_w_count( this, @base, type, count);
         }
 
         ///<summary>
@@ -529,7 +563,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public EntityId Clone(EntityId entity, bool copyValue)
         {
-            return ecs.clone(this, entity, copyValue);
+            return ecs.clone( this, entity, copyValue);
         }
 
         ///<summary>
@@ -547,7 +581,21 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Delete(EntityId entity)
         {
-            ecs.delete(this, entity);
+            ecs.delete( this, entity);
+        }
+
+        ///<summary>
+        /// Delete all entities containing a (set of) component(s).  This operation provides a more efficient alternative to deleting entities one by one by deleting an entire table or set of tables in a single operation. The operation will clear all tables that match the specified table.
+        ///</summary>
+        ///<param name="world"> [in]  The world. </param>
+        ///<param name="filter"> [in]  Filter that matches zero or more tables.</param>
+        ///<code>
+        ///void ecs_delete_w_filter(ecs_world_t *world, ecs_type_filter_t *filter)
+        ///</code>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void DeleteWFilter(out TypeFilter filter)
+        {
+            ecs.delete_w_filter( this, out filter);
         }
 
         ///<summary>
@@ -565,7 +613,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Add(EntityId entity, TypeId type)
         {
-            _ecs.add(this, entity, type);
+            _ecs.add( this, entity, type);
         }
 
         ///<summary>
@@ -583,7 +631,112 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Remove(EntityId entity, TypeId type)
         {
-            _ecs.remove(this, entity, type);
+            _ecs.remove( this, entity, type);
+        }
+
+        ///<summary>
+        /// Add and remove types from an entity. This operation is a combination of ecs_add and ecs_remove. The operation behaves as if the specified to_remove type is removed first, and  subsequently the to_add type is added. This operation is more efficient than adding/removing components separately with ecs_add/ecs_remove, as the entity is moved between tables at most once.
+        ///</summary>
+        ///<param name="world"> [in]  The world. </param>
+        ///<param name="entity"> [in]  The entity from which to remove, and to which to add the types. </param>
+        ///<param name="to_add"> [in]  The type to add to the entity. </param>
+        ///<param name="to_remove"> [in]  The type to remove from the entity.</param>
+        ///<code>
+        ///void _ecs_add_remove(ecs_world_t *world, ecs_entity_t entity, ecs_type_t to_add,
+        ///                     ecs_type_t to_remove)
+        ///</code>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void AddRemove(EntityId entity, TypeId toAdd, TypeId toRemove)
+        {
+            _ecs.add_remove( this, entity, toAdd, toRemove);
+        }
+
+        ///<summary>
+        /// Adopt a child entity by a parent. This operation adds the specified parent entity to the type of the specified entity, which effectively establishes a parent-child relationship. The parent entity, when added, behaves like a normal component in that it becomes part of the entity type.
+        ///</summary>
+        ///<param name="world"> [in]  The world. </param>
+        ///<param name="entity"> [in]  The entity to adopt. </param>
+        ///<param name="parent"> [in]  The parent entity to add to the entity.</param>
+        ///<remarks>
+        /// If the parent was already added to the entity, this operation will have no effect.
+        /// This operation is similar to an ecs_add, with as difference that instead of a  type it accepts any entity handle.
+        ///</remarks>
+        ///<code>
+        ///void ecs_adopt(ecs_world_t *world, ecs_entity_t entity, ecs_entity_t parent)
+        ///</code>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Adopt(EntityId entity, EntityId parent)
+        {
+            ecs.adopt( this, entity, parent);
+        }
+
+        ///<summary>
+        /// Orphan a child by a parent.  This operation removes the specified parent entity from the type of the specified entity. If the parent was not added to the entity, this operation has no effect.
+        ///</summary>
+        ///<param name="world"> [in]  The world. </param>
+        ///<param name="entity"> [in]  The entity to orphan. </param>
+        ///<param name="parent"> [in]  The parent entity to remove from the entity.</param>
+        ///<remarks>
+        /// This operation is similar to ecs_remove, with as difference that instead of a type it accepts any entity handle.
+        ///</remarks>
+        ///<code>
+        ///void ecs_orphan(ecs_world_t *world, ecs_entity_t entity, ecs_entity_t parent)
+        ///</code>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Orphan(EntityId entity, EntityId parent)
+        {
+            ecs.orphan( this, entity, parent);
+        }
+
+        ///<summary>
+        /// Inherit from a base. This operation adds a base to an entity, which will cause the entity to inherit the components of the base. If the entity already inherited from the specified base, this operation does nothing.
+        ///</summary>
+        ///<param name="world"> [in]  The world. </param>
+        ///<param name="entity"> [in]  The entity to add the base to. </param>
+        ///<param name="base"> [in]  The base to add to the entity.</param>
+        ///<code>
+        ///void ecs_inherit(ecs_world_t *world, ecs_entity_t entity, ecs_entity_t base)
+        ///</code>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Inherit(EntityId entity, EntityId @base)
+        {
+            ecs.inherit( this, entity, @base);
+        }
+
+        ///<summary>
+        /// Disinherit from a base. This operation removes a base from an entity, which will cause the entity to no longer inherit the components of the base. If the entity did not inherit from the specified base, this operation does nothing.
+        ///</summary>
+        ///<param name="world"> [in]  The world. </param>
+        ///<param name="entity"> [in]  The entity to remove the base from. </param>
+        ///<param name="base"> [in]  The base to remove from the entity.</param>
+        ///<code>
+        ///void ecs_disinherit(ecs_world_t *world, ecs_entity_t entity, ecs_entity_t base)
+        ///</code>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Disinherit(EntityId entity, EntityId @base)
+        {
+            ecs.disinherit( this, entity, @base);
+        }
+
+        ///<summary>
+        /// Add/remove one or more components from a set of tables. This operation adds/removes one or more components from a set of tables  matching a filter. This operation is more efficient than calling ecs_add  or ecs_remove on the individual entities.
+        ///</summary>
+        ///<param name="world"> [in]  The world. </param>
+        ///<param name="to_add"> [in]  The components to add. </param>
+        ///<param name="to_remove"> [in]  The components to remove. </param>
+        ///<param name="filter"> [in]  Filter that matches zero or more tables.</param>
+        ///<remarks>
+        /// If no filter is provided, the component(s) will be added/removed from all the tables in which it/they (not) occur(s).
+        /// After this operation it is guaranteed that no tables matching the filter will have the components in to_remove, and similarly, all will have the components in to_add. If to_add or to_remove has multiple components and only one of the components occurs in a table, that component will be added/removed from the entities in the table.
+        ///</remarks>
+        ///<code>
+        ///void _ecs_add_remove_w_filter(ecs_world_t *world, ecs_type_t to_add,
+        ///                              ecs_type_t to_remove, ecs_type_filter_t *filter)
+        ///</code>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void AddRemoveWFilter(TypeId toAdd, TypeId toRemove, out TypeFilter filter)
+        {
+            _ecs.add_remove_w_filter( this, toAdd, toRemove, out filter);
         }
 
         ///<summary>
@@ -596,7 +749,7 @@ namespace FlecsSharp
         /// A pointer to the data, or NULL of the component was not found.
         ///</returns>
         ///<remarks>
-        /// Note that the returned pointer has temporary validity. Operations such as delete and commit may invalidate the pointer as data is potentially moved to different locations. After one of these operations is invoked, the pointer will have to be re-obtained.
+        /// Note that the returned pointer has temporary validity. Operations such as delete and add/remove may invalidate the pointer as data is potentially moved to different locations. After one of these operations is invoked, the pointer will have to be re-obtained.
         /// This function is wrapped by the ecs_get convenience macro, which can be used like this:
         /// Foo value = ecs_get(world, e, Foo);
         ///</remarks>
@@ -606,7 +759,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IntPtr GetPtr(EntityId entity, TypeId type)
         {
-            return _ecs.get_ptr(this, entity, type);
+            return _ecs.get_ptr( this, entity, type);
         }
 
         ///<summary>
@@ -616,104 +769,24 @@ namespace FlecsSharp
         ///<param name="entity"> [in]  The entity on which to set the component. </param>
         ///<param name="component"> [in]  The component to set.</param>
         ///<remarks>
-        /// This function can be used like this: Foo value = {.x = 10, .y = 20}; ecs_set_ptr(world, e, tFoo, &value);
+        /// This function can be used like this: Foo value = {.x = 10, .y = 20}; ecs_set_ptr(world, e, ecs_type(Foo), &value);
         /// This function is wrapped by the ecs_set convenience macro, which can be used like this:
         /// ecs_set(world, e, Foo, {.x = 10, .y = 20});
         ///</remarks>
         ///<code>
         ///ecs_entity_t _ecs_set_ptr(ecs_world_t *world, ecs_entity_t entity,
-        ///                          ecs_type_t type, size_t size, void *ptr)
+        ///                          ecs_entity_t component, size_t size, void *ptr)
         ///</code>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public EntityId Set<T>(EntityId entity, T value) where T : unmanaged
+        public EntityId SetPtr(EntityId entity, EntityId component, UIntPtr size, IntPtr ptr)
         {
-            var type = getTypeId(typeof(T));
-            T* val = &value;
-            return _ecs.set_ptr(this, entity, type, (UIntPtr)Marshal.SizeOf<T>(), (IntPtr)val);
+            return _ecs.set_ptr( this, entity, component, size, ptr);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public EntityId SetSingletonPtr(TypeId type, UIntPtr size, IntPtr ptr)
+        public EntityId SetSingletonPtr(EntityId component, UIntPtr size, IntPtr ptr)
         {
-            return _ecs.set_singleton_ptr(this, type, size, ptr);
-        }
-
-        ///<summary>
-        /// Create a new child entity. Child entities are equivalent to normal entities, but can additionally be  created with a container entity. Container entities allow for the creation of entity hierarchies.
-        ///</summary>
-        ///<param name="world"> [in]  The world. </param>
-        ///<param name="parent"> [in]  The container to which to add the child entity. </param>
-        ///<param name="type"> [in]  The type with which to create the child entity. </param>
-        ///<returns>
-        /// A handle to the created entity. 
-        ///</returns>
-        ///<remarks>
-        /// This function is equivalent to calling ecs_new with a type that combines both the type specified in this function and the type id for the container.
-        /// If the provided parent entity does not have the 'EcsContainer' component, it will be added automatically.
-        /// ecs_new_entity ecs_new_component ecs_new_system ecs_new_prefab ecs_new_type ecs_new ecs_new_w_count
-        ///</remarks>
-        ///<code>
-        ///ecs_entity_t _ecs_new_child(ecs_world_t *world, ecs_entity_t parent,
-        ///                            ecs_type_t type)
-        ///</code>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public EntityId NewChild(EntityId parent, TypeId type)
-        {
-            return _ecs.new_child(this, parent, type);
-        }
-
-        ///<summary>
-        /// Create new child entities in batch. This operation is similar to ecs_new_w_count, with as only difference that the parent is added to the type of the new entities.
-        ///</summary>
-        ///<param name="world"> [in]  The world. </param>
-        ///<param name="parent"> [in]  The parent. </param>
-        ///<param name="type"> [in]  The type to create the new entities with. </param>
-        ///<param name="count"> [in]  The number of entities to create.</param>
-        ///<code>
-        ///ecs_entity_t _ecs_new_child_w_count(ecs_world_t *world, ecs_entity_t parent,
-        ///                                    ecs_type_t type, uint32_t count)
-        ///</code>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public EntityId NewChildWCount(EntityId parent, TypeId type, uint count)
-        {
-            return _ecs.new_child_w_count(this, parent, type, count);
-        }
-
-        ///<summary>
-        /// Adopt a child entity by a parent. This operation adds the specified parent entity to the type of the specified entity, which effectively establishes a parent-child relationship. The parent entity, when added, behaves like a normal component in that it becomes part of the entity type.
-        ///</summary>
-        ///<param name="world"> [in]  The world. </param>
-        ///<param name="entity"> [in]  The entity to adopt. </param>
-        ///<param name="parent"> [in]  The parent entity to add to the entity.</param>
-        ///<remarks>
-        /// If the parent was already added to the entity, this operation will have no effect. If this is the first time a child is added to the parent entity, the EcsContainer component will be added to the parent.
-        /// This operation is similar to an ecs_add, with as difference that instead of a  type it accepts any entity handle.
-        ///</remarks>
-        ///<code>
-        ///void ecs_adopt(ecs_world_t *world, ecs_entity_t entity, ecs_entity_t parent)
-        ///</code>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Adopt(EntityId entity, EntityId parent)
-        {
-            ecs.adopt(this, entity, parent);
-        }
-
-        ///<summary>
-        /// Orphan a child by a parent.  This operation removes the specified parent entity from the type of the specified entity. If the parent was not added to the entity, this operation has no effect.
-        ///</summary>
-        ///<param name="world"> [in]  The world. </param>
-        ///<param name="parent"> [in]  The parent entity to remove from the entity.</param>
-        ///<param name="entity"> [in]  The entity to orphan. </param>
-        ///<remarks>
-        /// This operation is similar to ecs_remove, with as difference that instead of a type it accepts any entity handle.
-        ///</remarks>
-        ///<code>
-        ///void ecs_orphan(ecs_world_t *world, ecs_entity_t child, ecs_entity_t parent)
-        ///</code>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Orphan(EntityId child, EntityId parent)
-        {
-            ecs.orphan(this, child, parent);
+            return _ecs.set_singleton_ptr( this, component, size, ptr);
         }
 
         ///<summary>
@@ -734,7 +807,19 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Has(EntityId entity, TypeId type)
         {
-            return _ecs.has(this, entity, type);
+            return _ecs.has( this, entity, type);
+        }
+
+        ///<summary>
+        /// Same as ecs_has, but only returns true if entity owns the component(s). 
+        ///</summary>
+        ///<code>
+        ///bool _ecs_has_owned(ecs_world_t *world, ecs_entity_t entity, ecs_type_t type)
+        ///</code>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool HasOwned(EntityId entity, TypeId type)
+        {
+            return _ecs.has_owned( this, entity, type);
         }
 
         ///<summary>
@@ -755,7 +840,26 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool HasAny(EntityId entity, TypeId type)
         {
-            return _ecs.has_any(this, entity, type);
+            return _ecs.has_any( this, entity, type);
+        }
+
+        ///<summary>
+        /// Same as ecs_has_any, but only returns true if entity owns the component(s). 
+        ///</summary>
+        ///<code>
+        ///bool _ecs_has_any_owned(ecs_world_t *world, ecs_entity_t entity,
+        ///                        ecs_type_t type)
+        ///</code>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool HasAnyOwned(EntityId entity, TypeId type)
+        {
+            return _ecs.has_any_owned( this, entity, type);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool HasEntity(EntityId entity, EntityId component)
+        {
+            return ecs.has_entity( this, entity, component);
         }
 
         ///<summary>
@@ -776,7 +880,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Contains(EntityId parent, EntityId child)
         {
-            return ecs.contains(this, parent, child);
+            return ecs.contains( this, parent, child);
         }
 
         ///<summary>
@@ -786,13 +890,13 @@ namespace FlecsSharp
         ///<param name="entity"> [in]  The entity for which to resolve the container. </param>
         ///<param name="component"> [in]  The component which the resovled container should have.</param>
         ///<code>
-        ///ecs_entity_t ecs_get_parent(ecs_world_t *world, ecs_entity_t entity,
-        ///                            ecs_entity_t component)
+        ///ecs_entity_t _ecs_get_parent(ecs_world_t *world, ecs_entity_t entity,
+        ///                             ecs_entity_t component)
         ///</code>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public EntityId GetParent(EntityId entity, EntityId component)
         {
-            return ecs.get_parent(this, entity, component);
+            return _ecs.get_parent( this, entity, component);
         }
 
         ///<summary>
@@ -813,7 +917,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public TypeId GetType(EntityId entity)
         {
-            return ecs.get_type(this, entity);
+            return ecs.get_type( this, entity);
         }
 
         ///<summary>
@@ -833,7 +937,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public CharPtr GetId(EntityId entity)
         {
-            return ecs.get_id(this, entity);
+            return ecs.get_id( this, entity);
         }
 
         ///<summary>
@@ -850,7 +954,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool IsEmpty(EntityId entity)
         {
-            return ecs.is_empty(this, entity);
+            return ecs.is_empty( this, entity);
         }
 
         ///<summary>
@@ -867,7 +971,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public uint Count(TypeId type)
         {
-            return _ecs.count(this, type);
+            return _ecs.count( this, type);
         }
 
         ///<summary>
@@ -884,7 +988,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public EntityId Lookup(CharPtr id)
         {
-            return ecs.lookup(this, id);
+            return ecs.lookup( this, id);
         }
 
         ///<summary>
@@ -908,7 +1012,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public EntityId LookupChild(EntityId parent, CharPtr id)
         {
-            return ecs.lookup_child(this, parent, id);
+            return ecs.lookup_child( this, parent, id);
         }
 
         ///<summary>
@@ -916,7 +1020,7 @@ namespace FlecsSharp
         ///</summary>
         ///<remarks>
         /// To add a component to an entity, you first have to obtain its type. Types uniquely identify sets of one or more components, and can be used with functions like ecs_add and ecs_remove.
-        /// You can only obtain types from entities that have EcsComponent, EcsPrefab, EcsTypeComponent or EcsContainer. These components are automatically added by the ecs_new_* functions, but can also be added manually.
+        /// You can only obtain types from entities that have EcsComponent, EcsPrefab, or EcsTypeComponent. These components are automatically added by the ecs_new_* functions, but can also be added manually.
         /// The ECS_COMPONENT, ECS_TAG, ECS_TYPE or ECS_PREFAB macro's will auto- declare a variable containing the type called tFoo (where 'Foo' is the id provided to the macro).
         ///</remarks>
         ///<code>
@@ -925,7 +1029,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public TypeId TypeFromEntity(EntityId entity)
         {
-            return ecs.type_from_entity(this, entity);
+            return ecs.type_from_entity( this, entity);
         }
 
         ///<summary>
@@ -940,16 +1044,35 @@ namespace FlecsSharp
         /// If this operation is invoked on a type that contains more than just one  entity, the function will abort. Applications should only use types with this function that are guaranteed to have one entity, such as the types created  for prefabs. 
         ///</remarks>
         ///<code>
-        ///ecs_entity_t ecs_entity_from_type(ecs_world_t *world, ecs_type_t type)
+        ///ecs_entity_t ecs_type_to_entity(ecs_world_t *world, ecs_type_t type)
         ///</code>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public EntityId EntityFromType(TypeId type)
+        public EntityId TypeToEntity(TypeId type)
         {
-            return ecs.entity_from_type(this, type);
+            return ecs.type_to_entity( this, type);
         }
 
         ///<summary>
-        /// Merge two types.  This operation will return a type that contains exactly the components in the specified type, plus the components in type_add, and not the components in type_remove.
+        /// Find or create type from existing type and entity.  This operation adds the specified entity to the specified type, and returns a new or existing type that is a union of the specified type and entity. The provided type will not be altered.
+        ///</summary>
+        ///<param name="world"> [in]  The world. </param>
+        ///<param name="type"> [in]  The type to which to add the entity. </param>
+        ///<param name="entity"> [in]  The entity to add to the type. </param>
+        ///<returns>
+        /// A type that is the union of the specified type and entity.
+        ///</returns>
+        ///<code>
+        ///ecs_type_t ecs_type_add(ecs_world_t *world, ecs_type_t type,
+        ///                        ecs_entity_t entity)
+        ///</code>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public TypeId TypeAdd(TypeId type, EntityId entity)
+        {
+            return ecs.type_add( this, type, entity);
+        }
+
+        ///<summary>
+        /// Find or create type that is the union of two types.  This operation will return a type that contains exactly the components in the specified type, plus the components in type_add, and not the components in type_remove.
         ///</summary>
         ///<param name="world"> [in]  The world. </param>
         ///<param name="type"> [in]  The original type. </param>
@@ -959,13 +1082,32 @@ namespace FlecsSharp
         /// The result of the operation is as if type_remove is subtracted before adding  type_add. If type_add contains components that are removed by type_remove, the result will contain the components in type_add.
         ///</remarks>
         ///<code>
-        ///ecs_type_t _ecs_merge_type(ecs_world_t *world, ecs_type_t type,
-        ///                           ecs_type_t type_add, ecs_type_t type_remove)
+        ///ecs_type_t ecs_type_merge(ecs_world_t *world, ecs_type_t type,
+        ///                          ecs_type_t type_add, ecs_type_t type_remove)
         ///</code>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public TypeId MergeType(TypeId type, TypeId typeAdd, TypeId typeRemove)
+        public TypeId TypeMerge(TypeId type, TypeId typeAdd, TypeId typeRemove)
         {
-            return _ecs.merge_type(this, type, typeAdd, typeRemove);
+            return ecs.type_merge( this, type, typeAdd, typeRemove);
+        }
+
+        ///<summary>
+        /// Find or create type from entity array. This operation will return a type that contains the entities in the specified array. If a type with the specified entities already exists, it will be returned, otherwise a new type will be created.
+        ///</summary>
+        ///<param name="world"> [in]  The world. </param>
+        ///<param name="array"> [in]  A C array with entity identifiers. </param>
+        ///<param name="count"> [in]  The number of elements in the array. </param>
+        ///<returns>
+        /// A type that contains the specified number of entities.
+        ///</returns>
+        ///<code>
+        ///ecs_type_t ecs_type_find(ecs_world_t *world, ecs_entity_t *array,
+        ///                         uint32_t count)
+        ///</code>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public TypeId TypeFind(out EntityId array, uint count)
+        {
+            return ecs.type_find( this, out array, count);
         }
 
         ///<summary>
@@ -978,13 +1120,82 @@ namespace FlecsSharp
         /// zero if out of bounds, a component if within bounds.
         ///</returns>
         ///<code>
-        ///ecs_entity_t ecs_type_get_component(ecs_world_t *world, ecs_type_t type,
-        ///                                    uint32_t index)
+        ///ecs_entity_t ecs_type_get_entity(ecs_world_t *world, ecs_type_t type,
+        ///                                 uint32_t index)
         ///</code>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public EntityId TypeGetComponent(TypeId type, uint index)
+        public EntityId TypeGetEntity(TypeId type, uint index)
         {
-            return ecs.type_get_component(this, type, index);
+            return ecs.type_get_entity( this, type, index);
+        }
+
+        ///<summary>
+        /// Check if type has entity. This operation returns whether a type has a specified entity.
+        ///</summary>
+        ///<param name="world"> [in]  The world. </param>
+        ///<param name="type"> [in]  The type to check. </param>
+        ///<param name="entity"> [in]  The entity to check for. </param>
+        ///<returns>
+        /// true if the type contains the entity, otherwise false.
+        ///</returns>
+        ///<code>
+        ///bool ecs_type_has_entity(ecs_world_t *world, ecs_type_t type,
+        ///                         ecs_entity_t entity)
+        ///</code>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool TypeHasEntity(TypeId type, EntityId entity)
+        {
+            return ecs.type_has_entity( this, type, entity);
+        }
+
+        ///<summary>
+        /// Get type from type expression. This function obtains a type from a type expression. A type expression is a comma-deliminated list of the type's entity identifiers. For example, a type with entities Position and Velocity is: "Position, Velocity".
+        ///</summary>
+        ///<param name="world"> [in]  The world. </param>
+        ///<param name="expr"> [in]  The type expression. </param>
+        ///<returns>
+        /// A type if the expression is valid, otherwise NULL.
+        ///</returns>
+        ///<remarks>
+        /// Type expressions may include type flags that indicate the role of the entity within the type. The following type flags are supported: - INSTANCEOF: share components from this entity - CHILDOF:    treat entity as parent
+        /// Type flags can be added with the OR (|) operator. More than one type flag may be specified. This is an example of a type expression with type flags:
+        /// Position, Velocity, INSTANCEOF | my_prefab, CHILDOF | my_parent
+        /// Entities created with this type will have the Position and Velocity  components, will share components from my_prefab, and will be children of my_parent. The following is also a valid type expression:
+        /// INSTANCEOF | CHILDOF | my_prefab
+        /// Entities of this type will both share components from my_prefab, as well as be treated as children of my_prefab.
+        /// The order in which components are specified has no effect. The following type expressions are equivalent:
+        /// - Position, Velocity - Velocity, Position
+        ///</remarks>
+        ///<code>
+        ///ecs_type_t ecs_expr_to_type(ecs_world_t *world, const char *expr)
+        ///</code>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public TypeId ExprToType(CharPtr expr)
+        {
+            return ecs.expr_to_type( this, expr);
+        }
+
+        ///<summary>
+        /// Get type expression from type.  This function converts a type to a type expression, which is a string representation of the type as it is provided to the ecs_new_entity and ecs_new_type functions. For more information on type expressions, see  ecs_expr_to_type.
+        ///</summary>
+        ///<param name="world"> [in]  The world. </param>
+        ///<param name="type"> [in]  The type for which to obtain the expression. </param>
+        ///<returns>
+        /// The type expression string. This string needs to be deallocated in          order to prevent memory leaks.
+        ///</returns>
+        ///<code>
+        ///char *ecs_type_to_expr(ecs_world_t *world, ecs_type_t type)
+        ///</code>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public CharPtr TypeToExpr(TypeId type)
+        {
+            return ecs.type_to_expr( this, type);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool TypeMatchWFilter(TypeId type, out TypeFilter filter)
+        {
+            return ecs.type_match_w_filter( this, type, out filter);
         }
 
         ///<summary>
@@ -1005,7 +1216,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Enable(EntityId system, bool enabled)
         {
-            ecs.enable(this, system, enabled);
+            ecs.enable( this, system, enabled);
         }
 
         ///<summary>
@@ -1025,7 +1236,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetPeriod(EntityId system, float period)
         {
-            ecs.set_period(this, system, period);
+            ecs.set_period( this, system, period);
         }
 
         ///<summary>
@@ -1042,26 +1253,23 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool IsEnabled(EntityId system)
         {
-            return ecs.is_enabled(this, system);
+            return ecs.is_enabled( this, system);
         }
 
         ///<summary>
-        /// Run a specific system manually. This operation runs a single system on demand. It is an efficient way to invoke logic on a set of entities, as on demand systems are only matched to tables at creation time or after creation time, when a new table is created.
+        /// Run a specific system manually. This operation runs a single system manually. It is an efficient way to invoke logic on a set of entities, as manual systems are only matched to tables at creation time or after creation time, when a new table is created.
         ///</summary>
         ///<param name="world"> [in]  The world. </param>
         ///<param name="system"> [in]  The system to run. </param>
         ///<param name="param"> [in]  A user-defined parameter to pass to the system. </param>
         ///<param name="delta_time:"> [in]  The time passed since the last system invocation. </param>
-        ///<param name="filter"> [in]  A component or type to filter matched entities. </param>
         ///<returns>
         /// handle to last evaluated entity if system was interrupted.
         ///</returns>
         ///<remarks>
-        /// On demand systems are useful to evaluate lists of prematched entities at application defined times. Because none of the matching logic is evaluated before the system is invoked, on demand systems are much more efficient than manually obtaining a list of entities and retrieving their components.
-        /// An application may however want to apply a filter to an on demand system for fast-changing unpredictable selections of entity subsets. The filter parameter lets applications pass handles to components or component families, and only entities that have said components will be evaluated.
-        /// Because the filter is evaluated not on a per-entity basis, but on a per table basis, filter evaluation is still very cheap, especially when compared to tables with large numbers of entities.
+        /// Manual systems are useful to evaluate lists of prematched entities at application defined times. Because none of the matching logic is evaluated before the system is invoked, manual systems are much more efficient than manually obtaining a list of entities and retrieving their components.
         /// An application may pass custom data to a system through the param parameter. This data can be accessed by the system through the param member in the ecs_rows_t value that is passed to the system callback.
-        /// Any system may interrupt execution by setting the interrupted_by member in the ecs_rows_t value. This is particularly useful for on demand systems, where the value of interrupted_by is returned by this operation. This, in cominbation with the param argument lets applications use on demand systems to lookup entities: once the entity has been found its handle is passed to interrupted_by, which is then subsequently returned.
+        /// Any system may interrupt execution by setting the interrupted_by member in the ecs_rows_t value. This is particularly useful for manual systems, where the value of interrupted_by is returned by this operation. This, in cominbation with the param argument lets applications use manual systems to lookup entities: once the entity has been found its handle is passed to interrupted_by, which is then subsequently returned.
         ///</remarks>
         ///<code>
         ///ecs_entity_t ecs_run(ecs_world_t *world, ecs_entity_t system, float delta_time,
@@ -1070,12 +1278,24 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public EntityId Run(EntityId system, float deltaTime, IntPtr param)
         {
-            return ecs.run(this, system, deltaTime, param);
+            return ecs.run( this, system, deltaTime, param);
         }
 
         ///<summary>
-        /// Run system with offset/limit and type filter 
+        /// Run system with offset/limit and type filter. This operation is the same as ecs_run, but filters the entities that will be iterated by the system.
         ///</summary>
+        ///<param name="world"> [in]  The world. </param>
+        ///<param name="system"> [in]  The system to invoke. </param>
+        ///<param name="filter"> [in]  A component or type to filter matched entities. </param>
+        ///<param name="param"> [in]  A user-defined parameter to pass to the system. </param>
+        ///<param name="delta_time:"> [in]  The time passed since the last system invocation. </param>
+        ///<returns>
+        /// handle to last evaluated entity if system was interrupted.
+        ///</returns>
+        ///<remarks>
+        /// Entities can be filtered in two ways. Offset and limit control the range of entities that is iterated over. The range is applied to all entities matched with the system, thus may cover multiple archetypes.
+        /// The type filter controls which entity types the system will evaluate. Only types that contain all components in the type filter will be iterated over. A type filter is only evaluated once per table, which makes filtering cheap if the number of entities is large and the number of tables is small, but not as cheap as filtering in the system signature.
+        ///</remarks>
         ///<code>
         ///ecs_entity_t _ecs_run_w_filter(ecs_world_t *world, ecs_entity_t system,
         ///                               float delta_time, uint32_t offset,
@@ -1084,7 +1304,40 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public EntityId RunWFilter(EntityId system, float deltaTime, uint offset, uint limit, TypeId filter, IntPtr param)
         {
-            return _ecs.run_w_filter(this, system, deltaTime, offset, limit, filter, param);
+            return _ecs.run_w_filter( this, system, deltaTime, offset, limit, filter, param);
+        }
+
+        ///<summary>
+        /// Set system context. This operation allows an application to register custom data with a system. This data can be accessed using the ecs_get_system_context operation, or through the 'param' field in the ecs_rows_t parameter passed into the system callback.
+        ///</summary>
+        ///<param name="world"> [in]  The world. </param>
+        ///<param name="system"> [in]  The system on which to set the context. </param>
+        ///<param name="ctx"> [in]  A pointer to a user defined structure.</param>
+        ///<code>
+        ///void ecs_set_system_context(ecs_world_t *world, ecs_entity_t system,
+        ///                            const void *ctx)
+        ///</code>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void SetSystemContext(EntityId system, IntPtr ctx)
+        {
+            ecs.set_system_context( this, system, ctx);
+        }
+
+        ///<summary>
+        /// Get system context. Get custom data from a system previously set with ecs_set_system_context.
+        ///</summary>
+        ///<param name="world"> [in]  The world. </param>
+        ///<param name="system"> [in]  The system of which to obtain the context. </param>
+        ///<returns>
+        /// The system context.
+        ///</returns>
+        ///<code>
+        ///void *ecs_get_system_context(ecs_world_t *world, ecs_entity_t system)
+        ///</code>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public IntPtr GetSystemContext(EntityId system)
+        {
+            return ecs.get_system_context( this, system);
         }
 
         ///<summary>
@@ -1107,7 +1360,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public EntityId NewEntity(CharPtr id, CharPtr components)
         {
-            return ecs.new_entity(this, id, components);
+            return ecs.new_entity( this, id, components);
         }
 
         ///<summary>
@@ -1130,10 +1383,37 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public EntityId NewComponent(CharPtr id, UIntPtr size)
         {
-            return ecs.new_component(this, id, size);
+            return ecs.new_component( this, id, size);
         }
 
-
+        ///<summary>
+        /// Create a new system. This operation creates a new system with a specified id, kind and action. After this operation is called, the system will be active. Systems can be created with three different kinds:
+        ///</summary>
+        ///<param name="world"> [in]  The world. </param>
+        ///<param name="id"> [in]  The identifier of the system. </param>
+        ///<param name="kind"> [in]  The kind of system. </param>
+        ///<param name="action"> [in]  The action that is invoked for matching entities. </param>
+        ///<param name="signature"> [in]  The signature that describes the components. </param>
+        ///<returns>
+        /// A handle to the system.
+        ///</returns>
+        ///<remarks>
+        /// - EcsOnUpdate: the system is invoked when ecs_progress is called. - EcsOnAdd: the system is invoked when a component is committed to memory. - EcsOnRemove: the system is invoked when a component is removed from memory. - EcsManual: the system is only invoked on demand (ecs_run)
+        /// The signature of the system is a string formatted as a comma separated list of component identifiers. For example, a system that wants to receive the Location and Speed components, should provide "Location, Speed" as its signature.
+        /// The action is a function that is invoked for every entity that has the components the system is interested in. The action has three parameters:
+        /// - ecs_entity_t system: Handle to the system (same as returned by this function) - ecs_entity_t entity: Handle to the current entity - void *data[]: Array of pointers to the component data
+        /// Systems are stored internally as entities. This operation is equivalent to creating an entity with the EcsSystem and EcsId components. The returned handle can be used in any function that accepts an entity handle.
+        ///</remarks>
+        ///<code>
+        ///ecs_entity_t ecs_new_system(ecs_world_t *world, const char *id,
+        ///                            EcsSystemKind kind, const char *sig,
+        ///                            ecs_system_action_t action)
+        ///</code>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public EntityId NewSystem(CharPtr id, SystemKind kind, CharPtr sig, SystemActionDelegate action)
+        {
+            return ecs.new_system( this, id, kind, sig, action);
+        }
 
         ///<summary>
         /// Get handle to type. This operation obtains a handle to a type that can be used with ecs_new. Predefining types has performance benefits over using ecs_add/ecs_remove multiple times, as it provides constant creation time regardless of the number of components. This function will internally create a table for the type.
@@ -1154,7 +1434,7 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public EntityId NewType(CharPtr id, CharPtr components)
         {
-            return ecs.new_type(this, id, components);
+            return ecs.new_type( this, id, components);
         }
 
         ///<summary>
@@ -1177,7 +1457,42 @@ namespace FlecsSharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public EntityId NewPrefab(CharPtr id, CharPtr sig)
         {
-            return ecs.new_prefab(this, id, sig);
+            return ecs.new_prefab( this, id, sig);
+        }
+
+        ///<summary>
+        /// Create a new world. A world manages all the ECS objects. Applications must have at least one world. Entities, component and system handles are local to a world and cannot be shared between worlds.
+        ///</summary>
+        ///<returns>
+        /// A new world object
+        ///</returns>
+        ///<code>
+        ///ecs_world_t *ecs_init()
+        ///</code>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static World Init()
+        {
+            return ecs.init();
+        }
+
+        ///<summary>
+        /// Create a new world with arguments. Same as ecs_init, but allows passing in command line arguments. These can be used to dynamically enable flecs features to an application, like performance monitoring or the web dashboard (if it is installed) without having to modify the code of an application.
+        ///</summary>
+        ///<returns>
+        /// A new world object
+        ///</returns>
+        ///<remarks>
+        /// If the functionality requested by the arguments is not available, an error message will be printed to stderr, but the function will not fail. Thus it is important that the application code does not rely on any functionality that is realized through the arguments.
+        /// If the arguments specify a setting that is explicity set as well by the application, the application setting will be ignored. For example, if an application specifies it will run on 2 threads, but an argument specify it will run on 6 threads, the argument will take precedence.
+        /// The following options are available: --threads [n]   Use n worker threads --fps [hz]      Run at hz FPS --admin [port]  Enable admin dashboard (requires flecs-systems-admin & flecs-systems-civetweb) --debug         Enables debug tracing
+        ///</remarks>
+        ///<code>
+        ///ecs_world_t *ecs_init_w_args(int argc, char *argv[])
+        ///</code>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static World InitWArgs(int argc, out sbyte argv)
+        {
+            return ecs.init_w_args(argc, out argv);
         }
 
     }

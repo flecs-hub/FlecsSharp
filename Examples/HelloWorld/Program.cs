@@ -1,4 +1,5 @@
 ﻿using FlecsSharp;
+using System;
 
 namespace HelloWorld
 {
@@ -16,9 +17,9 @@ namespace HelloWorld
             public int SpeedValue { get; set; }
         }
 
-        static void MoveSystem(EntitySet rows, Set<Position> position, Set<Speed> speed)
+        static void MoveSystem(ref Rows rows, Span<Position> position, Span<Speed> speed)
         {
-            for(uint i = 0; i < rows.Count; i++)
+            for(int i = 0; i < (int) rows.Count; i++)
             {
                 EntityId id = rows[i];
                 position[i].X += speed[i].SpeedValue * rows.DeltaTime;
@@ -30,7 +31,7 @@ namespace HelloWorld
         {
             using (var world = World.Create())
             {
-                world.AddSystem<Position, Speed>(MoveSystem, SystemKind.OnUpdate);
+                world.AddSystem<Position, Speed>(MoveSystem, SystemKind.Onupdate);
 
                 var myEntity = world.NewEntity("MyEntity", new Position { X = 1, Y = 2 }, new Speed { SpeedValue = 5 });
 
