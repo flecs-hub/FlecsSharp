@@ -23,10 +23,9 @@ namespace FlecsSharp
             set => system = value;
         }
 
-        public int* Columns
+        public Span<int> Columns
         {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)] get => columns;
-            [MethodImpl(MethodImplOptions.AggressiveInlining)] set => columns = value;
+            [MethodImpl(MethodImplOptions.AggressiveInlining)] get => new Span<int>(columns, columnCount);
         }
 
         public ushort ColumnCount
@@ -55,20 +54,16 @@ namespace FlecsSharp
             set => references = value;
         }
 
-        public EntityId* Components
+        public Span<EntityId> Components
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => components;
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            set => components = value;
+            get => new Span<EntityId>(components, columnCount);
         }
 
-        public EntityId* Entities
+        public Span<EntityId> Entities
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => entities;
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            set => entities = value;
+            get => new Span<EntityId>(entities, (int)count);
         }
 
         public IntPtr Param

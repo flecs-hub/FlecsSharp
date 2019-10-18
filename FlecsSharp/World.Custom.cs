@@ -73,47 +73,29 @@ namespace FlecsSharp
                 return typeId;
             }
 
-            var str = StringBuffer.ToString();
-
             return val;
 
         }
 
-        //TypeId getTypeId(params Type[] compType)
-        //{
-        //    var _this = this;
-
-        //    uint* tmp = stackalloc uint[compType.Length];
-
-        //    for(int i = 0; i < compType.Length; i++)
-        //    {
-        //        tmp[i] = (uint)_this.getTypeId(compType[i]);
-        //    }
-            
-        //    _ecs.merge_type(this, default, )
-
-        //}
-
         public EntityId AddSystem(SystemKind kind, ReadOnlySpan<char> name, SystemActionDelegate systemImpl, params Type[] componentTypes)
         {
             var systemNamePtr = StringBuffer.AddUTF8String(name);
-            string components = BuildComponentQuery(componentTypes);
+            var components = BuildComponentQuery(componentTypes);
             var signaturePtr = StringBuffer.AddUTF8String(components);
             var componentId = ecs.new_system(this, systemNamePtr, kind, signaturePtr, systemImpl);
             systemActions[(this, componentId)] = systemImpl;
             return componentId;
         }
+
         public EntityId AddSystem(SystemKind kind, SystemActionDelegate systemImpl, params Type[] componentTypes)
-         => AddSystem(kind, systemImpl.Method.Name, systemImpl, componentTypes);
-
-
+            => AddSystem(kind, systemImpl.Method.Name, systemImpl, componentTypes);
 
 
         public void AddSystem<T1>(SystemAction<T1> systemImpl, SystemKind kind) where T1 : unmanaged
         {
             SystemActionDelegate del = delegate (ref Rows e)
             {
-                var set1 = (T1*)_ecs.column(out e,new UIntPtr((uint)sizeof(T1)), 1);
+                var set1 = (T1*)_ecs.column(out e, new UIntPtr((uint)sizeof(T1)), 1);
                 systemImpl(ref e, new Span<T1>(set1, (int)e.count));
             };
 
@@ -128,7 +110,7 @@ namespace FlecsSharp
             {
                 var set1 = (T1*)_ecs.column(out e, new UIntPtr((uint)sizeof(T1)), 1);
                 var set2 = (T2*)_ecs.column(out e, new UIntPtr((uint)sizeof(T2)), 2);
-                systemImpl(ref e, new Span<T1>(set1, (int) e.Count ), new Span<T2>(set2, (int)e.Count));
+                systemImpl(ref e, new Span<T1>(set1, (int)e.Count), new Span<T2>(set2, (int)e.Count));
             };
 
             AddSystem(kind, systemImpl.Method.Name, del, typeof(T1), typeof(T2));
@@ -137,7 +119,7 @@ namespace FlecsSharp
 
         private string BuildComponentQuery(params Type[] componentTypes)
         {
-            StringBuilder sb = new StringBuilder(64);
+            var sb = new StringBuilder(64);
             for (int i = 0; i < componentTypes.Length; i++)
             {
                 getTypeId(componentTypes[i]);
@@ -150,13 +132,11 @@ namespace FlecsSharp
             return components;
         }
 
-      //  static class TypeQuery { }
 
         EntityId NewEntity(string entityName, params Type[] componentTypes)
         {
-            // var componentNamesPtr = StringBuffer.AddUTF8String(string.Join(", ", componentTypes.Select(t => t.Name)));
             var entityNamePtr = StringBuffer.AddUTF8String(entityName);
-            string components = BuildComponentQuery(componentTypes);
+            var components = BuildComponentQuery(componentTypes);
             var componentsQueryPtr = StringBuffer.AddUTF8String(components);
             var componentId = ecs.new_entity(this, entityNamePtr, componentsQueryPtr);
             return componentId;
@@ -177,7 +157,7 @@ namespace FlecsSharp
             return entt;
         }
 
-             ///<summary>
+        ///<summary>
         /// Set value of component. This function sets the value of a component on the specified entity. If the component does not yet exist, it will be added to the entity.
         ///</summary>
         ///<param name="world"> [in]  The world. </param>

@@ -1,5 +1,4 @@
 using System;
-using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 
 namespace FlecsSharp
@@ -27,12 +26,10 @@ namespace FlecsSharp
             set => entities = value;
         }
 
-        public EntityId* Components
+        public Span<EntityId> Components
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => components;
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            set => components = value;
+            get => new Span<EntityId>(components, (int)ColumnCount);
         }
 
         public TableColumns* Columns

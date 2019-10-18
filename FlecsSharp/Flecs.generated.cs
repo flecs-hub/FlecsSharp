@@ -51,18 +51,18 @@ namespace FlecsSharp
     // EcsSystemKind: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L76
     public enum SystemKind : Int32
     {
-        Onload = 0,
-        Postload = 1,
-        Preupdate = 2,
-        Onupdate = 3,
-        Onvalidate = 4,
-        Postupdate = 5,
-        Prestore = 6,
-        Onstore = 7,
+        OnLoad = 0,
+        PostLoad = 1,
+        PreUpdate = 2,
+        OnUpdate = 3,
+        OnValidate = 4,
+        PostUpdate = 5,
+        PreStore = 6,
+        OnStore = 7,
         Manual = 8,
-        Onadd = 9,
-        Onremove = 10,
-        Onset = 11,
+        OnAdd = 9,
+        OnRemove = 10,
+        OnSet = 11,
     }
 
 #endregion
@@ -468,14 +468,14 @@ namespace FlecsSharp
         ///void ecs_os_set_api(ecs_os_api_t *)
         ///</code>
         // ecs_os_set_api: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/os_api.h#L189
-        [DllImport(DLL, EntryPoint = "ecs_os_set_api", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_os_set_api", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void os_set_api(out OsApi osApi);
 
         ///<code>
         ///void ecs_os_set_api_defaults()
         ///</code>
         // ecs_os_set_api_defaults: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/os_api.h#L193
-        [DllImport(DLL, EntryPoint = "ecs_os_set_api_defaults", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_os_set_api_defaults", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void os_set_api_defaults();
 
         ///<summary>
@@ -485,42 +485,42 @@ namespace FlecsSharp
         ///void ecs_os_log(const char *fmt, ...)
         ///</code>
         // ecs_os_log: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/os_api.h#L232
-        [DllImport(DLL, EntryPoint = "ecs_os_log", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_os_log", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void os_log(CharPtr fmt);
 
         ///<code>
         ///void ecs_os_warn(const char *, ...)
         ///</code>
         // ecs_os_warn: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/os_api.h#L235
-        [DllImport(DLL, EntryPoint = "ecs_os_warn", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_os_warn", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void os_warn(CharPtr fmt);
 
         ///<code>
         ///void ecs_os_err(const char *, ...)
         ///</code>
         // ecs_os_err: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/os_api.h#L238
-        [DllImport(DLL, EntryPoint = "ecs_os_err", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_os_err", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void os_err(CharPtr fmt);
 
         ///<code>
         ///void ecs_os_dbg(const char *, ...)
         ///</code>
         // ecs_os_dbg: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/os_api.h#L241
-        [DllImport(DLL, EntryPoint = "ecs_os_dbg", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_os_dbg", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void os_dbg(CharPtr fmt);
 
         ///<code>
         ///void ecs_os_enable_dbg(bool)
         ///</code>
         // ecs_os_enable_dbg: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/os_api.h#L244
-        [DllImport(DLL, EntryPoint = "ecs_os_enable_dbg", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_os_enable_dbg", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void os_enable_dbg(bool enable);
 
         ///<code>
         ///bool ecs_os_dbg_enabled()
         ///</code>
         // ecs_os_dbg_enabled: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/os_api.h#L247
-        [DllImport(DLL, EntryPoint = "ecs_os_dbg_enabled", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_os_dbg_enabled", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern bool os_dbg_enabled();
 
         ///<summary>
@@ -530,7 +530,7 @@ namespace FlecsSharp
         ///void ecs_sleepf(double t)
         ///</code>
         // ecs_sleepf: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/os_api.h#L262
-        [DllImport(DLL, EntryPoint = "ecs_sleepf", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_sleepf", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void sleepf(double t);
 
         ///<summary>
@@ -540,343 +540,343 @@ namespace FlecsSharp
         ///double ecs_time_measure(ecs_time_t *start)
         ///</code>
         // ecs_time_measure: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/os_api.h#L267
-        [DllImport(DLL, EntryPoint = "ecs_time_measure", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_time_measure", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern double time_measure(out Time start);
 
         ///<code>
         ///ecs_vector_t * ecs_vector_new(const ecs_vector_params_t *, uint32_t)
         ///</code>
         // ecs_vector_new: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/vector.h#L30
-        [DllImport(DLL, EntryPoint = "ecs_vector_new", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_vector_new", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern Vector vector_new(out VectorParams @params, uint size);
 
         ///<code>
         ///ecs_vector_t * ecs_vector_new_from_buffer(const ecs_vector_params_t *, uint32_t, void *)
         ///</code>
         // ecs_vector_new_from_buffer: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/vector.h#L35
-        [DllImport(DLL, EntryPoint = "ecs_vector_new_from_buffer", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_vector_new_from_buffer", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern Vector vector_new_from_buffer(out VectorParams @params, uint size, IntPtr buffer);
 
         ///<code>
         ///void ecs_vector_free(ecs_vector_t *)
         ///</code>
         // ecs_vector_free: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/vector.h#L41
-        [DllImport(DLL, EntryPoint = "ecs_vector_free", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_vector_free", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void vector_free(Vector array);
 
         ///<code>
         ///void ecs_vector_clear(ecs_vector_t *)
         ///</code>
         // ecs_vector_clear: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/vector.h#L45
-        [DllImport(DLL, EntryPoint = "ecs_vector_clear", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_vector_clear", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void vector_clear(Vector array);
 
         ///<code>
         ///void * ecs_vector_add(ecs_vector_t **, const ecs_vector_params_t *)
         ///</code>
         // ecs_vector_add: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/vector.h#L49
-        [DllImport(DLL, EntryPoint = "ecs_vector_add", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_vector_add", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern IntPtr vector_add(out Vector arrayInout, out VectorParams @params);
 
         ///<code>
         ///void * ecs_vector_addn(ecs_vector_t **, const ecs_vector_params_t *, uint32_t)
         ///</code>
         // ecs_vector_addn: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/vector.h#L54
-        [DllImport(DLL, EntryPoint = "ecs_vector_addn", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_vector_addn", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern IntPtr vector_addn(out Vector arrayInout, out VectorParams @params, uint count);
 
         ///<code>
         ///void * ecs_vector_get(const ecs_vector_t *, const ecs_vector_params_t *, uint32_t)
         ///</code>
         // ecs_vector_get: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/vector.h#L60
-        [DllImport(DLL, EntryPoint = "ecs_vector_get", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_vector_get", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern IntPtr vector_get(Vector array, out VectorParams @params, uint index);
 
         ///<code>
         ///uint32_t ecs_vector_get_index(const ecs_vector_t *, const ecs_vector_params_t *, void *)
         ///</code>
         // ecs_vector_get_index: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/vector.h#L66
-        [DllImport(DLL, EntryPoint = "ecs_vector_get_index", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_vector_get_index", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern uint vector_get_index(Vector array, out VectorParams @params, IntPtr elem);
 
         ///<code>
         ///void * ecs_vector_last(const ecs_vector_t *, const ecs_vector_params_t *)
         ///</code>
         // ecs_vector_last: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/vector.h#L72
-        [DllImport(DLL, EntryPoint = "ecs_vector_last", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_vector_last", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern IntPtr vector_last(Vector array, out VectorParams @params);
 
         ///<code>
         ///uint32_t ecs_vector_remove(ecs_vector_t *, const ecs_vector_params_t *, void *)
         ///</code>
         // ecs_vector_remove: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/vector.h#L77
-        [DllImport(DLL, EntryPoint = "ecs_vector_remove", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_vector_remove", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern uint vector_remove(Vector array, out VectorParams @params, IntPtr elem);
 
         ///<code>
         ///void ecs_vector_remove_last(ecs_vector_t *)
         ///</code>
         // ecs_vector_remove_last: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/vector.h#L83
-        [DllImport(DLL, EntryPoint = "ecs_vector_remove_last", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_vector_remove_last", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void vector_remove_last(Vector array);
 
         ///<code>
         ///bool ecs_vector_pop(ecs_vector_t *, const ecs_vector_params_t *, void *)
         ///</code>
         // ecs_vector_pop: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/vector.h#L87
-        [DllImport(DLL, EntryPoint = "ecs_vector_pop", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_vector_pop", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern bool vector_pop(Vector array, out VectorParams @params, IntPtr @value);
 
         ///<code>
         ///uint32_t ecs_vector_move_index(ecs_vector_t **, ecs_vector_t *, const ecs_vector_params_t *, uint32_t)
         ///</code>
         // ecs_vector_move_index: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/vector.h#L93
-        [DllImport(DLL, EntryPoint = "ecs_vector_move_index", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_vector_move_index", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern uint vector_move_index(out Vector dstArray, Vector srcArray, out VectorParams @params, uint index);
 
         ///<code>
         ///uint32_t ecs_vector_remove_index(ecs_vector_t *, const ecs_vector_params_t *, uint32_t)
         ///</code>
         // ecs_vector_remove_index: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/vector.h#L100
-        [DllImport(DLL, EntryPoint = "ecs_vector_remove_index", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_vector_remove_index", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern uint vector_remove_index(Vector array, out VectorParams @params, uint index);
 
         ///<code>
         ///void ecs_vector_reclaim(ecs_vector_t **, const ecs_vector_params_t *)
         ///</code>
         // ecs_vector_reclaim: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/vector.h#L106
-        [DllImport(DLL, EntryPoint = "ecs_vector_reclaim", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_vector_reclaim", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void vector_reclaim(out Vector array, out VectorParams @params);
 
         ///<code>
         ///uint32_t ecs_vector_set_size(ecs_vector_t **, const ecs_vector_params_t *, uint32_t)
         ///</code>
         // ecs_vector_set_size: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/vector.h#L111
-        [DllImport(DLL, EntryPoint = "ecs_vector_set_size", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_vector_set_size", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern uint vector_set_size(out Vector array, out VectorParams @params, uint size);
 
         ///<code>
         ///uint32_t ecs_vector_set_count(ecs_vector_t **, const ecs_vector_params_t *, uint32_t)
         ///</code>
         // ecs_vector_set_count: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/vector.h#L117
-        [DllImport(DLL, EntryPoint = "ecs_vector_set_count", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_vector_set_count", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern uint vector_set_count(out Vector array, out VectorParams @params, uint size);
 
         ///<code>
         ///uint32_t ecs_vector_count(const ecs_vector_t *)
         ///</code>
         // ecs_vector_count: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/vector.h#L123
-        [DllImport(DLL, EntryPoint = "ecs_vector_count", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_vector_count", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern uint vector_count(Vector array);
 
         ///<code>
         ///uint32_t ecs_vector_size(const ecs_vector_t *)
         ///</code>
         // ecs_vector_size: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/vector.h#L127
-        [DllImport(DLL, EntryPoint = "ecs_vector_size", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_vector_size", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern uint vector_size(Vector array);
 
         ///<code>
         ///void * ecs_vector_first(const ecs_vector_t *)
         ///</code>
         // ecs_vector_first: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/vector.h#L131
-        [DllImport(DLL, EntryPoint = "ecs_vector_first", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_vector_first", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern IntPtr vector_first(Vector array);
 
         ///<code>
         ///void ecs_vector_sort(ecs_vector_t *, const ecs_vector_params_t *, EcsComparator)
         ///</code>
         // ecs_vector_sort: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/vector.h#L135
-        [DllImport(DLL, EntryPoint = "ecs_vector_sort", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_vector_sort", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void vector_sort(Vector array, out VectorParams @params, ComparatorDelegate compareAction);
 
         ///<code>
         ///void ecs_vector_memory(const ecs_vector_t *, const ecs_vector_params_t *, uint32_t *, uint32_t *)
         ///</code>
         // ecs_vector_memory: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/vector.h#L141
-        [DllImport(DLL, EntryPoint = "ecs_vector_memory", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_vector_memory", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void vector_memory(Vector array, out VectorParams @params, out uint allocd, out uint used);
 
         ///<code>
         ///void ecs_chunked_free(ecs_chunked_t *)
         ///</code>
         // ecs_chunked_free: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/chunked.h#L20
-        [DllImport(DLL, EntryPoint = "ecs_chunked_free", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_chunked_free", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void chunked_free(Chunked chunked);
 
         ///<code>
         ///void ecs_chunked_clear(ecs_chunked_t *)
         ///</code>
         // ecs_chunked_clear: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/chunked.h#L24
-        [DllImport(DLL, EntryPoint = "ecs_chunked_clear", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_chunked_clear", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void chunked_clear(Chunked chunked);
 
         ///<code>
         ///uint32_t ecs_chunked_count(const ecs_chunked_t *)
         ///</code>
         // ecs_chunked_count: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/chunked.h#L54
-        [DllImport(DLL, EntryPoint = "ecs_chunked_count", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_chunked_count", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern uint chunked_count(Chunked chunked);
 
         ///<code>
         ///const uint32_t * ecs_chunked_indices(const ecs_chunked_t *)
         ///</code>
         // ecs_chunked_indices: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/chunked.h#L67
-        [DllImport(DLL, EntryPoint = "ecs_chunked_indices", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_chunked_indices", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern ref uint chunked_indices(Chunked chunked);
 
         ///<code>
         ///void ecs_chunked_memory(ecs_chunked_t *, uint32_t *, uint32_t *)
         ///</code>
         // ecs_chunked_memory: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/chunked.h#L71
-        [DllImport(DLL, EntryPoint = "ecs_chunked_memory", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_chunked_memory", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void chunked_memory(Chunked chunked, out uint allocd, out uint used);
 
         ///<code>
         ///ecs_map_t * ecs_map_new(uint32_t, uint32_t)
         ///</code>
         // ecs_map_new: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/map.h#L17
-        [DllImport(DLL, EntryPoint = "ecs_map_new", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_map_new", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern Map map_new(uint size, uint elemSize);
 
         ///<code>
         ///void ecs_map_free(ecs_map_t *)
         ///</code>
         // ecs_map_free: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/map.h#L22
-        [DllImport(DLL, EntryPoint = "ecs_map_free", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_map_free", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void map_free(Map map);
 
         ///<code>
         ///void ecs_map_memory(ecs_map_t *, uint32_t *, uint32_t *)
         ///</code>
         // ecs_map_memory: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/map.h#L26
-        [DllImport(DLL, EntryPoint = "ecs_map_memory", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_map_memory", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void map_memory(Map map, out uint total, out uint used);
 
         ///<code>
         ///uint32_t ecs_map_count(ecs_map_t *)
         ///</code>
         // ecs_map_count: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/map.h#L32
-        [DllImport(DLL, EntryPoint = "ecs_map_count", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_map_count", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern uint map_count(Map map);
 
         ///<code>
         ///uint32_t ecs_map_set_size(ecs_map_t *, uint32_t)
         ///</code>
         // ecs_map_set_size: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/map.h#L36
-        [DllImport(DLL, EntryPoint = "ecs_map_set_size", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_map_set_size", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern uint map_set_size(Map map, uint size);
 
         ///<code>
         ///uint32_t ecs_map_data_size(ecs_map_t *)
         ///</code>
         // ecs_map_data_size: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/map.h#L41
-        [DllImport(DLL, EntryPoint = "ecs_map_data_size", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_map_data_size", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern uint map_data_size(Map map);
 
         ///<code>
         ///uint32_t ecs_map_grow(ecs_map_t *, uint32_t)
         ///</code>
         // ecs_map_grow: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/map.h#L45
-        [DllImport(DLL, EntryPoint = "ecs_map_grow", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_map_grow", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern uint map_grow(Map map, uint size);
 
         ///<code>
         ///uint32_t ecs_map_bucket_count(ecs_map_t *)
         ///</code>
         // ecs_map_bucket_count: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/map.h#L50
-        [DllImport(DLL, EntryPoint = "ecs_map_bucket_count", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_map_bucket_count", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern uint map_bucket_count(Map map);
 
         ///<code>
         ///void ecs_map_clear(ecs_map_t *)
         ///</code>
         // ecs_map_clear: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/map.h#L54
-        [DllImport(DLL, EntryPoint = "ecs_map_clear", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_map_clear", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void map_clear(Map map);
 
         ///<code>
         ///void * ecs_map_get_ptr(ecs_map_t *, uint64_t)
         ///</code>
         // ecs_map_get_ptr: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/map.h#L78
-        [DllImport(DLL, EntryPoint = "ecs_map_get_ptr", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_map_get_ptr", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern IntPtr map_get_ptr(Map map, ulong keyHash);
 
         ///<code>
         ///int ecs_map_remove(ecs_map_t *, uint64_t)
         ///</code>
         // ecs_map_remove: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/map.h#L83
-        [DllImport(DLL, EntryPoint = "ecs_map_remove", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_map_remove", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern int map_remove(Map map, ulong keyHash);
 
         ///<code>
         ///ecs_map_iter_t ecs_map_iter(ecs_map_t *)
         ///</code>
         // ecs_map_iter: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/map.h#L88
-        [DllImport(DLL, EntryPoint = "ecs_map_iter", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_map_iter", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern MapIter map_iter(Map map);
 
         ///<code>
         ///bool ecs_map_hasnext(ecs_map_iter_t *)
         ///</code>
         // ecs_map_hasnext: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/map.h#L92
-        [DllImport(DLL, EntryPoint = "ecs_map_hasnext", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_map_hasnext", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern bool map_hasnext(out MapIter it);
 
         ///<code>
         ///void * ecs_map_next(ecs_map_iter_t *)
         ///</code>
         // ecs_map_next: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/map.h#L96
-        [DllImport(DLL, EntryPoint = "ecs_map_next", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_map_next", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern IntPtr map_next(out MapIter it);
 
         ///<code>
         ///void * ecs_map_next_w_size(ecs_map_iter_t *, size_t)
         ///</code>
         // ecs_map_next_w_size: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/map.h#L100
-        [DllImport(DLL, EntryPoint = "ecs_map_next_w_size", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_map_next_w_size", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern IntPtr map_next_w_size(out MapIter it, UIntPtr size);
 
         ///<code>
         ///void * ecs_map_next_w_key(ecs_map_iter_t *, uint64_t *)
         ///</code>
         // ecs_map_next_w_key: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/map.h#L114
-        [DllImport(DLL, EntryPoint = "ecs_map_next_w_key", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_map_next_w_key", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern IntPtr map_next_w_key(out MapIter it, out ulong keyOut);
 
         ///<code>
         ///void * ecs_map_next_w_key_w_size(ecs_map_iter_t *, uint64_t *, size_t)
         ///</code>
         // ecs_map_next_w_key_w_size: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/map.h#L119
-        [DllImport(DLL, EntryPoint = "ecs_map_next_w_key_w_size", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_map_next_w_key_w_size", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern IntPtr map_next_w_key_w_size(out MapIter it, out ulong keyOut, UIntPtr size);
 
         ///<code>
         ///void ecs_get_stats(ecs_world_t *, ecs_world_stats_t *)
         ///</code>
         // ecs_get_stats: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/stats.h#L87
-        [DllImport(DLL, EntryPoint = "ecs_get_stats", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_get_stats", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void get_stats(World world, out WorldStats stats);
 
         ///<code>
         ///void ecs_free_stats(ecs_world_stats_t *)
         ///</code>
         // ecs_free_stats: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/stats.h#L92
-        [DllImport(DLL, EntryPoint = "ecs_free_stats", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_free_stats", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void free_stats(out WorldStats stats);
 
         ///<code>
         ///void ecs_measure_frame_time(ecs_world_t *, bool)
         ///</code>
         // ecs_measure_frame_time: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/stats.h#L96
-        [DllImport(DLL, EntryPoint = "ecs_measure_frame_time", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_measure_frame_time", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void measure_frame_time(World world, bool enable);
 
         ///<code>
         ///void ecs_measure_system_time(ecs_world_t *, bool)
         ///</code>
         // ecs_measure_system_time: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/stats.h#L101
-        [DllImport(DLL, EntryPoint = "ecs_measure_system_time", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_measure_system_time", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void measure_system_time(World world, bool enable);
 
         ///<summary>
@@ -889,7 +889,7 @@ namespace FlecsSharp
         ///ecs_world_t *ecs_init()
         ///</code>
         // ecs_init: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L245
-        [DllImport(DLL, EntryPoint = "ecs_init", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_init", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern World init();
 
         ///<summary>
@@ -907,7 +907,7 @@ namespace FlecsSharp
         ///ecs_world_t *ecs_init_w_args(int argc, char *argv[])
         ///</code>
         // ecs_init_w_args: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L272
-        [DllImport(DLL, EntryPoint = "ecs_init_w_args", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_init_w_args", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern World init_w_args(int argc, out sbyte argv);
 
         ///<summary>
@@ -918,7 +918,7 @@ namespace FlecsSharp
         ///int ecs_fini(ecs_world_t *world)
         ///</code>
         // ecs_fini: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L283
-        [DllImport(DLL, EntryPoint = "ecs_fini", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_fini", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern int fini(World world);
 
         ///<summary>
@@ -929,7 +929,7 @@ namespace FlecsSharp
         ///void ecs_quit(ecs_world_t *world)
         ///</code>
         // ecs_quit: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L293
-        [DllImport(DLL, EntryPoint = "ecs_quit", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_quit", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void quit(World world);
 
         ///<summary>
@@ -949,7 +949,7 @@ namespace FlecsSharp
         ///                                     const char *module_name, int flags)
         ///</code>
         // ecs_import_from_library: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L355
-        [DllImport(DLL, EntryPoint = "ecs_import_from_library", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_import_from_library", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern EntityId import_from_library(World world, CharPtr libraryName, CharPtr moduleName, int flags);
 
         ///<summary>
@@ -972,7 +972,7 @@ namespace FlecsSharp
         ///bool ecs_progress(ecs_world_t *world, float delta_time)
         ///</code>
         // ecs_progress: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L417
-        [DllImport(DLL, EntryPoint = "ecs_progress", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_progress", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern bool progress(World world, float deltaTime);
 
         ///<summary>
@@ -987,7 +987,7 @@ namespace FlecsSharp
         ///void ecs_merge(ecs_world_t *world)
         ///</code>
         // ecs_merge: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L438
-        [DllImport(DLL, EntryPoint = "ecs_merge", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_merge", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void merge(World world);
 
         ///<summary>
@@ -1003,7 +1003,7 @@ namespace FlecsSharp
         ///void ecs_set_automerge(ecs_world_t *world, bool auto_merge)
         ///</code>
         // ecs_set_automerge: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L457
-        [DllImport(DLL, EntryPoint = "ecs_set_automerge", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_set_automerge", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void set_automerge(World world, bool autoMerge);
 
         ///<summary>
@@ -1022,7 +1022,7 @@ namespace FlecsSharp
         ///void ecs_set_threads(ecs_world_t *world, uint32_t threads)
         ///</code>
         // ecs_set_threads: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L477
-        [DllImport(DLL, EntryPoint = "ecs_set_threads", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_set_threads", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void set_threads(World world, uint threads);
 
         ///<summary>
@@ -1032,7 +1032,7 @@ namespace FlecsSharp
         ///uint32_t ecs_get_threads(ecs_world_t *world)
         ///</code>
         // ecs_get_threads: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L483
-        [DllImport(DLL, EntryPoint = "ecs_get_threads", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_get_threads", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern uint get_threads(World world);
 
         ///<summary>
@@ -1042,7 +1042,7 @@ namespace FlecsSharp
         ///uint16_t ecs_get_thread_index(ecs_world_t *world)
         ///</code>
         // ecs_get_thread_index: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L488
-        [DllImport(DLL, EntryPoint = "ecs_get_thread_index", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_get_thread_index", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern ushort get_thread_index(World world);
 
         ///<summary>
@@ -1058,7 +1058,7 @@ namespace FlecsSharp
         ///void ecs_set_target_fps(ecs_world_t *world, float fps)
         ///</code>
         // ecs_set_target_fps: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L513
-        [DllImport(DLL, EntryPoint = "ecs_set_target_fps", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_set_target_fps", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void set_target_fps(World world, float fps);
 
         ///<summary>
@@ -1068,7 +1068,7 @@ namespace FlecsSharp
         ///uint32_t ecs_get_target_fps(ecs_world_t *world)
         ///</code>
         // ecs_get_target_fps: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L519
-        [DllImport(DLL, EntryPoint = "ecs_get_target_fps", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_get_target_fps", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern uint get_target_fps(World world);
 
         ///<summary>
@@ -1083,7 +1083,7 @@ namespace FlecsSharp
         ///int ecs_enable_admin(ecs_world_t *world, uint16_t port)
         ///</code>
         // ecs_enable_admin: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L534
-        [DllImport(DLL, EntryPoint = "ecs_enable_admin", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_enable_admin", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern int enable_admin(World world, ushort port);
 
         ///<summary>
@@ -1093,7 +1093,7 @@ namespace FlecsSharp
         ///float ecs_get_delta_time(ecs_world_t *world)
         ///</code>
         // ecs_get_delta_time: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L540
-        [DllImport(DLL, EntryPoint = "ecs_get_delta_time", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_get_delta_time", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern float get_delta_time(World world);
 
         ///<summary>
@@ -1108,7 +1108,7 @@ namespace FlecsSharp
         ///void ecs_set_context(ecs_world_t *world, void *ctx)
         ///</code>
         // ecs_set_context: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L554
-        [DllImport(DLL, EntryPoint = "ecs_set_context", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_set_context", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void set_context(World world, IntPtr ctx);
 
         ///<summary>
@@ -1122,7 +1122,7 @@ namespace FlecsSharp
         ///void *ecs_get_context(ecs_world_t *world)
         ///</code>
         // ecs_get_context: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L566
-        [DllImport(DLL, EntryPoint = "ecs_get_context", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_get_context", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern IntPtr get_context(World world);
 
         ///<summary>
@@ -1136,7 +1136,7 @@ namespace FlecsSharp
         ///uint32_t ecs_get_tick(ecs_world_t *world)
         ///</code>
         // ecs_get_tick: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L578
-        [DllImport(DLL, EntryPoint = "ecs_get_tick", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_get_tick", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern uint get_tick(World world);
 
         ///<summary>
@@ -1152,7 +1152,7 @@ namespace FlecsSharp
         ///void ecs_dim(ecs_world_t *world, uint32_t entity_count)
         ///</code>
         // ecs_dim: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L599
-        [DllImport(DLL, EntryPoint = "ecs_dim", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_dim", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void dim(World world, uint entityCount);
 
         ///<summary>
@@ -1170,7 +1170,7 @@ namespace FlecsSharp
         ///                          ecs_entity_t id_end)
         ///</code>
         // ecs_set_entity_range: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L648
-        [DllImport(DLL, EntryPoint = "ecs_set_entity_range", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_set_entity_range", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void set_entity_range(World world, EntityId idStart, EntityId idEnd);
 
         ///<summary>
@@ -1183,7 +1183,7 @@ namespace FlecsSharp
         ///bool ecs_enable_range_check(ecs_world_t *world, bool enable)
         ///</code>
         // ecs_enable_range_check: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L661
-        [DllImport(DLL, EntryPoint = "ecs_enable_range_check", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_enable_range_check", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern bool enable_range_check(World world, bool enable);
 
         ///<summary>
@@ -1201,7 +1201,7 @@ namespace FlecsSharp
         ///ecs_entity_t ecs_set_w_data(ecs_world_t *world, ecs_table_data_t *data)
         ///</code>
         // ecs_set_w_data: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L758
-        [DllImport(DLL, EntryPoint = "ecs_set_w_data", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_set_w_data", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern EntityId set_w_data(World world, out TableData data);
 
         ///<summary>
@@ -1220,7 +1220,7 @@ namespace FlecsSharp
         ///ecs_entity_t ecs_clone(ecs_world_t *world, ecs_entity_t entity, bool copy_value)
         ///</code>
         // ecs_clone: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L857
-        [DllImport(DLL, EntryPoint = "ecs_clone", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_clone", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern EntityId clone(World world, EntityId entity, bool copyValue);
 
         ///<summary>
@@ -1236,7 +1236,7 @@ namespace FlecsSharp
         ///void ecs_delete(ecs_world_t *world, ecs_entity_t entity)
         ///</code>
         // ecs_delete: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L878
-        [DllImport(DLL, EntryPoint = "ecs_delete", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_delete", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void delete(World world, EntityId entity);
 
         ///<summary>
@@ -1248,7 +1248,7 @@ namespace FlecsSharp
         ///void ecs_delete_w_filter(ecs_world_t *world, ecs_type_filter_t *filter)
         ///</code>
         // ecs_delete_w_filter: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L891
-        [DllImport(DLL, EntryPoint = "ecs_delete_w_filter", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_delete_w_filter", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void delete_w_filter(World world, out TypeFilter filter);
 
         ///<summary>
@@ -1265,7 +1265,7 @@ namespace FlecsSharp
         ///void ecs_adopt(ecs_world_t *world, ecs_entity_t entity, ecs_entity_t parent)
         ///</code>
         // ecs_adopt: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L981
-        [DllImport(DLL, EntryPoint = "ecs_adopt", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_adopt", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void adopt(World world, EntityId entity, EntityId parent);
 
         ///<summary>
@@ -1281,7 +1281,7 @@ namespace FlecsSharp
         ///void ecs_orphan(ecs_world_t *world, ecs_entity_t entity, ecs_entity_t parent)
         ///</code>
         // ecs_orphan: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L999
-        [DllImport(DLL, EntryPoint = "ecs_orphan", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_orphan", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void orphan(World world, EntityId entity, EntityId parent);
 
         ///<summary>
@@ -1294,7 +1294,7 @@ namespace FlecsSharp
         ///void ecs_inherit(ecs_world_t *world, ecs_entity_t entity, ecs_entity_t base)
         ///</code>
         // ecs_inherit: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1014
-        [DllImport(DLL, EntryPoint = "ecs_inherit", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_inherit", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void inherit(World world, EntityId entity, EntityId @base);
 
         ///<summary>
@@ -1307,14 +1307,14 @@ namespace FlecsSharp
         ///void ecs_disinherit(ecs_world_t *world, ecs_entity_t entity, ecs_entity_t base)
         ///</code>
         // ecs_disinherit: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1029
-        [DllImport(DLL, EntryPoint = "ecs_disinherit", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_disinherit", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void disinherit(World world, EntityId entity, EntityId @base);
 
         ///<code>
         ///bool ecs_has_entity(ecs_world_t *, ecs_entity_t, ecs_entity_t)
         ///</code>
         // ecs_has_entity: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1220
-        [DllImport(DLL, EntryPoint = "ecs_has_entity", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_has_entity", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern bool has_entity(World world, EntityId entity, EntityId component);
 
         ///<summary>
@@ -1333,7 +1333,7 @@ namespace FlecsSharp
         ///bool ecs_contains(ecs_world_t *world, ecs_entity_t parent, ecs_entity_t child)
         ///</code>
         // ecs_contains: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1238
-        [DllImport(DLL, EntryPoint = "ecs_contains", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_contains", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern bool contains(World world, EntityId parent, EntityId child);
 
         ///<summary>
@@ -1352,7 +1352,7 @@ namespace FlecsSharp
         ///ecs_type_t ecs_get_type(ecs_world_t *world, ecs_entity_t entity)
         ///</code>
         // ecs_get_type: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1278
-        [DllImport(DLL, EntryPoint = "ecs_get_type", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_get_type", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern TypeId get_type(World world, EntityId entity);
 
         ///<summary>
@@ -1370,7 +1370,7 @@ namespace FlecsSharp
         ///const char *ecs_get_id(ecs_world_t *world, ecs_entity_t entity)
         ///</code>
         // ecs_get_id: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1295
-        [DllImport(DLL, EntryPoint = "ecs_get_id", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_get_id", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern CharPtr get_id(World world, EntityId entity);
 
         ///<summary>
@@ -1385,7 +1385,7 @@ namespace FlecsSharp
         ///bool ecs_is_empty(ecs_world_t *world, ecs_entity_t entity)
         ///</code>
         // ecs_is_empty: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1308
-        [DllImport(DLL, EntryPoint = "ecs_is_empty", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_is_empty", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern bool is_empty(World world, EntityId entity);
 
         ///<summary>
@@ -1400,7 +1400,7 @@ namespace FlecsSharp
         ///ecs_entity_t ecs_lookup(ecs_world_t *world, const char *id)
         ///</code>
         // ecs_lookup: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1341
-        [DllImport(DLL, EntryPoint = "ecs_lookup", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_lookup", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern EntityId lookup(World world, CharPtr id);
 
         ///<summary>
@@ -1422,7 +1422,7 @@ namespace FlecsSharp
         ///                              const char *id)
         ///</code>
         // ecs_lookup_child: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1362
-        [DllImport(DLL, EntryPoint = "ecs_lookup_child", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_lookup_child", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern EntityId lookup_child(World world, EntityId parent, CharPtr id);
 
         ///<summary>
@@ -1437,7 +1437,7 @@ namespace FlecsSharp
         ///ecs_type_t ecs_type_from_entity(ecs_world_t *world, ecs_entity_t entity)
         ///</code>
         // ecs_type_from_entity: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1389
-        [DllImport(DLL, EntryPoint = "ecs_type_from_entity", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_type_from_entity", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern TypeId type_from_entity(World world, EntityId entity);
 
         ///<summary>
@@ -1455,7 +1455,7 @@ namespace FlecsSharp
         ///ecs_entity_t ecs_type_to_entity(ecs_world_t *world, ecs_type_t type)
         ///</code>
         // ecs_type_to_entity: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1407
-        [DllImport(DLL, EntryPoint = "ecs_type_to_entity", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_type_to_entity", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern EntityId type_to_entity(World world, TypeId type);
 
         ///<summary>
@@ -1472,7 +1472,7 @@ namespace FlecsSharp
         ///                        ecs_entity_t entity)
         ///</code>
         // ecs_type_add: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1422
-        [DllImport(DLL, EntryPoint = "ecs_type_add", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_type_add", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern TypeId type_add(World world, TypeId type, EntityId entity);
 
         ///<summary>
@@ -1490,7 +1490,7 @@ namespace FlecsSharp
         ///                          ecs_type_t type_add, ecs_type_t type_remove)
         ///</code>
         // ecs_type_merge: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1442
-        [DllImport(DLL, EntryPoint = "ecs_type_merge", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_type_merge", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern TypeId type_merge(World world, TypeId type, TypeId typeAdd, TypeId typeRemove);
 
         ///<summary>
@@ -1507,7 +1507,7 @@ namespace FlecsSharp
         ///                         uint32_t count)
         ///</code>
         // ecs_type_find: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1459
-        [DllImport(DLL, EntryPoint = "ecs_type_find", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_type_find", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern TypeId type_find(World world, out EntityId array, uint count);
 
         ///<summary>
@@ -1524,7 +1524,7 @@ namespace FlecsSharp
         ///                                 uint32_t index)
         ///</code>
         // ecs_type_get_entity: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1474
-        [DllImport(DLL, EntryPoint = "ecs_type_get_entity", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_type_get_entity", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern EntityId type_get_entity(World world, TypeId type, uint index);
 
         ///<summary>
@@ -1541,7 +1541,7 @@ namespace FlecsSharp
         ///                         ecs_entity_t entity)
         ///</code>
         // ecs_type_has_entity: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1488
-        [DllImport(DLL, EntryPoint = "ecs_type_has_entity", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_type_has_entity", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern bool type_has_entity(World world, TypeId type, EntityId entity);
 
         ///<summary>
@@ -1566,7 +1566,7 @@ namespace FlecsSharp
         ///ecs_type_t ecs_expr_to_type(ecs_world_t *world, const char *expr)
         ///</code>
         // ecs_expr_to_type: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1528
-        [DllImport(DLL, EntryPoint = "ecs_expr_to_type", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_expr_to_type", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern TypeId expr_to_type(World world, CharPtr expr);
 
         ///<summary>
@@ -1581,14 +1581,14 @@ namespace FlecsSharp
         ///char *ecs_type_to_expr(ecs_world_t *world, ecs_type_t type)
         ///</code>
         // ecs_type_to_expr: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1544
-        [DllImport(DLL, EntryPoint = "ecs_type_to_expr", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_type_to_expr", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern CharPtr type_to_expr(World world, TypeId type);
 
         ///<code>
         ///bool ecs_type_match_w_filter(ecs_world_t *, ecs_type_t, ecs_type_filter_t *)
         ///</code>
         // ecs_type_match_w_filter: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1549
-        [DllImport(DLL, EntryPoint = "ecs_type_match_w_filter", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_type_match_w_filter", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern bool type_match_w_filter(World world, TypeId type, out TypeFilter filter);
 
         ///<summary>
@@ -1607,7 +1607,7 @@ namespace FlecsSharp
         ///void ecs_enable(ecs_world_t *world, ecs_entity_t system, bool enabled)
         ///</code>
         // ecs_enable: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1571
-        [DllImport(DLL, EntryPoint = "ecs_enable", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_enable", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void enable(World world, EntityId system, bool enabled);
 
         ///<summary>
@@ -1625,7 +1625,7 @@ namespace FlecsSharp
         ///void ecs_set_period(ecs_world_t *world, ecs_entity_t system, float period)
         ///</code>
         // ecs_set_period: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1598
-        [DllImport(DLL, EntryPoint = "ecs_set_period", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_set_period", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void set_period(World world, EntityId system, float period);
 
         ///<summary>
@@ -1640,7 +1640,7 @@ namespace FlecsSharp
         ///bool ecs_is_enabled(ecs_world_t *world, ecs_entity_t system)
         ///</code>
         // ecs_is_enabled: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1614
-        [DllImport(DLL, EntryPoint = "ecs_is_enabled", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_is_enabled", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern bool is_enabled(World world, EntityId system);
 
         ///<summary>
@@ -1663,7 +1663,7 @@ namespace FlecsSharp
         ///                     void *param)
         ///</code>
         // ecs_run: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1646
-        [DllImport(DLL, EntryPoint = "ecs_run", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_run", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern EntityId run(World world, EntityId system, float deltaTime, IntPtr param);
 
         ///<summary>
@@ -1677,7 +1677,7 @@ namespace FlecsSharp
         ///                            const void *ctx)
         ///</code>
         // ecs_set_system_context: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1697
-        [DllImport(DLL, EntryPoint = "ecs_set_system_context", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_set_system_context", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void set_system_context(World world, EntityId system, IntPtr ctx);
 
         ///<summary>
@@ -1692,7 +1692,7 @@ namespace FlecsSharp
         ///void *ecs_get_system_context(ecs_world_t *world, ecs_entity_t system)
         ///</code>
         // ecs_get_system_context: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1710
-        [DllImport(DLL, EntryPoint = "ecs_get_system_context", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_get_system_context", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern IntPtr get_system_context(World world, EntityId system);
 
         ///<summary>
@@ -1712,7 +1712,7 @@ namespace FlecsSharp
         ///bool ecs_is_shared(ecs_rows_t *rows, uint32_t column)
         ///</code>
         // ecs_is_shared: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1767
-        [DllImport(DLL, EntryPoint = "ecs_is_shared", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_is_shared", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern bool is_shared(out Rows rows, uint column);
 
         ///<summary>
@@ -1731,7 +1731,7 @@ namespace FlecsSharp
         ///ecs_entity_t ecs_column_source(ecs_rows_t *rows, uint32_t column)
         ///</code>
         // ecs_column_source: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1815
-        [DllImport(DLL, EntryPoint = "ecs_column_source", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_column_source", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern EntityId column_source(out Rows rows, uint column);
 
         ///<summary>
@@ -1751,7 +1751,7 @@ namespace FlecsSharp
         ///ecs_entity_t ecs_column_entity(ecs_rows_t *rows, uint32_t column)
         ///</code>
         // ecs_column_entity: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1838
-        [DllImport(DLL, EntryPoint = "ecs_column_entity", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_column_entity", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern EntityId column_entity(out Rows rows, uint column);
 
         ///<summary>
@@ -1773,7 +1773,7 @@ namespace FlecsSharp
         ///ecs_type_t ecs_column_type(ecs_rows_t *rows, uint32_t column)
         ///</code>
         // ecs_column_type: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1864
-        [DllImport(DLL, EntryPoint = "ecs_column_type", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_column_type", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern TypeId column_type(out Rows rows, uint column);
 
         ///<summary>
@@ -1783,7 +1783,7 @@ namespace FlecsSharp
         ///ecs_type_t ecs_table_type(ecs_rows_t *rows)
         ///</code>
         // ecs_table_type: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1870
-        [DllImport(DLL, EntryPoint = "ecs_table_type", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_table_type", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern TypeId table_type(out Rows rows);
 
         ///<summary>
@@ -1793,7 +1793,7 @@ namespace FlecsSharp
         ///void *ecs_table_column(ecs_rows_t *rows, uint32_t column)
         ///</code>
         // ecs_table_column: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1875
-        [DllImport(DLL, EntryPoint = "ecs_table_column", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_table_column", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern IntPtr table_column(out Rows rows, uint column);
 
         ///<summary>
@@ -1814,7 +1814,7 @@ namespace FlecsSharp
         ///                            const char *components)
         ///</code>
         // ecs_new_entity: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1895
-        [DllImport(DLL, EntryPoint = "ecs_new_entity", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_new_entity", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern EntityId new_entity(World world, CharPtr id, CharPtr components);
 
         ///<summary>
@@ -1835,7 +1835,7 @@ namespace FlecsSharp
         ///ecs_entity_t ecs_new_component(ecs_world_t *world, const char *id, size_t size)
         ///</code>
         // ecs_new_component: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1924
-        [DllImport(DLL, EntryPoint = "ecs_new_component", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_new_component", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern EntityId new_component(World world, CharPtr id, UIntPtr size);
 
         ///<summary>
@@ -1862,7 +1862,7 @@ namespace FlecsSharp
         ///                            ecs_system_action_t action)
         ///</code>
         // ecs_new_system: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1963
-        [DllImport(DLL, EntryPoint = "ecs_new_system", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_new_system", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern EntityId new_system(World world, CharPtr id, SystemKind kind, CharPtr sig, SystemActionDelegate action);
 
         ///<summary>
@@ -1882,7 +1882,7 @@ namespace FlecsSharp
         ///                          const char *components)
         ///</code>
         // ecs_new_type: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1988
-        [DllImport(DLL, EntryPoint = "ecs_new_type", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_new_type", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern EntityId new_type(World world, CharPtr id, CharPtr components);
 
         ///<summary>
@@ -1903,7 +1903,7 @@ namespace FlecsSharp
         ///ecs_entity_t ecs_new_prefab(ecs_world_t *world, const char *id, const char *sig)
         ///</code>
         // ecs_new_prefab: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L2030
-        [DllImport(DLL, EntryPoint = "ecs_new_prefab", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_new_prefab", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern EntityId new_prefab(World world, CharPtr id, CharPtr sig);
 
         ///<summary>
@@ -1913,7 +1913,7 @@ namespace FlecsSharp
         ///const char *ecs_strerror(uint32_t error_code)
         ///</code>
         // ecs_strerror: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L2040
-        [DllImport(DLL, EntryPoint = "ecs_strerror", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "ecs_strerror", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern CharPtr strerror(uint errorCode);
 
 #region Size check
@@ -1949,49 +1949,49 @@ namespace FlecsSharp
         ///ecs_chunked_t * _ecs_chunked_new(uint32_t, uint32_t, uint32_t)
         ///</code>
         // _ecs_chunked_new: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/chunked.h#L11
-        [DllImport(DLL, EntryPoint = "_ecs_chunked_new", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "_ecs_chunked_new", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern Chunked chunked_new(uint elementSize, uint chunkSize, uint chunkCount);
 
         ///<code>
         ///void * _ecs_chunked_add(ecs_chunked_t *, uint32_t)
         ///</code>
         // _ecs_chunked_add: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/chunked.h#L28
-        [DllImport(DLL, EntryPoint = "_ecs_chunked_add", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "_ecs_chunked_add", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern IntPtr chunked_add(Chunked chunked, uint size);
 
         ///<code>
         ///void * _ecs_chunked_remove(ecs_chunked_t *, uint32_t, uint32_t)
         ///</code>
         // _ecs_chunked_remove: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/chunked.h#L36
-        [DllImport(DLL, EntryPoint = "_ecs_chunked_remove", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "_ecs_chunked_remove", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern IntPtr chunked_remove(Chunked chunked, uint size, uint index);
 
         ///<code>
         ///void * _ecs_chunked_get(const ecs_chunked_t *, uint32_t, uint32_t)
         ///</code>
         // _ecs_chunked_get: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/chunked.h#L45
-        [DllImport(DLL, EntryPoint = "_ecs_chunked_get", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "_ecs_chunked_get", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern IntPtr chunked_get(Chunked chunked, uint size, uint index);
 
         ///<code>
         ///void * _ecs_chunked_get_sparse(const ecs_chunked_t *, uint32_t, uint32_t)
         ///</code>
         // _ecs_chunked_get_sparse: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/chunked.h#L58
-        [DllImport(DLL, EntryPoint = "_ecs_chunked_get_sparse", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "_ecs_chunked_get_sparse", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern IntPtr chunked_get_sparse(Chunked chunked, uint size, uint index);
 
         ///<code>
         ///void * _ecs_map_set(ecs_map_t *, uint64_t, const void *, uint32_t)
         ///</code>
         // _ecs_map_set: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/map.h#L58
-        [DllImport(DLL, EntryPoint = "_ecs_map_set", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "_ecs_map_set", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern IntPtr map_set(Map map, ulong keyHash, IntPtr data, uint size);
 
         ///<code>
         ///bool _ecs_map_has(ecs_map_t *, uint64_t, void *, uint32_t)
         ///</code>
         // _ecs_map_has: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/map.h#L68
-        [DllImport(DLL, EntryPoint = "_ecs_map_has", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "_ecs_map_has", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern bool map_has(Map map, ulong keyHash, IntPtr valueOut, uint size);
 
         ///<summary>
@@ -2015,7 +2015,7 @@ namespace FlecsSharp
         ///                         size_t handles_size)
         ///</code>
         // _ecs_import: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L327
-        [DllImport(DLL, EntryPoint = "_ecs_import", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "_ecs_import", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern EntityId import(World world, ModuleInitActionDelegate module, CharPtr moduleName, int flags, IntPtr handlesOut, UIntPtr handlesSize);
 
         ///<summary>
@@ -2032,7 +2032,7 @@ namespace FlecsSharp
         ///void _ecs_dim_type(ecs_world_t *world, ecs_type_t type, uint32_t entity_count)
         ///</code>
         // _ecs_dim_type: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L621
-        [DllImport(DLL, EntryPoint = "_ecs_dim_type", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "_ecs_dim_type", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void dim_type(World world, TypeId type, uint entityCount);
 
         ///<summary>
@@ -2052,7 +2052,7 @@ namespace FlecsSharp
         ///ecs_entity_t _ecs_new(ecs_world_t *world, ecs_type_t type)
         ///</code>
         // _ecs_new: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L687
-        [DllImport(DLL, EntryPoint = "_ecs_new", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "_ecs_new", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern EntityId @new(World world, TypeId type);
 
         ///<summary>
@@ -2070,7 +2070,7 @@ namespace FlecsSharp
         ///                              uint32_t count)
         ///</code>
         // _ecs_new_w_count: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L706
-        [DllImport(DLL, EntryPoint = "_ecs_new_w_count", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "_ecs_new_w_count", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern EntityId new_w_count(World world, TypeId type, uint count);
 
         ///<summary>
@@ -2091,7 +2091,7 @@ namespace FlecsSharp
         ///                            ecs_type_t type)
         ///</code>
         // _ecs_new_child: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L777
-        [DllImport(DLL, EntryPoint = "_ecs_new_child", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "_ecs_new_child", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern EntityId new_child(World world, EntityId parent, TypeId type);
 
         ///<summary>
@@ -2106,7 +2106,7 @@ namespace FlecsSharp
         ///                                    ecs_type_t type, uint32_t count)
         ///</code>
         // _ecs_new_child_w_count: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L796
-        [DllImport(DLL, EntryPoint = "_ecs_new_child_w_count", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "_ecs_new_child_w_count", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern EntityId new_child_w_count(World world, EntityId parent, TypeId type, uint count);
 
         ///<summary>
@@ -2122,7 +2122,7 @@ namespace FlecsSharp
         ///                               ecs_type_t type)
         ///</code>
         // _ecs_new_instance: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L815
-        [DllImport(DLL, EntryPoint = "_ecs_new_instance", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "_ecs_new_instance", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern EntityId new_instance(World world, EntityId @base, TypeId type);
 
         ///<summary>
@@ -2138,7 +2138,7 @@ namespace FlecsSharp
         ///                                       ecs_type_t type, uint32_t count)
         ///</code>
         // _ecs_new_instance_w_count: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L833
-        [DllImport(DLL, EntryPoint = "_ecs_new_instance_w_count", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "_ecs_new_instance_w_count", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern EntityId new_instance_w_count(World world, EntityId @base, TypeId type, uint count);
 
         ///<summary>
@@ -2154,7 +2154,7 @@ namespace FlecsSharp
         ///void _ecs_add(ecs_world_t *world, ecs_entity_t entity, ecs_type_t type)
         ///</code>
         // _ecs_add: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L909
-        [DllImport(DLL, EntryPoint = "_ecs_add", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "_ecs_add", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void add(World world, EntityId entity, TypeId type);
 
         ///<summary>
@@ -2170,7 +2170,7 @@ namespace FlecsSharp
         ///void _ecs_remove(ecs_world_t *world, ecs_entity_t entity, ecs_type_t type)
         ///</code>
         // _ecs_remove: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L932
-        [DllImport(DLL, EntryPoint = "_ecs_remove", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "_ecs_remove", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void remove(World world, EntityId entity, TypeId type);
 
         ///<summary>
@@ -2185,7 +2185,7 @@ namespace FlecsSharp
         ///                     ecs_type_t to_remove)
         ///</code>
         // _ecs_add_remove: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L954
-        [DllImport(DLL, EntryPoint = "_ecs_add_remove", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "_ecs_add_remove", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void add_remove(World world, EntityId entity, TypeId toAdd, TypeId toRemove);
 
         ///<summary>
@@ -2204,7 +2204,7 @@ namespace FlecsSharp
         ///                              ecs_type_t to_remove, ecs_type_filter_t *filter)
         ///</code>
         // _ecs_add_remove_w_filter: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1054
-        [DllImport(DLL, EntryPoint = "_ecs_add_remove_w_filter", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "_ecs_add_remove_w_filter", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void add_remove_w_filter(World world, TypeId toAdd, TypeId toRemove, out TypeFilter filter);
 
         ///<summary>
@@ -2225,7 +2225,7 @@ namespace FlecsSharp
         ///void *_ecs_get_ptr(ecs_world_t *world, ecs_entity_t entity, ecs_type_t type)
         ///</code>
         // _ecs_get_ptr: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1084
-        [DllImport(DLL, EntryPoint = "_ecs_get_ptr", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "_ecs_get_ptr", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern IntPtr get_ptr(World world, EntityId entity, TypeId type);
 
         ///<summary>
@@ -2244,14 +2244,14 @@ namespace FlecsSharp
         ///                          ecs_entity_t component, size_t size, void *ptr)
         ///</code>
         // _ecs_set_ptr: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1121
-        [DllImport(DLL, EntryPoint = "_ecs_set_ptr", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "_ecs_set_ptr", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern EntityId set_ptr(World world, EntityId entity, EntityId component, UIntPtr size, IntPtr ptr);
 
         ///<code>
         ///ecs_entity_t _ecs_set_singleton_ptr(ecs_world_t *, ecs_entity_t, size_t, void *)
         ///</code>
         // _ecs_set_singleton_ptr: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1129
-        [DllImport(DLL, EntryPoint = "_ecs_set_singleton_ptr", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "_ecs_set_singleton_ptr", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern EntityId set_singleton_ptr(World world, EntityId component, UIntPtr size, IntPtr ptr);
 
         ///<summary>
@@ -2270,7 +2270,7 @@ namespace FlecsSharp
         ///bool _ecs_has(ecs_world_t *world, ecs_entity_t entity, ecs_type_t type)
         ///</code>
         // _ecs_has: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1166
-        [DllImport(DLL, EntryPoint = "_ecs_has", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "_ecs_has", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern bool has(World world, EntityId entity, TypeId type);
 
         ///<summary>
@@ -2280,7 +2280,7 @@ namespace FlecsSharp
         ///bool _ecs_has_owned(ecs_world_t *world, ecs_entity_t entity, ecs_type_t type)
         ///</code>
         // _ecs_has_owned: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1177
-        [DllImport(DLL, EntryPoint = "_ecs_has_owned", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "_ecs_has_owned", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern bool has_owned(World world, EntityId entity, TypeId type);
 
         ///<summary>
@@ -2299,7 +2299,7 @@ namespace FlecsSharp
         ///bool _ecs_has_any(ecs_world_t *world, ecs_entity_t entity, ecs_type_t type)
         ///</code>
         // _ecs_has_any: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1200
-        [DllImport(DLL, EntryPoint = "_ecs_has_any", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "_ecs_has_any", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern bool has_any(World world, EntityId entity, TypeId type);
 
         ///<summary>
@@ -2310,7 +2310,7 @@ namespace FlecsSharp
         ///                        ecs_type_t type)
         ///</code>
         // _ecs_has_any_owned: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1210
-        [DllImport(DLL, EntryPoint = "_ecs_has_any_owned", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "_ecs_has_any_owned", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern bool has_any_owned(World world, EntityId entity, TypeId type);
 
         ///<summary>
@@ -2324,7 +2324,7 @@ namespace FlecsSharp
         ///                             ecs_entity_t component)
         ///</code>
         // _ecs_get_parent: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1254
-        [DllImport(DLL, EntryPoint = "_ecs_get_parent", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "_ecs_get_parent", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern EntityId get_parent(World world, EntityId entity, EntityId component);
 
         ///<summary>
@@ -2339,7 +2339,7 @@ namespace FlecsSharp
         ///uint32_t _ecs_count(ecs_world_t *world, ecs_type_t type)
         ///</code>
         // _ecs_count: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1324
-        [DllImport(DLL, EntryPoint = "_ecs_count", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "_ecs_count", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern uint count(World world, TypeId type);
 
         ///<summary>
@@ -2363,7 +2363,7 @@ namespace FlecsSharp
         ///                               uint32_t limit, ecs_type_t filter, void *param)
         ///</code>
         // _ecs_run_w_filter: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1674
-        [DllImport(DLL, EntryPoint = "_ecs_run_w_filter", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "_ecs_run_w_filter", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern EntityId run_w_filter(World world, EntityId system, float deltaTime, uint offset, uint limit, TypeId filter, IntPtr param);
 
         ///<summary>
@@ -2384,7 +2384,7 @@ namespace FlecsSharp
         ///void *_ecs_column(ecs_rows_t *rows, size_t size, uint32_t column)
         ///</code>
         // _ecs_column: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1737
-        [DllImport(DLL, EntryPoint = "_ecs_column", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "_ecs_column", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern IntPtr column(out Rows rows, UIntPtr size, uint column);
 
         ///<summary>
@@ -2398,7 +2398,7 @@ namespace FlecsSharp
         ///void *_ecs_field(ecs_rows_t *rows, size_t size, uint32_t column, uint32_t row)
         ///</code>
         // _ecs_field: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1787
-        [DllImport(DLL, EntryPoint = "_ecs_field", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "_ecs_field", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern IntPtr field(out Rows rows, UIntPtr size, uint column, uint row);
 
         ///<summary>
@@ -2409,7 +2409,7 @@ namespace FlecsSharp
         ///                uint32_t line)
         ///</code>
         // _ecs_abort: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L2045
-        [DllImport(DLL, EntryPoint = "_ecs_abort", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "_ecs_abort", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void abort(uint errorCode, CharPtr param, CharPtr file, uint line);
 
         ///<summary>
@@ -2420,7 +2420,7 @@ namespace FlecsSharp
         ///                 const char *condition_str, const char *file, uint32_t line)
         ///</code>
         // _ecs_assert: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L2053
-        [DllImport(DLL, EntryPoint = "_ecs_assert", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+        [DllImport(ecs.DLL, EntryPoint = "_ecs_assert", CallingConvention=CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
         public static extern void assert(bool condition, uint errorCode, CharPtr param, CharPtr conditionStr, CharPtr file, uint line);
 
 #region Size check
