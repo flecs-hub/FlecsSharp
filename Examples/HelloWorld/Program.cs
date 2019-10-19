@@ -1,74 +1,74 @@
 ﻿using FlecsSharp;
 using System;
 
+
 namespace HelloWorld
 {
-    class Program
-    {
-        public struct Position
-        {
-            public float X { get; set; }
-            public float Y { get; set; }
-        }
+	class Program
+	{
+		public struct Position
+		{
+			public float X { get; set; }
+			public float Y { get; set; }
+		}
 
-        public struct Speed
-        {
-            public int SpeedValue { get; set; }
-        }
+		public struct Speed
+		{
+			public int SpeedValue { get; set; }
+		}
 
-        static void PositionSystem(ref Rows rows, Span<Position> position)
-        {
-            for (int i = 0; i < (int)rows.Count; i++)
-            {
-                var entityId = rows[i];
+		static void PositionSystem(ref Rows rows, Span<Position> position)
+		{
+			for (int i = 0; i < (int)rows.Count; i++)
+			{
+				var entityId = rows[i];
 				ref var pos = ref position[i];
 				pos.X += 1;
 				pos.Y += 1;
-            }
-        }
+			}
+		}
 
-        static void MoveSystem(ref Rows rows, Span<Position> position, Span<Speed> speed)
-        {
+		static void MoveSystem(ref Rows rows, Span<Position> position, Span<Speed> speed)
+		{
 			Console.WriteLine($"MoveSystem: {rows.Count}");
 			for (int i = 0; i < (int)rows.Count; i++)
-            {
-                var entityId = rows[i];
+			{
+				var entityId = rows[i];
 				ref var pos = ref position[i];
 				pos.X += speed[i].SpeedValue * rows.DeltaTime;
 				pos.Y += speed[i].SpeedValue * rows.DeltaTime;
 			}
-        }
+		}
 
 
 		static void Main(string[] args)
-        {
-            using (var world = World.Create())
-            {
-                world.AddSystem<Position, Speed>(MoveSystem, SystemKind.OnUpdate);
-                world.AddSystem<Position>(PositionSystem, SystemKind.OnUpdate);
+		{
+			using (var world = World.Create())
+			{
+				world.AddSystem<Position, Speed>(MoveSystem, SystemKind.OnUpdate);
+				world.AddSystem<Position>(PositionSystem, SystemKind.OnUpdate);
 
-				world.NewEntity("MyEntity1", new Position { X = 1, Y = 2 }, new Speed { SpeedValue = 5 });
-                world.NewEntity("MyEntity2", new Position { X = 1, Y = 2 }, new Speed { SpeedValue = 5 });
+				world.NewEntity("MyEntity1", new Position {X = 1, Y = 2}, new Speed {SpeedValue = 5});
+				world.NewEntity("MyEntity2", new Position {X = 1, Y = 2}, new Speed {SpeedValue = 5});
 
-                world.NewEntity("MyEntity3", new Position { X = 14, Y = 2 });
-                world.NewEntity("MyEntity4", new Position { X = 13, Y = 2 });
+				world.NewEntity("MyEntity3", new Position {X = 14, Y = 2});
+				world.NewEntity("MyEntity4", new Position {X = 13, Y = 2});
 
 				world.NewEntity<Position, Speed>();
 				world.NewEntity<Speed, Position>();
 
-				world.NewEntity(new Position { X = 75, Y = 23 }, new Speed { SpeedValue = 66 });
+				world.NewEntity(new Position {X = 75, Y = 23}, new Speed {SpeedValue = 66});
 
 				world.GetStats(out var stats);
-                stats.FreeStats();
+				stats.FreeStats();
 
-                var i = 0;
-                while (world.Progress(1))
-                {
-                    if (i++ > 3)
-                        break;
-                }
-            }
-        }
-
-    }
+				var i = 0;
+				while (world.Progress(1))
+				{
+					if (i++ > 3)
+						break;
+				}
+			}
+		}
+	}
 }
