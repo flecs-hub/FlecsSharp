@@ -90,9 +90,9 @@ namespace FlecsSharp
 
         public void AddSystem<T1>(SystemAction<T1> systemImpl, SystemKind kind) where T1 : unmanaged
         {
-            SystemActionDelegate del = delegate (ref Rows e)
+            SystemActionDelegate del = delegate(ref Rows e)
             {
-                var set1 = (T1*)_ecs.column(out e, new UIntPtr((uint)sizeof(T1)), 1);
+                var set1 = (T1*)_ecs.column(out e, (UIntPtr)Marshal.SizeOf<T1>(), 1);
                 systemImpl(ref e, new Span<T1>(set1, (int)e.count));
             };
 
@@ -103,10 +103,13 @@ namespace FlecsSharp
             where T1 : unmanaged
             where T2 : unmanaged
         {
-            SystemActionDelegate del = delegate (ref Rows e)
+            SystemActionDelegate del = delegate(ref Rows e)
             {
-                var set1 = (T1*)_ecs.column(out e, new UIntPtr((uint)sizeof(T1)), 1);
-                var set2 = (T2*)_ecs.column(out e, new UIntPtr((uint)sizeof(T2)), 2);
+				var wtf = (UIntPtr)Marshal.SizeOf<T1>();
+				var ftw = new UIntPtr((uint)sizeof(T1));
+
+				var set1 = (T1*)_ecs.column(out e, (UIntPtr)Marshal.SizeOf<T1>(), 1);
+                var set2 = (T2*)_ecs.column(out e, (UIntPtr)Marshal.SizeOf<T2>(), 2);
                 systemImpl(ref e, new Span<T1>(set1, (int)e.Count), new Span<T2>(set2, (int)e.Count));
             };
 
@@ -129,17 +132,50 @@ namespace FlecsSharp
             return components;
         }
 
+		EntityId NewEntity(string entityName, params Type[] componentTypes)
+		{
+			var entityNamePtr = StringBuffer.AddUTF8String(entityName);
+			var components = BuildComponentQuery(componentTypes);
+			var componentsQueryPtr = StringBuffer.AddUTF8String(components);
+			var entityId = ecs.new_entity(this, entityNamePtr, componentsQueryPtr);
+			return entityId;
+		}
 
-        EntityId NewEntity(string entityName, params Type[] componentTypes)
-        {
-            var entityNamePtr = StringBuffer.AddUTF8String(entityName);
-            var components = BuildComponentQuery(componentTypes);
-            var componentsQueryPtr = StringBuffer.AddUTF8String(components);
-            var entityId = ecs.new_entity(this, entityNamePtr, componentsQueryPtr);
-            return entityId;
-        }
+		EntityId NewEntity(params Type[] componentTypes)
+		{
+			var components = BuildComponentQuery(componentTypes);
+			var componentsQueryPtr = StringBuffer.AddUTF8String(components);
+			var typeId = ecs.expr_to_type(this, componentsQueryPtr);
+			return _ecs.@new(this, typeId);
+		}
 
-        public unsafe EntityId NewEntity<T1>(string entityName, T1 comp1 = default) where T1 : unmanaged
+		public EntityId NewEntity<T1>() where T1 : unmanaged
+		{
+			var typeId = GetTypeId(typeof(T1));
+			return _ecs.@new(this, typeId);
+		}
+
+		public EntityId NewEntity<T1, T2>() where T1 : unmanaged where T2 : unmanaged
+		{
+			return NewEntity(typeof(T1), typeof(T2));
+		}
+
+		public EntityId NewEntity<T1>(T1 comp1 = default) where T1 : unmanaged
+		{
+			var entityId = NewEntity<T1>();
+			Set(entityId, comp1);
+			return entityId;
+		}
+
+		public EntityId NewEntity<T1, T2>(T1 comp1 = default, T2 comp2 = default) where T1 : unmanaged where T2 : unmanaged
+		{
+			var entityId = NewEntity(typeof(T1), typeof(T2));
+			Set(entityId, comp1);
+			Set(entityId, comp2);
+			return entityId;
+		}
+
+		public unsafe EntityId NewEntity<T1>(string entityName, T1 comp1 = default) where T1 : unmanaged
         {
             var entt = NewEntity(entityName, typeof(T1));
             Set(entt, comp1);
@@ -173,12 +209,11 @@ namespace FlecsSharp
         public EntityId Set<T>(EntityId entity, T value) where T : unmanaged
         {
             var type = GetTypeId(typeof(T));
-            T* val = &value;
-            return _ecs.set_ptr(this, entity, TypeToEntity(type), (UIntPtr)Marshal.SizeOf<T>(), (IntPtr)val);
-            //return _ecs.set_ptr(this, entity, new EntityId((ulong)type.Ptr), (UIntPtr)Marshal.SizeOf<T>(), (IntPtr)val);
-        }
+			T* val = &value;
+			return _ecs.set_ptr(this, entity, TypeToEntity(type), (UIntPtr)Marshal.SizeOf<T>(), (IntPtr)val);
+		}
 
-        public void Add<T>(EntityId entity)
+		public void Add<T>(EntityId entity)
         {
             _ecs.add(this, entity, GetTypeId(typeof(T)));
         }

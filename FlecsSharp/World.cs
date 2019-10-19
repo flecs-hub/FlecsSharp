@@ -1357,7 +1357,7 @@ namespace FlecsSharp
         ///                            const char *components)
         ///</code>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public EntityId NewEntity(CharPtr id, CharPtr components)
+        EntityId NewEntity(CharPtr id, CharPtr components)
         {
             return ecs.new_entity(this, id, components);
         }

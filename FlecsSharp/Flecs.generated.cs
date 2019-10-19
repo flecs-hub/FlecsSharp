@@ -8,6 +8,7 @@ namespace FlecsSharp
     public readonly struct CharPtr
     {
         readonly IntPtr _ptr;
+
         public CharPtr(IntPtr ptr) => this._ptr = ptr;
         public static explicit operator CharPtr(IntPtr ptr) => new CharPtr(ptr);
         public static implicit operator IntPtr(CharPtr charPtr) => charPtr._ptr;
@@ -23,9 +24,7 @@ namespace FlecsSharp
             return new ReadOnlySpan<byte>(start, (int)(current - start));
         }
     
-        public unsafe override string ToString() => 
-    		System.Text.Encoding.UTF8.GetString(AsSpan());
-            
+        public unsafe override string ToString() => System.Text.Encoding.UTF8.GetString(AsSpan());
     }
     
     public class NativeStructAttribute : Attribute
@@ -38,6 +37,7 @@ namespace FlecsSharp
     	public string Name{get;}
     	public int Size{get;}
     }
+
 #region Enums
     // ecs_type_filter_kind_t: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L161
     public enum TypeFilterKind : Int32
@@ -136,7 +136,9 @@ namespace FlecsSharp
         public static explicit operator EntityId(UInt64 val) => new EntityId(val);
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static explicit operator UInt64(EntityId val) => val.Value;
-    }
+
+		public override string ToString() => Value.ToString();
+	}
 
 #endregion
 
@@ -304,7 +306,8 @@ namespace FlecsSharp
         internal float deltaTime; //size: 4, offset:80
         internal float worldTime; //size: 4, offset:84
         internal uint frameOffset; //size: 4, offset:88
-        internal uint offset; //size: 4, offset:92
+		internal uint table_offset; //Manually added
+		internal uint offset; //size: 4, offset:92
         internal uint count; //size: 4, offset:96
         internal EntityId interruptedBy; //size: 8, offset:104
     }

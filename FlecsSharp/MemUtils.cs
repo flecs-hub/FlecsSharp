@@ -47,7 +47,6 @@ namespace FlecsSharp
             return new DynamicBuffer(mem);
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Dispose()
         {
             Heap.Free(header);
@@ -79,7 +78,6 @@ namespace FlecsSharp
                 var sizeLeft = header->size - (int)(aligned - thisPtr);
                 return new Span<byte>(aligned, (int)sizeLeft);
             }
-
         }
 
         public Span<byte> AsSpan()
@@ -90,7 +88,6 @@ namespace FlecsSharp
                 var offset = (int)header->currentOffset - header->start;
                 return new Span<byte>(startPtr, offset);
             }
-
         }
 
         public IntPtr Acquire(int size, int align = NATURAL_ALIGNMENT)
@@ -110,17 +107,13 @@ namespace FlecsSharp
                     header = (Header*)Heap.Realloc(header, newSize);
                 }
 
-
-
                 return (IntPtr)ptr;
             }
         }
 
-        public CharPtr AddUTF8String(ReadOnlySpan<char> str)
-        => AddString(str, Encoding.UTF8);
+        public CharPtr AddUTF8String(ReadOnlySpan<char> str) => AddString(str, Encoding.UTF8);
 
-        public CharPtr AddASCIIString(ReadOnlySpan<char> str)
-        => AddString(str, Encoding.ASCII);
+        public CharPtr AddASCIIString(ReadOnlySpan<char> str) => AddString(str, Encoding.ASCII);
 
         public CharPtr AddString(ReadOnlySpan<char> str, Encoding encoding)
         {
@@ -148,13 +141,12 @@ namespace FlecsSharp
             *ptr = defaultVal;
             return ptr;
         }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Free<T>(T* ptr) where T : unmanaged
-            => Marshal.FreeHGlobal((IntPtr)ptr);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Free(IntPtr ptr)
-            => Marshal.FreeHGlobal((IntPtr)ptr);
+        public static void Free<T>(T* ptr) where T : unmanaged => Marshal.FreeHGlobal((IntPtr)ptr);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Free(IntPtr ptr) => Marshal.FreeHGlobal((IntPtr)ptr);
 
         internal static void* Realloc(void* ptr, int newSize)
             => (void*)Marshal.ReAllocHGlobal((IntPtr)ptr, (IntPtr)newSize);
