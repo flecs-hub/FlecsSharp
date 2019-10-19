@@ -39,8 +39,9 @@ namespace FlecsSharp
         public static DynamicBuffer Create(int size = 4096)
         {
             Header* mem = (Header*)Heap.Alloc(size);
-            mem->size = (int)size;
-            var offset = (int)Marshal.SizeOf<Header>();
+            mem->size = size;
+
+            var offset = Marshal.SizeOf<Header>();
             offset += offset % NATURAL_ALIGNMENT;
             mem->currentOffset = offset;
             mem->start = offset;
@@ -53,8 +54,8 @@ namespace FlecsSharp
         }
 
 
-        byte* thisPtr => ((byte*)header);
-        byte* bufferEnd => (thisPtr + header->size);
+        byte* thisPtr => (byte*)header;
+        byte* bufferEnd => thisPtr + header->size;
 
         byte* _aligned(int alignment, bool apply = false)
         {
@@ -85,7 +86,7 @@ namespace FlecsSharp
             unchecked
             {
                 var startPtr = thisPtr + header->start;
-                var offset = (int)header->currentOffset - header->start;
+                var offset = header->currentOffset - header->start;
                 return new Span<byte>(startPtr, offset);
             }
         }
@@ -95,7 +96,7 @@ namespace FlecsSharp
             unchecked
             {
                 var ptr = _aligned(align, true);
-                var nextPtr = (ptr + size);
+                var nextPtr = ptr + size;
                 var newOffset = (int)(nextPtr - thisPtr);
                 header->currentOffset = newOffset;
 
@@ -119,10 +120,10 @@ namespace FlecsSharp
         {
             const int STR_ALIGN = 8; // 8 bytes alignment for string would be better to compute hashes
 
-            var availlable = GetAvaillableSpan(STR_ALIGN);
-            var len = encoding.GetBytes(str, availlable);
-            availlable[len] = 0; //null terminated
-            var charPtr = Acquire((int)(len + 1), STR_ALIGN);
+            var available = GetAvaillableSpan(STR_ALIGN);
+            var len = encoding.GetBytes(str, available);
+            available[len] = 0; //null terminated
+            var charPtr = Acquire(len + 1, STR_ALIGN);
             return (CharPtr)charPtr;
         }
 

@@ -29,7 +29,7 @@ namespace FlecsSharp
 		{
 			var w = ecs.init();
 			var context = Heap.Alloc<ContextData>();
-			context->stringBuffer = DynamicBuffer.Create();
+			context->stringBuffer = DynamicBuffer.Create(4096 * 100);
 
 			ecs.set_context(w, (IntPtr)context);
 			return w;
@@ -195,9 +195,8 @@ namespace FlecsSharp
 		///<summary>
 		/// Set value of component. This function sets the value of a component on the specified entity. If the component does not yet exist, it will be added to the entity.
 		///</summary>
-		///<param name="world"> [in]  The world. </param>
 		///<param name="entity"> [in]  The entity on which to set the component. </param>
-		///<param name="component"> [in]  The component to set.</param>
+		///<param name="value"> [in]  The component to set.</param>
 		///<remarks>
 		/// This function can be used like this: Foo value = {.x = 10, .y = 20}; ecs_set_ptr(world, e, tFoo, &value);
 		/// This function is wrapped by the ecs_set convenience macro, which can be used like this:

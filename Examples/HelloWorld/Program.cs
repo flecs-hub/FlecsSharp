@@ -8,13 +8,13 @@ namespace HelloWorld
 	{
 		public struct Position
 		{
-			public float X { get; set; }
-			public float Y { get; set; }
+			public float X;
+			public float Y;
 		}
 
 		public struct Speed
 		{
-			public int SpeedValue { get; set; }
+			public int SpeedValue;
 		}
 
 		static void PositionSystem(ref Rows rows, Span<Position> position)
@@ -40,7 +40,6 @@ namespace HelloWorld
 			}
 		}
 
-
 		static void Main(string[] args)
 		{
 			using (var world = World.Create())
@@ -59,8 +58,17 @@ namespace HelloWorld
 
 				world.NewEntity(new Position {X = 75, Y = 23}, new Speed {SpeedValue = 66});
 
-				world.GetStats(out var stats);
-				stats.FreeStats();
+				var watch = System.Diagnostics.Stopwatch.StartNew();
+				for (var j = 0; j < 100000; j++)
+					world.NewEntity(new Position { X = 75, Y = 23 }, new Speed { SpeedValue = 66 });
+				Console.WriteLine($"-- add: {watch.ElapsedMilliseconds}");
+
+				for (var j = 0; j < 10; j++)
+				{
+					watch.Restart();
+					world.Progress(1);
+					Console.WriteLine($"-- progress: {watch.ElapsedMilliseconds}");
+				}
 
 				var i = 0;
 				while (world.Progress(1))
