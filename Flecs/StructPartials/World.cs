@@ -57,7 +57,7 @@ namespace Flecs
 		//    return componentId;
 		//}
 
-		TypeId GetTypeId(Type compType)
+		internal TypeId GetTypeId(Type compType)
 		{
 			if (!typeMap.TryGetValue((this, compType), out var val))
 			{

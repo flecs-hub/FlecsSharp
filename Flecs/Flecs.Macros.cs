@@ -1,4 +1,6 @@
-﻿namespace Flecs
+﻿using System;
+
+namespace Flecs
 {
 	public unsafe static partial class ecs
 	{
@@ -7,6 +9,21 @@
 		public static EntityId ecs_new(World world, TypeId typeId)
 		{
 			return _ecs.@new(world, typeId);
+		}
+
+		public static EntityId ecs_new(World world, Type componentType)
+		{
+			return _ecs.@new(world, world.GetTypeId(componentType));
+		}
+
+		public static bool ecs_has(World world, EntityId entity, TypeId typeId)
+		{
+			return _ecs.has(world, entity, typeId);
+		}
+
+		public static bool ecs_has(World world, EntityId entity, Type componentType)
+		{
+			return _ecs.has(world, entity, world.GetTypeId(componentType));
 		}
 
 		public static EntityId ecs_new_w_count(World world, TypeId typeId, uint count)
@@ -86,8 +103,10 @@
 
 		#region Declarative Macros
 
-		public static void ECS_COMPONENT(World world)
+		public static void ECS_COMPONENT(World world, Type componentType)
 		{
+			world.GetTypeId(componentType);
+
 			//#define ECS_COMPONENT(world, id) \
 			//	  ECS_ENTITY_VAR(id) = ecs_new_component(world, #id, sizeof(id));\
 			//    ECS_TYPE_VAR(id) = ecs_type_from_entity(world, ecs_entity(id));\

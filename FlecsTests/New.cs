@@ -20,13 +20,13 @@ namespace Flecs.Tests
 		}
 
 		[Test]
-		void New_component()
+		public void New_component()
 		{
-			ecs.ECS_COMPONENT(_world, Position);
+			ecs.ECS_COMPONENT(_world, typeof(Position));
 
-			var e = ecs.@new(world, Position);
-			//test_assert(e != 0);
-			//test_assert(ecs_has(world, e, Position));
+			var e = ecs.ecs_new(_world, typeof(Position));
+			Assert.NotZero((UInt64)e);
+			Assert.IsTrue(ecs.ecs_has(_world, e, typeof(Position)));
 		}
 	}
 }
