@@ -11,24 +11,18 @@ namespace FlecsSharp
 		{
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			get => rowCount;
-			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			set => rowCount = value;
 		}
 
 		public uint ColumnCount
 		{
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			get => columnCount;
-			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			set => columnCount = value;
 		}
 
-		public EntityId* Entities
+		public Span<EntityId> Entities
 		{
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			get => entities;
-			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			set => entities = value;
+			get => new Span<EntityId>(entities, (int)RowCount);
 		}
 
 		public Span<EntityId> Components
@@ -41,8 +35,6 @@ namespace FlecsSharp
 		{
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			get => columns;
-			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			set => columns = value;
 		}
 	}
 }
