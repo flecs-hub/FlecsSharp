@@ -4,11 +4,9 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 
-
-namespace FlecsSharp
+namespace Flecs
 {
 	public delegate void SystemAction<T>(ref Rows ids, Span<T> comp) where T : unmanaged;
-
 	public delegate void SystemAction<T1, T2>(ref Rows ids, Span<T1> comp1, Span<T2> comp2) where T1 : unmanaged where T2 : unmanaged;
 
 	unsafe partial struct World : IDisposable
@@ -27,19 +25,18 @@ namespace FlecsSharp
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static World Create()
 		{
-			var w = ecs.init();
+			var world = ecs.init();
+
 			var context = Heap.Alloc<ContextData>();
 			context->stringBuffer = DynamicBuffer.Create(4096 * 100);
+			ecs.set_context(world, (IntPtr)context);
 
-			ecs.set_context(w, (IntPtr)context);
-			return w;
+			return world;
 		}
-
 
 		///<summary>
 		/// Delete a world. This operation deletes the world, and all entities, components and systems within the world.
 		///</summary>
-		///<param name="world"> [in]  The world to delete.</param>
 		///<code>
 		///int ecs_fini(ecs_world_t *world)
 		///</code>
@@ -50,7 +47,6 @@ namespace FlecsSharp
 			Heap.Free(ctx);
 			ecs.fini(this);
 		}
-
 
 		//public EntityId NewComponent<T>() where T : unmanaged
 		//{
@@ -67,7 +63,7 @@ namespace FlecsSharp
 			{
 				var charPtr = StringBuffer.AddUTF8String(compType.Name);
 				var entityId = ecs.new_component(this, charPtr, (UIntPtr)Marshal.SizeOf(compType));
-				var typeId = TypeFromEntity(entityId);
+				var typeId = ecs.type_from_entity(this, entityId);
 				typeMap.Add((this, compType), typeId);
 				return typeId;
 			}
@@ -91,10 +87,10 @@ namespace FlecsSharp
 
 		public void AddSystem<T1>(SystemAction<T1> systemImpl, SystemKind kind) where T1 : unmanaged
 		{
-			SystemActionDelegate del = delegate(ref Rows e)
+			SystemActionDelegate del = delegate(ref Rows rows)
 			{
-				var set1 = (T1*)_ecs.column(out e, (UIntPtr)Marshal.SizeOf<T1>(), 1);
-				systemImpl(ref e, new Span<T1>(set1, (int)e.count));
+				var set1 = (T1*)_ecs.column(ref rows, (UIntPtr)Marshal.SizeOf<T1>(), 1);
+				systemImpl(ref rows, new Span<T1>(set1, (int)rows.count));
 			};
 
 			AddSystem(kind, systemImpl.Method.Name, del, typeof(T1));
@@ -104,14 +100,14 @@ namespace FlecsSharp
 			where T1 : unmanaged
 			where T2 : unmanaged
 		{
-			SystemActionDelegate del = delegate(ref Rows e)
+			SystemActionDelegate del = delegate(ref Rows rows)
 			{
 				var wtf = (UIntPtr)Marshal.SizeOf<T1>();
 				var ftw = new UIntPtr((uint)sizeof(T1));
 
-				var set1 = (T1*)_ecs.column(out e, (UIntPtr)Marshal.SizeOf<T1>(), 1);
-				var set2 = (T2*)_ecs.column(out e, (UIntPtr)Marshal.SizeOf<T2>(), 2);
-				systemImpl(ref e, new Span<T1>(set1, (int)e.Count), new Span<T2>(set2, (int)e.Count));
+				var set1 = (T1*)_ecs.column(ref rows, (UIntPtr)Marshal.SizeOf<T1>(), 1);
+				var set2 = (T2*)_ecs.column(ref rows, (UIntPtr)Marshal.SizeOf<T2>(), 2);
+				systemImpl(ref rows, new Span<T1>(set1, (int)rows.count), new Span<T2>(set2, (int)rows.count));
 			};
 
 			AddSystem(kind, systemImpl.Method.Name, del, typeof(T1), typeof(T2));
@@ -211,7 +207,7 @@ namespace FlecsSharp
 		{
 			var type = GetTypeId(typeof(T));
 			T* val = &value;
-			return _ecs.set_ptr(this, entity, TypeToEntity(type), (UIntPtr)Marshal.SizeOf<T>(), (IntPtr)val);
+			return _ecs.set_ptr(this, entity, ecs.type_to_entity(this, type), (UIntPtr)Marshal.SizeOf<T>(), (IntPtr)val);
 		}
 
 		public void Add<T>(EntityId entity)

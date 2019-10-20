@@ -7,11 +7,11 @@
     <!--<RunWorkingDirectory>$(MSBuildProjectDirectory)/../runtime</RunWorkingDirectory>-->
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\FlecsSharp\FlecsSharp.csproj" />
-  </ItemGroup>
-  <ItemGroup>
     <None Update="libflecs_shared.dylib">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Flecs\Flecs.csproj" />
   </ItemGroup>
 </Project>

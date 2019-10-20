@@ -1,64 +1,21 @@
 using System;
 using System.Runtime.CompilerServices;
 
-
-namespace FlecsSharp
+namespace Flecs
 {
 	// ecs_rows_t: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L104
 	unsafe partial struct Rows
 	{
-		public World World
+		public EntityId this[int i]
 		{
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			get => world;
-			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			set => world = value;
-		}
-
-		public EntityId System
-		{
-			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			get => system;
-			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			set => system = value;
+			get => entities[i];
 		}
 
 		public Span<int> Columns
 		{
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			get => new Span<int>(columns, columnCount);
-		}
-
-		public ushort ColumnCount
-		{
-			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			get => columnCount;
-			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			set => columnCount = value;
-		}
-
-		public IntPtr Table
-		{
-			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			get => table;
-			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			set => table = value;
-		}
-
-		public IntPtr TableColumns
-		{
-			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			get => tableColumns;
-			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			set => tableColumns = value;
-		}
-
-		public Reference* References
-		{
-			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			get => references;
-			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			set => references = value;
 		}
 
 		public Span<EntityId> Components
@@ -71,62 +28,6 @@ namespace FlecsSharp
 		{
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			get => new Span<EntityId>(entities, (int)count);
-		}
-
-		public IntPtr Param
-		{
-			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			get => param;
-			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			set => param = value;
-		}
-
-		public float DeltaTime
-		{
-			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			get => deltaTime;
-			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			set => deltaTime = value;
-		}
-
-		public float WorldTime
-		{
-			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			get => worldTime;
-			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			set => worldTime = value;
-		}
-
-		public uint FrameOffset
-		{
-			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			get => frameOffset;
-			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			set => frameOffset = value;
-		}
-
-		public uint Offset
-		{
-			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			get => offset;
-			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			set => offset = value;
-		}
-
-		public uint Count
-		{
-			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			get => count;
-			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			set => count = value;
-		}
-
-		public EntityId InterruptedBy
-		{
-			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			get => interruptedBy;
-			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			set => interruptedBy = value;
 		}
 
 		///<summary>
@@ -147,16 +48,11 @@ namespace FlecsSharp
 		///void *_ecs_column(ecs_rows_t *rows, size_t size, uint32_t column)
 		///</code>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public IntPtr Column(UIntPtr size, uint column)
-		{
-			return _ecs.column(out this, size, column);
-		}
+		public IntPtr Column(UIntPtr size, uint column) => _ecs.column(ref this, size, column);
 
 		///<summary>
 		/// Test if column is shared or not.  The following signature shows an example of owned components and shared components:
 		///</summary>
-		///<param name="rows"> [in]  The rows parameter passed into the system. </param>
-		///<param name="index"> [in]  The index identifying the column in a system signature. </param>
 		///<returns>
 		/// true if the column is shared, false if it is owned.
 		///</returns>
@@ -169,10 +65,7 @@ namespace FlecsSharp
 		///bool ecs_is_shared(ecs_rows_t *rows, uint32_t column)
 		///</code>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public bool IsShared(uint column)
-		{
-			return ecs.is_shared(out this, column);
-		}
+		public bool IsShared(uint column) => ecs.is_shared(ref this, column);
 
 		///<summary>
 		/// Obtain a single field.  This is an alternative method to ecs_column to access data in a system, which accesses data from individual fields (one column per row). This method is slower than iterating over a column array, but has the added benefit that it automatically abstracts between shared components and owned components.
@@ -185,10 +78,7 @@ namespace FlecsSharp
 		///void *_ecs_field(ecs_rows_t *rows, size_t size, uint32_t column, uint32_t row)
 		///</code>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public IntPtr Field(UIntPtr size, uint column, uint row)
-		{
-			return _ecs.field(out this, size, column, row);
-		}
+		public IntPtr Field(UIntPtr size, uint column, uint row) => _ecs.field(ref this, size, column, row);
 
 		///<summary>
 		/// Obtain the source of a column from inside a system. This operation lets you obtain the entity from which the column data was resolved. In most cases a component will come from the entities being iterated over, but when using prefabs or containers, the component can be shared between entities. For shared components, this function will return the original entity on which the component is stored.
@@ -206,10 +96,7 @@ namespace FlecsSharp
 		///ecs_entity_t ecs_column_source(ecs_rows_t *rows, uint32_t column)
 		///</code>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public EntityId ColumnSource(uint column)
-		{
-			return ecs.column_source(out this, column);
-		}
+		public EntityId ColumnSource(uint column) => ecs.column_source(ref this, column);
 
 		///<summary>
 		/// Obtain the component for a column inside a system. This operation obtains the component handle for a column in the system. This function wraps around the 'components' array in the ecs_rows_t type.
@@ -228,10 +115,7 @@ namespace FlecsSharp
 		///ecs_entity_t ecs_column_entity(ecs_rows_t *rows, uint32_t column)
 		///</code>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public EntityId ColumnEntity(uint column)
-		{
-			return ecs.column_entity(out this, column);
-		}
+		public EntityId ColumnEntity(uint column) => ecs.column_entity(ref this, column);
 
 		///<summary>
 		/// Obtain the type of a column from inside a system.  This operation is equivalent to ecs_column_entity, except that it returns a type, instead of an entity handle. Invoking this function is the same as doing:
@@ -252,10 +136,7 @@ namespace FlecsSharp
 		///ecs_type_t ecs_column_type(ecs_rows_t *rows, uint32_t column)
 		///</code>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public TypeId ColumnType(uint column)
-		{
-			return ecs.column_type(out this, column);
-		}
+		public TypeId ColumnType(uint column) => ecs.column_type(ref this, column);
 
 		///<summary>
 		/// Get type of table that system is currently iterating over.
@@ -264,10 +145,7 @@ namespace FlecsSharp
 		///ecs_type_t ecs_table_type(ecs_rows_t *rows)
 		///</code>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public TypeId TableType()
-		{
-			return ecs.table_type(out this);
-		}
+		public TypeId TableType() => ecs.table_type(ref this);
 
 		///<summary>
 		/// Get type of table that system is currently iterating over.
@@ -276,9 +154,6 @@ namespace FlecsSharp
 		///void *ecs_table_column(ecs_rows_t *rows, uint32_t column)
 		///</code>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public IntPtr TableColumn(uint column)
-		{
-			return ecs.table_column(out this, column);
-		}
+		public IntPtr TableColumn(uint column) => ecs.table_column(ref this, column);
 	}
 }
