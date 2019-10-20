@@ -29,6 +29,18 @@ namespace HelloWorld
 			}
 		}
 
+		static void OnAddMoveSystem(ref Rows rows, Span<Position> position, Span<Speed> speed)
+		{
+			Console.WriteLine($"OnAddMoveSystem: {rows.count}");
+			for (int i = 0; i < (int)rows.count; i++)
+			{
+				var entityId = rows[i];
+				ref var pos = ref position[i];
+				pos.X = i;
+				pos.Y = i;
+			}
+		}
+
 		static void MoveSystem(ref Rows rows, Span<Position> position, Span<Speed> speed)
 		{
 			Console.WriteLine($"MoveSystem: {rows.count}");
@@ -64,6 +76,12 @@ namespace HelloWorld
 					world.NewEntity(new Position { X = 75, Y = 23 }, new Speed { SpeedValue = 66 });
 				Console.WriteLine($"-- add: {watch.ElapsedMilliseconds} ms, ticks: {watch.ElapsedTicks}");
 
+				// bulk add with an init system
+				world.AddSystem<Position, Speed>(OnAddMoveSystem, SystemKind.OnAdd);
+				watch.Restart();
+				world.NewEntitiesWithCount<Position, Speed>(10000);
+				Console.WriteLine($"-- add w count: {watch.ElapsedMilliseconds} ms, ticks: {watch.ElapsedTicks}");
+
 				for (var j = 0; j < 10; j++)
 				{
 					watch.Restart();
@@ -71,8 +89,9 @@ namespace HelloWorld
 					Console.WriteLine($"-- progress: {watch.ElapsedMilliseconds} ms, ticks: {watch.ElapsedTicks}");
 				}
 
+				ecs.set_target_fps(world, 60);
 				var i = 0;
-				while (ecs.progress(world, 1))
+				while (ecs.progress(world, 0))
 				{
 					if (i++ > 3)
 						break;

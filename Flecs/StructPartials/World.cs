@@ -147,16 +147,30 @@ namespace Flecs
 			return _ecs.@new(this, typeId);
 		}
 
+		EntityId NewEntitiesWithCount(uint count, params Type[] componentTypes)
+		{
+			var components = BuildComponentQuery(componentTypes);
+			var componentsQueryPtr = StringBuffer.AddUTF8String(components);
+			var typeId = ecs.expr_to_type(this, componentsQueryPtr);
+			return _ecs.new_w_count(this, typeId, count);
+		}
+
 		public EntityId NewEntity<T1>() where T1 : unmanaged
 		{
 			var typeId = GetTypeId(typeof(T1));
 			return _ecs.@new(this, typeId);
 		}
 
-		public EntityId NewEntity<T1, T2>() where T1 : unmanaged where T2 : unmanaged
+		public EntityId NewEntitiesWithCount<T1, T2>(uint count) where T1 : unmanaged where T2 : unmanaged
+			=> NewEntitiesWithCount(count, typeof(T1), typeof(T2));
+
+		public EntityId NewEntitiesWithCount<T1>(uint count) where T1 : unmanaged
 		{
-			return NewEntity(typeof(T1), typeof(T2));
+			var typeId = GetTypeId(typeof(T1));
+			return _ecs.new_w_count(this, typeId, count);
 		}
+
+		public EntityId NewEntity<T1, T2>() where T1 : unmanaged where T2 : unmanaged => NewEntity(typeof(T1), typeof(T2));
 
 		public EntityId NewEntity<T1>(T1 comp1 = default) where T1 : unmanaged
 		{
