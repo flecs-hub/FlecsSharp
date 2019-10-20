@@ -4,8 +4,52 @@ using System.Security;
 
 namespace Flecs
 {
+	[SuppressUnmanagedCodeSecurity]
 	internal unsafe static class _ecs
 	{
+
+		///<summary>
+		/// Create a new entity. Entities are light-weight objects that represent "things" in the application. Entities themselves do not have any state or logic, but instead are composed out of a set of zero or more components.
+		///</summary>
+		///<param name="world"> [in]  The world to which to add the entity. </param>
+		///<param name="type"> [in]  Zero if no type, or handle to a component, type or prefab. </param>
+		///<returns>
+		/// A handle to the new entity. 
+		///</returns>
+		///<remarks>
+		/// Entities are accessed through handles instead of direct pointers. Certain operations may move an entity in memory. Handles provide a safe mechanism for addressing entities.
+		/// Flecs does not require applications to explicitly create handles, as entities do not have an explicit lifecycle. The ecs_new operation merely provides a convenient way to dispense handles. It is guaranteed that the handle returned by ecs_new has not bee returned before.
+		/// ecs_new_entity ecs_new_component ecs_new_system ecs_new_prefab ecs_new_type ecs_new_child ecs_new_w_count
+		///</remarks>
+		///<code>
+		///ecs_entity_t _ecs_new(ecs_world_t *world, ecs_type_t type)
+		///</code>
+		// _ecs_new: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L687
+		[DllImport(ecs.NativeLibName, EntryPoint = "_ecs_new", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+		public static extern EntityId @new(World world, TypeId type);
+
+		///<summary>
+		/// Create new entities in a batch. This operation creates the number of specified entities with one API call which is a more efficient alternative to calling ecs_new in a loop.
+		///</summary>
+		///<param name="world"> [in]  The world. </param>
+		///<param name="type"> [in]  Zero if no type, or handle to a component, type or prefab. </param>
+		///<param name="count"> [in]  The number of entities to create. </param>
+		///<param name="handles_out"> [in]  An array which contains the handles of the new entities. </param>
+		///<returns>
+		/// The handle to the first created entity.
+		///</returns>
+		///<code>
+		///ecs_entity_t _ecs_new_w_count(ecs_world_t *world, ecs_type_t type,
+		///                              uint32_t count)
+		///</code>
+		// _ecs_new_w_count: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L706
+		[DllImport(ecs.NativeLibName, EntryPoint = "_ecs_new_w_count", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+		public static extern EntityId new_w_count(World world, TypeId type, uint count);
+
+
+
+
+
 		///<code>
 		///ecs_chunked_t * _ecs_chunked_new(uint32_t, uint32_t, uint32_t)
 		///</code>
@@ -95,44 +139,6 @@ namespace Flecs
 		// _ecs_dim_type: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L621
 		[DllImport(ecs.NativeLibName, EntryPoint = "_ecs_dim_type", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
 		public static extern void dim_type(World world, TypeId type, uint entityCount);
-
-		///<summary>
-		/// Create a new entity. Entities are light-weight objects that represent "things" in the application. Entities themselves do not have any state or logic, but instead are composed out of a set of zero or more components.
-		///</summary>
-		///<param name="world"> [in]  The world to which to add the entity. </param>
-		///<param name="type"> [in]  Zero if no type, or handle to a component, type or prefab. </param>
-		///<returns>
-		/// A handle to the new entity. 
-		///</returns>
-		///<remarks>
-		/// Entities are accessed through handles instead of direct pointers. Certain operations may move an entity in memory. Handles provide a safe mechanism for addressing entities.
-		/// Flecs does not require applications to explicitly create handles, as entities do not have an explicit lifecycle. The ecs_new operation merely provides a convenient way to dispense handles. It is guaranteed that the handle returned by ecs_new has not bee returned before.
-		/// ecs_new_entity ecs_new_component ecs_new_system ecs_new_prefab ecs_new_type ecs_new_child ecs_new_w_count
-		///</remarks>
-		///<code>
-		///ecs_entity_t _ecs_new(ecs_world_t *world, ecs_type_t type)
-		///</code>
-		// _ecs_new: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L687
-		[DllImport(ecs.NativeLibName, EntryPoint = "_ecs_new", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-		public static extern EntityId @new(World world, TypeId type);
-
-		///<summary>
-		/// Create new entities in a batch. This operation creates the number of specified entities with one API call which is a more efficient alternative to calling ecs_new in a loop.
-		///</summary>
-		///<param name="world"> [in]  The world. </param>
-		///<param name="type"> [in]  Zero if no type, or handle to a component, type or prefab. </param>
-		///<param name="count"> [in]  The number of entities to create. </param>
-		///<param name="handles_out"> [in]  An array which contains the handles of the new entities. </param>
-		///<returns>
-		/// The handle to the first created entity.
-		///</returns>
-		///<code>
-		///ecs_entity_t _ecs_new_w_count(ecs_world_t *world, ecs_type_t type,
-		///                              uint32_t count)
-		///</code>
-		// _ecs_new_w_count: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L706
-		[DllImport(ecs.NativeLibName, EntryPoint = "_ecs_new_w_count", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-		public static extern EntityId new_w_count(World world, TypeId type, uint count);
 
 		///<summary>
 		/// Create a new child entity. Child entities are equivalent to normal entities, but can additionally be  created with a container entity. Container entities allow for the creation of entity hierarchies.

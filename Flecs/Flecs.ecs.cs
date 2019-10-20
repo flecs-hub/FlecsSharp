@@ -4,6 +4,7 @@ using System.Security;
 
 namespace Flecs
 {
+	[SuppressUnmanagedCodeSecurity]
 	public unsafe static partial class ecs
 	{
 		internal const string NativeLibName = "flecs_shared";
