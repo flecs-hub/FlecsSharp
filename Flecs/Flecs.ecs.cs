@@ -9,6 +9,17 @@ namespace Flecs
 	{
 		internal const string NativeLibName = "flecs_shared";
 
+		public static readonly TypeId TEcsComponent = InteropUtils.LoadTypedSymbol<TypeId>("TEcsComponent");
+		public static readonly TypeId TEcsTypeComponent = InteropUtils.LoadTypedSymbol<TypeId>("TEcsTypeComponent");
+		public static readonly TypeId TEcsPrefab = InteropUtils.LoadTypedSymbol<TypeId>("TEcsPrefab");
+		public static readonly TypeId TEcsPrefabParent = InteropUtils.LoadTypedSymbol<TypeId>("TEcsPrefabParent");
+		public static readonly TypeId TEcsPrefabBuilder = InteropUtils.LoadTypedSymbol<TypeId>("TEcsPrefabBuilder");
+		public static readonly TypeId TEcsRowSystem = InteropUtils.LoadTypedSymbol<TypeId>("TEcsRowSystem");
+		public static readonly TypeId TEcsColSystem = InteropUtils.LoadTypedSymbol<TypeId>("TEcsColSystem");
+		public static readonly TypeId TEcsId = InteropUtils.LoadTypedSymbol<TypeId>("TEcsId");
+		public static readonly TypeId TEcsHidden = InteropUtils.LoadTypedSymbol<TypeId>("TEcsHidden");
+		public static readonly TypeId TEcsDisabled = InteropUtils.LoadTypedSymbol<TypeId>("TEcsDisabled");
+
 		///<code>
 		///void ecs_os_set_api(ecs_os_api_t *)
 		///</code>
@@ -1414,7 +1425,7 @@ namespace Flecs
 		/// Get handle to type. This operation obtains a handle to a type that can be used with ecs_new. Predefining types has performance benefits over using ecs_add/ecs_remove multiple times, as it provides constant creation time regardless of the number of components. This function will internally create a table for the type.
 		///</summary>
 		///<param name="world"> [in]  The world. </param>
-		///<param name="components"> [in]  A comma-separated string with the component identifiers. </param>
+		///<param name="expr"> [in]  A comma-separated string with the component identifiers. </param>
 		///<returns>
 		/// Handle to the type, zero if failed.
 		///</returns>
@@ -1428,7 +1439,7 @@ namespace Flecs
 		///</code>
 		// ecs_new_type: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1988
 		[DllImport(NativeLibName, EntryPoint = "ecs_new_type", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-		public static extern EntityId new_type(World world, CharPtr id, CharPtr components);
+		public static extern EntityId new_type(World world, CharPtr id, string expr);
 
 		///<summary>
 		/// Create a new prefab entity. Prefab entities allow entities to share a set of components. Components of the prefab will appear on the specified entity when using any of the API functions and ECS systems.

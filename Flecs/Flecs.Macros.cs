@@ -142,8 +142,11 @@ namespace Flecs
 //    (void)ecs_type(id);\
 		}
 
-		public static void ECS_TYPE(World world)
+		public static TypeId ECS_TYPE(World world, string id, string expr)
 		{
+			var idPtr = world.StringBuffer.AddUTF8String(id);
+			var entityId = ecs.new_type(world, idPtr, expr);
+			return ecs.type_from_entity(world, entityId);
 //#define ECS_TYPE(world, id, ...) \
 //			ecs_entity_t id = ecs_new_type(world, #id, #__VA_ARGS__);\
 //    ECS_TYPE_VAR(id) = ecs_type_from_entity(world, id);\

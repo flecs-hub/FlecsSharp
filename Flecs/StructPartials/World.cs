@@ -11,8 +11,7 @@ namespace Flecs
 
 	unsafe partial struct World : IDisposable
 	{
-		static Dictionary<(World, Type), TypeId> typeMap = new Dictionary<(World, Type), TypeId>();
-		static Dictionary<(World, EntityId), SystemActionDelegate> systemActions = new Dictionary<(World, EntityId), SystemActionDelegate>();
+		static Dictionary<World, Dictionary<Type, TypeId>> typeMap = new Dictionary<World, Dictionary<Type, TypeId>>();
 
 		public struct ContextData
 		{
@@ -26,6 +25,7 @@ namespace Flecs
 		public static World Create()
 		{
 			var world = ecs.init();
+			typeMap[world] = new Dictionary<Type, TypeId>();
 
 			var context = Heap.Alloc<ContextData>();
 			context->stringBuffer = DynamicBuffer.Create(4096 * 100);
@@ -59,12 +59,12 @@ namespace Flecs
 
 		internal TypeId GetTypeId(Type compType)
 		{
-			if (!typeMap.TryGetValue((this, compType), out var val))
+			if (!typeMap[this].TryGetValue(compType, out var val))
 			{
 				var charPtr = StringBuffer.AddUTF8String(compType.Name);
 				var entityId = ecs.new_component(this, charPtr, (UIntPtr)Marshal.SizeOf(compType));
 				var typeId = ecs.type_from_entity(this, entityId);
-				typeMap.Add((this, compType), typeId);
+				typeMap[this][compType] = typeId;
 				return typeId;
 			}
 
@@ -77,7 +77,6 @@ namespace Flecs
 			var components = BuildComponentQuery(componentTypes);
 			var signaturePtr = StringBuffer.AddUTF8String(components);
 			var entityId = ecs.new_system(this, systemNamePtr, kind, signaturePtr, systemImpl);
-			systemActions[(this, entityId)] = systemImpl;
 			return entityId;
 		}
 
