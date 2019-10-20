@@ -288,6 +288,9 @@ namespace Flecs
 		IntPtr ptr;
 		public TypeId(IntPtr ptr) => this.ptr = ptr;
 		internal TypeId* Ptr => (TypeId*)ptr;
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static explicit operator TypeId(int val) => new TypeId(new IntPtr(val));
 	}
 
 	//ecs_table_columns_t

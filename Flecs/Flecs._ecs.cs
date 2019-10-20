@@ -46,6 +46,53 @@ namespace Flecs
 		[DllImport(ecs.NativeLibName, EntryPoint = "_ecs_new_w_count", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
 		public static extern EntityId new_w_count(World world, TypeId type, uint count);
 
+		///<summary>
+		/// Get pointer to component data. This operation obtains a pointer to the component data of an entity. If the component was not added for the specified entity, the operation will return NULL.
+		///</summary>
+		///<param name="world"> [in]  The world. </param>
+		///<param name="entity"> [in]  Handle to the entity from which to obtain the component data. </param>
+		///<param name="component"> [in]  The component to retrieve the data for. </param>
+		///<returns>
+		/// A pointer to the data, or NULL of the component was not found.
+		///</returns>
+		///<remarks>
+		/// Note that the returned pointer has temporary validity. Operations such as delete and add/remove may invalidate the pointer as data is potentially moved to different locations. After one of these operations is invoked, the pointer will have to be re-obtained.
+		/// This function is wrapped by the ecs_get convenience macro, which can be used like this:
+		/// Foo value = ecs_get(world, e, Foo);
+		///</remarks>
+		///<code>
+		///void *_ecs_get_ptr(ecs_world_t *world, ecs_entity_t entity, ecs_type_t type)
+		///</code>
+		// _ecs_get_ptr: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1084
+		[DllImport(ecs.NativeLibName, EntryPoint = "_ecs_get_ptr", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+		public static extern IntPtr get_ptr(World world, EntityId entity, TypeId type);
+
+		///<summary>
+		/// Set value of component. This function sets the value of a component on the specified entity. If the component does not yet exist, it will be added to the entity.
+		///</summary>
+		///<param name="world"> [in]  The world. </param>
+		///<param name="entity"> [in]  The entity on which to set the component. </param>
+		///<param name="component"> [in]  The component to set.</param>
+		///<remarks>
+		/// This function can be used like this: Foo value = {.x = 10, .y = 20}; ecs_set_ptr(world, e, ecs_type(Foo), &value);
+		/// This function is wrapped by the ecs_set convenience macro, which can be used like this:
+		/// ecs_set(world, e, Foo, {.x = 10, .y = 20});
+		///</remarks>
+		///<code>
+		///ecs_entity_t _ecs_set_ptr(ecs_world_t *world, ecs_entity_t entity,
+		///                          ecs_entity_t component, size_t size, void *ptr)
+		///</code>
+		// _ecs_set_ptr: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1121
+		[DllImport(ecs.NativeLibName, EntryPoint = "_ecs_set_ptr", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+		public static extern EntityId set_ptr(World world, EntityId entity, EntityId component, UIntPtr size, IntPtr ptr);
+
+		///<code>
+		///ecs_entity_t _ecs_set_singleton_ptr(ecs_world_t *, ecs_entity_t, size_t, void *)
+		///</code>
+		// _ecs_set_singleton_ptr: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1129
+		[DllImport(ecs.NativeLibName, EntryPoint = "_ecs_set_singleton_ptr", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+		public static extern EntityId set_singleton_ptr(World world, EntityId component, UIntPtr size, IntPtr ptr);
+
 
 
 
@@ -273,53 +320,6 @@ namespace Flecs
 		// _ecs_add_remove_w_filter: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1054
 		[DllImport(ecs.NativeLibName, EntryPoint = "_ecs_add_remove_w_filter", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
 		public static extern void add_remove_w_filter(World world, TypeId toAdd, TypeId toRemove, out TypeFilter filter);
-
-		///<summary>
-		/// Get pointer to component data. This operation obtains a pointer to the component data of an entity. If the component was not added for the specified entity, the operation will return NULL.
-		///</summary>
-		///<param name="world"> [in]  The world. </param>
-		///<param name="entity"> [in]  Handle to the entity from which to obtain the component data. </param>
-		///<param name="component"> [in]  The component to retrieve the data for. </param>
-		///<returns>
-		/// A pointer to the data, or NULL of the component was not found.
-		///</returns>
-		///<remarks>
-		/// Note that the returned pointer has temporary validity. Operations such as delete and add/remove may invalidate the pointer as data is potentially moved to different locations. After one of these operations is invoked, the pointer will have to be re-obtained.
-		/// This function is wrapped by the ecs_get convenience macro, which can be used like this:
-		/// Foo value = ecs_get(world, e, Foo);
-		///</remarks>
-		///<code>
-		///void *_ecs_get_ptr(ecs_world_t *world, ecs_entity_t entity, ecs_type_t type)
-		///</code>
-		// _ecs_get_ptr: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1084
-		[DllImport(ecs.NativeLibName, EntryPoint = "_ecs_get_ptr", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-		public static extern IntPtr get_ptr(World world, EntityId entity, TypeId type);
-
-		///<summary>
-		/// Set value of component. This function sets the value of a component on the specified entity. If the component does not yet exist, it will be added to the entity.
-		///</summary>
-		///<param name="world"> [in]  The world. </param>
-		///<param name="entity"> [in]  The entity on which to set the component. </param>
-		///<param name="component"> [in]  The component to set.</param>
-		///<remarks>
-		/// This function can be used like this: Foo value = {.x = 10, .y = 20}; ecs_set_ptr(world, e, ecs_type(Foo), &value);
-		/// This function is wrapped by the ecs_set convenience macro, which can be used like this:
-		/// ecs_set(world, e, Foo, {.x = 10, .y = 20});
-		///</remarks>
-		///<code>
-		///ecs_entity_t _ecs_set_ptr(ecs_world_t *world, ecs_entity_t entity,
-		///                          ecs_entity_t component, size_t size, void *ptr)
-		///</code>
-		// _ecs_set_ptr: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1121
-		[DllImport(ecs.NativeLibName, EntryPoint = "_ecs_set_ptr", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-		public static extern EntityId set_ptr(World world, EntityId entity, EntityId component, UIntPtr size, IntPtr ptr);
-
-		///<code>
-		///ecs_entity_t _ecs_set_singleton_ptr(ecs_world_t *, ecs_entity_t, size_t, void *)
-		///</code>
-		// _ecs_set_singleton_ptr: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1129
-		[DllImport(ecs.NativeLibName, EntryPoint = "_ecs_set_singleton_ptr", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-		public static extern EntityId set_singleton_ptr(World world, EntityId component, UIntPtr size, IntPtr ptr);
 
 		///<summary>
 		/// Check if entity has the specified type. This operation checks if the entity has the components associated with the specified type. It accepts component handles, families and prefabs.

@@ -40,7 +40,7 @@
 			//		_ecs_new_instance_w_count(world, base, T##type, count)
 		}
 
-		public static void ecs_set(World world)
+		public static void ecs_set(World world, EntityId entity)
 		{
 			//#define ecs_set(world, entity, component, ...)\
 			//		_ecs_set_ptr(world, entity, ecs_entity(component), sizeof(component), &(component) __VA_ARGS__)
@@ -88,11 +88,11 @@
 
 		public static void ECS_COMPONENT(World world)
 		{
-//#define ECS_COMPONENT(world, id) \
-//			ECS_ENTITY_VAR(id) = ecs_new_component(world, #id, sizeof(id));\
-//    ECS_TYPE_VAR(id) = ecs_type_from_entity(world, ecs_entity(id));\
-//    (void)ecs_entity(id);\
-//    (void)ecs_type(id);\
+			//#define ECS_COMPONENT(world, id) \
+			//	  ECS_ENTITY_VAR(id) = ecs_new_component(world, #id, sizeof(id));\
+			//    ECS_TYPE_VAR(id) = ecs_type_from_entity(world, ecs_entity(id));\
+			//    (void)ecs_entity(id);\
+			//    (void)ecs_type(id);\
 		}
 
 		public static void ECS_SYSTEM(World world)
