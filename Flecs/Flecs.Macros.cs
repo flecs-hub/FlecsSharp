@@ -49,15 +49,11 @@ namespace Flecs
 		public static EntityId ecs_new_instance(World world, EntityId baseEntityId, TypeId type)
 		{
 			return _ecs.new_instance(world, baseEntityId, type);
-			//#define ecs_new_instance(world, base, type)\
-			//		_ecs_new_instance(world, base, T##type)
 		}
 
 		public static EntityId ecs_new_instance_w_count(World world, EntityId baseEntityId, TypeId type, uint count)
 		{
 			return _ecs.new_instance_w_count(world, baseEntityId, type, count);
-			//#define ecs_new_instance_w_count(world, base, type, count)\
-			//		_ecs_new_instance_w_count(world, base, T##type, count)
 		}
 
 		public static void ecs_set(World world, EntityId entity)
@@ -84,22 +80,19 @@ namespace Flecs
 			//    _ecs_set_singleton_ptr(world, ecs_entity(component), sizeof(component), ptr)
 		}
 
-		public static void ecs_add(World world)
+		public static void ecs_add(World world, EntityId entity, TypeId type)
 		{
-			//#define ecs_add(world, entity, type)\
-			//		_ecs_add(world, entity, T##type)
+			_ecs.add(world, entity, type);
 		}
 
-		public static void ecs_remove(World world)
+		public static void ecs_remove(World world, EntityId entity, TypeId type)
 		{
-			//#define ecs_remove(world, entity, type)\
-			//		_ecs_remove(world, entity, T##type)
+			_ecs.remove(world, entity, type);
 		}
 
-		public static void ecs_add_remove(World world)
+		public static void ecs_add_remove(World world, EntityId entity, TypeId typeToAdd, TypeId typeToRemove)
 		{
-			//#define ecs_add_remove(world, entity, to_add, to_remove)\
-			//		_ecs_add_remove(world, entity, T##to_add, T##to_remove)
+			_ecs.add_remove(world, entity, typeToAdd, typeToRemove);
 		}
 
 		#endregion
@@ -132,15 +125,7 @@ namespace Flecs
 		public static EntityId ECS_ENTITY(World world, string id, string expr)
 		{
 			var idPtr = world.StringBuffer.AddUTF8String(id);
-			var entityId = ecs.new_entity(world, idPtr, expr);
-			//ecs.type_from_entity(world, entityId);
-			return entityId;
-
-//#define ECS_ENTITY(world, id, ...)\
-//			ecs_entity_t id = ecs_new_entity(world, #id, #__VA_ARGS__);\
-//    ECS_TYPE_VAR(id) = ecs_type_from_entity(world, id);\
-//    (void)id;\
-//    (void)ecs_type(id);
+			return ecs.new_entity(world, idPtr, expr);
 		}
 
 		public static TypeId ECS_TAG(World world, string tag)
