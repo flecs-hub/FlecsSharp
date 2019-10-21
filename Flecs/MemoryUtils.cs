@@ -65,12 +65,13 @@ namespace Flecs
 			}
 		}
 
-		public Span<byte> GetAvaillableSpan(int align = NATURAL_ALIGNMENT)
+		Span<byte> GetAvailableSpan(int align = NATURAL_ALIGNMENT)
 		{
 			unchecked
 			{
 				var aligned = _aligned(align);
 				var sizeLeft = header->size - (int)(aligned - thisPtr);
+				Console.WriteLine($"--- {sizeLeft}");
 				return new Span<byte>(aligned, (int)sizeLeft);
 			}
 		}
@@ -92,14 +93,16 @@ namespace Flecs
 				var ptr = _aligned(align, true);
 				var nextPtr = ptr + size;
 				var newOffset = (int)(nextPtr - thisPtr);
+
+				Console.WriteLine($"req: {size}, offset: {header->currentOffset}, newOffset: {newOffset}, tot: {header->size}, space: " + ((nextPtr >= bufferEnd) ? "no" : "yes"));
 				header->currentOffset = newOffset;
 
-				if (nextPtr > bufferEnd)
+				if (nextPtr >= bufferEnd)
 				{
-					var newSize = (int)(nextPtr - thisPtr);
-					newSize = (int)(newOffset * 1.3F); // grow by 30%
-					newSize += newOffset % 4096; //align to a pretty number
+					var newSize = (int)(newOffset * 1.3F); // grow by 30%
+					newSize += newOffset % 4096; // align to a pretty number
 					header = (Header*)Heap.Realloc(header, newSize);
+					header->size = newSize;
 				}
 
 				return (IntPtr)ptr;
@@ -114,9 +117,20 @@ namespace Flecs
 		{
 			const int STR_ALIGN = 8; // 8 bytes alignment for string would be better to compute hashes
 
-			var available = GetAvaillableSpan(STR_ALIGN);
+			var available = GetAvailableSpan(STR_ALIGN);
+			if (available.Length < str.Length)
+			{
+				Console.WriteLine("-----fucked");
+				var newSize = (int)(header->size * 1.3F); // grow by 30%
+				newSize += newSize % 4096; // align to a pretty number
+				header = (Header*)Heap.Realloc(header, newSize);
+				header->size = newSize;
+
+				available = GetAvailableSpan(STR_ALIGN);
+			}
+
 			var len = encoding.GetBytes(str, available);
-			available[len] = 0; //null terminated
+			available[len] = 0; // null terminated
 			var charPtr = Acquire(len + 1, STR_ALIGN);
 			return (CharPtr)charPtr;
 		}

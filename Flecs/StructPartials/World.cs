@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -11,11 +10,6 @@ namespace Flecs
 
 	unsafe partial struct World : IDisposable
 	{
-		static Dictionary<World, Dictionary<Type, TypeId>> typeMap = new Dictionary<World, Dictionary<Type, TypeId>>();
-		static Dictionary<World, Dictionary<string, TypeId>> tagTypeMap = new Dictionary<World, Dictionary<string, TypeId>>();
-		static Dictionary<World, List<SystemActionDelegate>> systemActions = new Dictionary<World, List<SystemActionDelegate>>();
-
-
 		public struct ContextData
 		{
 			internal DynamicBuffer stringBuffer;
@@ -28,12 +22,10 @@ namespace Flecs
 		public static World Create()
 		{
 			var world = ecs.init();
-			typeMap[world] = new Dictionary<Type, TypeId>();
-			tagTypeMap[world] = new Dictionary<string, TypeId>();
-			systemActions[world] = new List<SystemActionDelegate>();
+			Caches.RegisterWorld(world);
 
 			var context = Heap.Alloc<ContextData>();
-			context->stringBuffer = DynamicBuffer.Create(4096 * 100);
+			context->stringBuffer = DynamicBuffer.Create(4096);
 			ecs.set_context(world, (IntPtr)context);
 
 			return world;
@@ -48,6 +40,7 @@ namespace Flecs
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Dispose()
 		{
+			Caches.DeregisterWorld(this);
 			StringBuffer.Dispose();
 			Heap.Free(ctx);
 			ecs.fini(this);
@@ -64,30 +57,29 @@ namespace Flecs
 
 		internal TypeId GetComponentTypeId(Type compType)
 		{
-			if (!typeMap[this].TryGetValue(compType, out var val))
+			if (!Caches.TryGetComponentTypeId(this, compType, out var typeId))
 			{
 				var charPtr = StringBuffer.AddUTF8String(compType.Name);
 				var entityId = ecs.new_component(this, charPtr, (UIntPtr)Marshal.SizeOf(compType));
-				var typeId = ecs.type_from_entity(this, entityId);
-				typeMap[this][compType] = typeId;
-				return typeId;
+				typeId = ecs.type_from_entity(this, entityId);
+				Caches.AddComponentTypeToTypeId(this, compType, typeId);
 			}
 
-			return val;
+			return typeId;
 		}
 
 		internal TypeId GetTagTypeId(string tag)
 		{
-			if (!tagTypeMap[this].TryGetValue(tag, out var val))
+			if (!Caches.TryGetTagTypeId(this, tag, out var typeId))
 			{
 				var charPtr = StringBuffer.AddUTF8String(tag);
 				var entityId = ecs.new_component(this, charPtr, (UIntPtr)0);
-				var typeId = ecs.type_from_entity(this, entityId);
-				tagTypeMap[this][tag] = typeId;
+				typeId = ecs.type_from_entity(this, entityId);
+				Caches.AddTagToTypeId(this, tag, typeId);
 				return typeId;
 			}
 
-			return val;
+			return typeId;
 		}
 
 		public EntityId AddSystem(SystemKind kind, ReadOnlySpan<char> name, SystemActionDelegate systemImpl, params Type[] componentTypes)
@@ -96,7 +88,7 @@ namespace Flecs
 			var components = BuildComponentQuery(componentTypes);
 			var signaturePtr = StringBuffer.AddUTF8String(components);
 			var entityId = ecs.new_system(this, systemNamePtr, kind, signaturePtr, systemImpl);
-			systemActions[this].Add(systemImpl);
+			Caches.AddSystemAction(this, systemImpl);
 			return entityId;
 		}
 
