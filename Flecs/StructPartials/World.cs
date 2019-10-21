@@ -12,6 +12,7 @@ namespace Flecs
 	unsafe partial struct World : IDisposable
 	{
 		static Dictionary<World, Dictionary<Type, TypeId>> typeMap = new Dictionary<World, Dictionary<Type, TypeId>>();
+		static Dictionary<World, Dictionary<string, TypeId>> tagTypeMap = new Dictionary<World, Dictionary<string, TypeId>>();
 
 		public struct ContextData
 		{
@@ -26,6 +27,7 @@ namespace Flecs
 		{
 			var world = ecs.init();
 			typeMap[world] = new Dictionary<Type, TypeId>();
+			tagTypeMap[world] = new Dictionary<string, TypeId>();
 
 			var context = Heap.Alloc<ContextData>();
 			context->stringBuffer = DynamicBuffer.Create(4096 * 100);
@@ -57,7 +59,7 @@ namespace Flecs
 		//    return componentId;
 		//}
 
-		internal TypeId GetTypeId(Type compType)
+		internal TypeId GetComponentTypeId(Type compType)
 		{
 			if (!typeMap[this].TryGetValue(compType, out var val))
 			{
@@ -65,6 +67,20 @@ namespace Flecs
 				var entityId = ecs.new_component(this, charPtr, (UIntPtr)Marshal.SizeOf(compType));
 				var typeId = ecs.type_from_entity(this, entityId);
 				typeMap[this][compType] = typeId;
+				return typeId;
+			}
+
+			return val;
+		}
+
+		internal TypeId GetTagTypeId(string tag)
+		{
+			if (!tagTypeMap[this].TryGetValue(tag, out var val))
+			{
+				var charPtr = StringBuffer.AddUTF8String(tag);
+				var entityId = ecs.new_component(this, charPtr, (UIntPtr)0);
+				var typeId = ecs.type_from_entity(this, entityId);
+				tagTypeMap[this][tag] = typeId;
 				return typeId;
 			}
 
@@ -118,7 +134,7 @@ namespace Flecs
 			var sb = new StringBuilder(64);
 			for (int i = 0; i < componentTypes.Length; i++)
 			{
-				GetTypeId(componentTypes[i]);
+				GetComponentTypeId(componentTypes[i]);
 				sb.Append(componentTypes[i].Name);
 
 				if (i != componentTypes.Length - 1)
@@ -133,8 +149,7 @@ namespace Flecs
 		{
 			var entityNamePtr = StringBuffer.AddUTF8String(entityName);
 			var components = BuildComponentQuery(componentTypes);
-			var componentsQueryPtr = StringBuffer.AddUTF8String(components);
-			var entityId = ecs.new_entity(this, entityNamePtr, componentsQueryPtr);
+			var entityId = ecs.new_entity(this, entityNamePtr, components);
 			return entityId;
 		}
 
@@ -156,7 +171,7 @@ namespace Flecs
 
 		public EntityId NewEntity<T1>() where T1 : unmanaged
 		{
-			var typeId = GetTypeId(typeof(T1));
+			var typeId = GetComponentTypeId(typeof(T1));
 			return _ecs.@new(this, typeId);
 		}
 
@@ -165,7 +180,7 @@ namespace Flecs
 
 		public EntityId NewEntitiesWithCount<T1>(uint count) where T1 : unmanaged
 		{
-			var typeId = GetTypeId(typeof(T1));
+			var typeId = GetComponentTypeId(typeof(T1));
 			return _ecs.new_w_count(this, typeId, count);
 		}
 
@@ -218,14 +233,14 @@ namespace Flecs
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public EntityId Set<T>(EntityId entity, T value) where T : unmanaged
 		{
-			var type = GetTypeId(typeof(T));
+			var type = GetComponentTypeId(typeof(T));
 			T* val = &value;
 			return _ecs.set_ptr(this, entity, ecs.type_to_entity(this, type), (UIntPtr)Marshal.SizeOf<T>(), (IntPtr)val);
 		}
 
 		public void Add<T>(EntityId entity)
 		{
-			_ecs.add(this, entity, GetTypeId(typeof(T)));
+			_ecs.add(this, entity, GetComponentTypeId(typeof(T)));
 		}
 	}
 }

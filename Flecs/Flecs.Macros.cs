@@ -13,7 +13,7 @@ namespace Flecs
 
 		public static EntityId ecs_new(World world, Type componentType)
 		{
-			return _ecs.@new(world, world.GetTypeId(componentType));
+			return _ecs.@new(world, world.GetComponentTypeId(componentType));
 		}
 
 		public static bool ecs_has(World world, EntityId entity, TypeId typeId)
@@ -23,7 +23,12 @@ namespace Flecs
 
 		public static bool ecs_has(World world, EntityId entity, Type componentType)
 		{
-			return _ecs.has(world, entity, world.GetTypeId(componentType));
+			return _ecs.has(world, entity, world.GetComponentTypeId(componentType));
+		}
+
+		public static bool ecs_has<T>(World world, EntityId entity) where T : unmanaged
+		{
+			return _ecs.has(world, entity, world.GetComponentTypeId(typeof(T)));
 		}
 
 		public static EntityId ecs_new_w_count(World world, TypeId typeId, uint count)
@@ -31,16 +36,14 @@ namespace Flecs
 			return _ecs.new_w_count(world, typeId, count);
 		}
 
-		public static void ecs_new_child(World world)
+		public static EntityId ecs_new_child(World world, EntityId parent, TypeId type)
 		{
-			//#define ecs_new_child(world, parent, type)\
-			//		_ecs_new_child(world, parent, T##type)
+			return _ecs.new_child(world, parent, type);
 		}
 
-		public static void ecs_new_child_w_count(World world)
+		public static EntityId ecs_new_child_w_count(World world, EntityId parent, TypeId type, uint count)
 		{
-			//#define ecs_new_child_w_count(world, parent, type, count)\
-			//		_ecs_new_child_w_count(world, parent, T##type, count)
+			return _ecs.new_child_w_count(world, parent, type, count);
 		}
 
 		public static EntityId ecs_new_instance(World world, EntityId baseEntityId, TypeId type)
@@ -105,7 +108,7 @@ namespace Flecs
 
 		public static void ECS_COMPONENT(World world, Type componentType)
 		{
-			world.GetTypeId(componentType);
+			world.GetComponentTypeId(componentType);
 
 			//#define ECS_COMPONENT(world, id) \
 			//	  ECS_ENTITY_VAR(id) = ecs_new_component(world, #id, sizeof(id));\
@@ -113,6 +116,8 @@ namespace Flecs
 			//    (void)ecs_entity(id);\
 			//    (void)ecs_type(id);\
 		}
+
+		public static TypeId ECS_COMPONENT<T>(World world) where T : unmanaged => world.GetComponentTypeId(typeof(T));
 
 		public static void ECS_SYSTEM(World world)
 		{
@@ -124,8 +129,13 @@ namespace Flecs
 //    (void)ecs_type(id);
 		}
 
-		public static void ECS_ENTITY(World world)
+		public static EntityId ECS_ENTITY(World world, string id, string expr)
 		{
+			var idPtr = world.StringBuffer.AddUTF8String(id);
+			var entityId = ecs.new_entity(world, idPtr, expr);
+			//ecs.type_from_entity(world, entityId);
+			return entityId;
+
 //#define ECS_ENTITY(world, id, ...)\
 //			ecs_entity_t id = ecs_new_entity(world, #id, #__VA_ARGS__);\
 //    ECS_TYPE_VAR(id) = ecs_type_from_entity(world, id);\
@@ -133,13 +143,11 @@ namespace Flecs
 //    (void)ecs_type(id);
 		}
 
-		public static void ECS_TAG(World world)
+		public static TypeId ECS_TAG(World world, string tag)
 		{
-//#define ECS_TAG(world, id) \
-//			ecs_entity_t id = ecs_new_component(world, #id, 0);\
-//    ECS_TYPE_VAR(id) = ecs_type_from_entity(world, id);\
-//    (void)id;\
-//    (void)ecs_type(id);\
+			var idPtr = world.StringBuffer.AddUTF8String(tag);
+			var entityId = ecs.new_component(world, idPtr, (UIntPtr)0);
+			return ecs.type_from_entity(world, entityId);
 		}
 
 		public static TypeId ECS_TYPE(World world, string id, string expr)
@@ -147,11 +155,6 @@ namespace Flecs
 			var idPtr = world.StringBuffer.AddUTF8String(id);
 			var entityId = ecs.new_type(world, idPtr, expr);
 			return ecs.type_from_entity(world, entityId);
-//#define ECS_TYPE(world, id, ...) \
-//			ecs_entity_t id = ecs_new_type(world, #id, #__VA_ARGS__);\
-//    ECS_TYPE_VAR(id) = ecs_type_from_entity(world, id);\
-//    (void)id;\
-//    (void)ecs_type(id);\
 		}
 
 		public static void ECS_PREFAB(World world)

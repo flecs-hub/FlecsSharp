@@ -1357,7 +1357,7 @@ namespace Flecs
 		///</summary>
 		///<param name="world"> [in]  The world. </param>
 		///<param name="id"> [in]  The entity id. </param>
-		///<param name="components"> [in]  A component expression. </param>
+		///<param name="expr"> [in]  A component expression. </param>
 		///<returns>
 		/// A handle to the created entity. 
 		///</returns>
@@ -1371,7 +1371,7 @@ namespace Flecs
 		///</code>
 		// ecs_new_entity: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1895
 		[DllImport(NativeLibName, EntryPoint = "ecs_new_entity", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-		public static extern EntityId new_entity(World world, CharPtr id, CharPtr components);
+		public static extern EntityId new_entity(World world, CharPtr id, string expr);
 
 		///<summary>
 		/// Create a new component. This operation creates a new component with a specified id and size. After this operation is called, the component can be added to entities by using the returned handle with ecs_add.

@@ -84,7 +84,7 @@ namespace Flecs
 	{
 		public EntityId(UInt64 value) => Value = value;
 
-		UInt64 Value;
+		public readonly UInt64 Value;
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static explicit operator EntityId(UInt64 val) => new EntityId(val);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -285,12 +285,14 @@ namespace Flecs
 	//type
 	public unsafe partial struct TypeId
 	{
-		IntPtr ptr;
+		internal IntPtr ptr;
 		public TypeId(IntPtr ptr) => this.ptr = ptr;
 		internal TypeId* Ptr => (TypeId*)ptr;
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static explicit operator TypeId(int val) => new TypeId(new IntPtr(val));
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static implicit operator Vector(TypeId type) => new Vector(type.ptr);
 	}
 
 	//ecs_table_columns_t
