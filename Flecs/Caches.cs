@@ -11,6 +11,8 @@ namespace Flecs
 		static Dictionary<World, Dictionary<Type, TypeId>> typeMap = new Dictionary<World, Dictionary<Type, TypeId>>();
 		static Dictionary<World, Dictionary<string, TypeId>> tagTypeMap = new Dictionary<World, Dictionary<string, TypeId>>();
 		static Dictionary<World, List<SystemActionDelegate>> systemActions = new Dictionary<World, List<SystemActionDelegate>>();
+		static Dictionary<int, CharPtr> unmanagedStrings = new Dictionary<int, CharPtr>();
+		static UnmanagedStringBuffer stringBuffer = UnmanagedStringBuffer.Create();
 
 		internal static void RegisterWorld(World world)
 		{
@@ -24,6 +26,22 @@ namespace Flecs
 			typeMap.Remove(world);
 			tagTypeMap.Remove(world);
 			systemActions.Remove(world);
+		}
+
+		/// <summary>
+		/// adds an unmanaged string to the buffer and returns a pointer to the null-terminated string. Caches the result so each string is only
+		/// ever created once.
+		/// </summary>
+		internal static CharPtr AddUnmanagedString(string str)
+		{
+			var strHashCode = str.GetHashCode();
+			if (unmanagedStrings.ContainsKey(strHashCode))
+				return unmanagedStrings[strHashCode];
+
+			var ptr = stringBuffer.AddString(str);
+			unmanagedStrings[strHashCode] = ptr;
+
+			return ptr;
 		}
 
 		#region Add/Remove Type Caches

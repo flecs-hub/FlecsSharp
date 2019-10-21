@@ -10,23 +10,11 @@ namespace Flecs
 
 	unsafe partial struct World : IDisposable
 	{
-		public struct ContextData
-		{
-			internal DynamicBuffer stringBuffer;
-		}
-
-		ContextData* ctx => (ContextData*)ecs.get_context(this);
-		public DynamicBuffer StringBuffer => ctx->stringBuffer;
-
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static World Create()
 		{
 			var world = ecs.init();
 			Caches.RegisterWorld(world);
-
-			var context = Heap.Alloc<ContextData>();
-			context->stringBuffer = DynamicBuffer.Create(4096);
-			ecs.set_context(world, (IntPtr)context);
 
 			return world;
 		}
@@ -34,15 +22,10 @@ namespace Flecs
 		///<summary>
 		/// Delete a world. This operation deletes the world, and all entities, components and systems within the world.
 		///</summary>
-		///<code>
-		///int ecs_fini(ecs_world_t *world)
-		///</code>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Dispose()
 		{
 			Caches.DeregisterWorld(this);
-			StringBuffer.Dispose();
-			Heap.Free(ctx);
 			ecs.fini(this);
 		}
 
@@ -59,7 +42,7 @@ namespace Flecs
 		{
 			if (!Caches.TryGetComponentTypeId(this, compType, out var typeId))
 			{
-				var charPtr = StringBuffer.AddString(compType.Name);
+				var charPtr = Caches.AddUnmanagedString(compType.Name);
 				var entityId = ecs.new_component(this, charPtr, (UIntPtr)Marshal.SizeOf(compType));
 				typeId = ecs.type_from_entity(this, entityId);
 				Caches.AddComponentTypeToTypeId(this, compType, typeId);
@@ -72,7 +55,7 @@ namespace Flecs
 		{
 			if (!Caches.TryGetTagTypeId(this, tag, out var typeId))
 			{
-				var charPtr = StringBuffer.AddString(tag);
+				var charPtr = Caches.AddUnmanagedString(tag);
 				var entityId = ecs.new_component(this, charPtr, (UIntPtr)0);
 				typeId = ecs.type_from_entity(this, entityId);
 				Caches.AddTagToTypeId(this, tag, typeId);
@@ -84,9 +67,9 @@ namespace Flecs
 
 		public EntityId AddSystem(SystemKind kind, string name, SystemActionDelegate systemImpl, params Type[] componentTypes)
 		{
-			var systemNamePtr = StringBuffer.AddString(name);
+			var systemNamePtr = Caches.AddUnmanagedString(name);
 			var components = BuildComponentQuery(componentTypes);
-			var signaturePtr = StringBuffer.AddString(components);
+			var signaturePtr = Caches.AddUnmanagedString(components);
 			var entityId = ecs.new_system(this, systemNamePtr, kind, signaturePtr, systemImpl);
 			Caches.AddSystemAction(this, systemImpl);
 			return entityId;
@@ -143,7 +126,7 @@ namespace Flecs
 
 		EntityId NewEntity(string entityName, params Type[] componentTypes)
 		{
-			var entityNamePtr = StringBuffer.AddString(entityName);
+			var entityNamePtr = Caches.AddUnmanagedString(entityName);
 			var components = BuildComponentQuery(componentTypes);
 			var entityId = ecs.new_entity(this, entityNamePtr, components);
 			return entityId;
@@ -152,7 +135,7 @@ namespace Flecs
 		EntityId NewEntity(params Type[] componentTypes)
 		{
 			var components = BuildComponentQuery(componentTypes);
-			var componentsQueryPtr = StringBuffer.AddString(components);
+			var componentsQueryPtr = Caches.AddUnmanagedString(components);
 			var typeId = ecs.expr_to_type(this, componentsQueryPtr);
 			return _ecs.@new(this, typeId);
 		}
@@ -160,7 +143,7 @@ namespace Flecs
 		EntityId NewEntitiesWithCount(uint count, params Type[] componentTypes)
 		{
 			var components = BuildComponentQuery(componentTypes);
-			var componentsQueryPtr = StringBuffer.AddString(components);
+			var componentsQueryPtr = Caches.AddUnmanagedString(components);
 			var typeId = ecs.expr_to_type(this, componentsQueryPtr);
 			return _ecs.new_w_count(this, typeId, count);
 		}

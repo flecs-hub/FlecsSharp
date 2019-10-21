@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Flecs
 {
-    public unsafe struct DynamicBuffer : IDisposable
+    public unsafe struct UnmanagedStringBuffer : IDisposable
     {
         private struct Header
         {
@@ -20,47 +20,44 @@ namespace Flecs
 
         byte* ThisPtr => (byte*)_header;
 
-        private DynamicBuffer(Header* header) => this._header = header;
+		private UnmanagedStringBuffer(Header* header) => _header = header;
 
-        public static DynamicBuffer Create(int size = 4096)
-        {
-            var mem = (Header*)Heap.Alloc(size);
-            mem->Size = size;
+		public static UnmanagedStringBuffer Create(int size = 4096) => new UnmanagedStringBuffer(AllocateHeader(size));
 
-            var offset = Marshal.SizeOf<Header>();
-            offset += offset % NATURAL_ALIGNMENT;
+		static Header* AllocateHeader(int size = 4096)
+		{
+			var mem = (Header*)Heap.Alloc(size);
+			mem->Size = size;
 
-            mem->CurrentOffset = offset;
-            mem->Start = offset;
+			var offset = Marshal.SizeOf<Header>();
+			offset += offset % NATURAL_ALIGNMENT;
 
-            return new DynamicBuffer(mem);
-        }
+			mem->CurrentOffset = offset;
+			mem->Start = offset;
+
+			return mem;
+		}
 
         public void Dispose() => Heap.Free(_header);
 
-        public Span<byte> GetAvailableSpan(int requiredSize, out IntPtr startPtr)
+        Span<byte> GetAvailableSpan(int requiredSize, out IntPtr startPtr)
         {
             var aligned = ThisPtr + _header->CurrentOffset;
-            aligned += ((long)aligned) % STR_ALIGN;
+            var alignOffset = ((long)aligned) % STR_ALIGN;
+            aligned += alignOffset;
             startPtr = (IntPtr)aligned;
 
             var sizeLeft = _header->Size - (int)(aligned - ThisPtr);
             if (sizeLeft <= requiredSize)
             {
-                ExpandBuffer();
-                return GetAvailableSpan(requiredSize, out startPtr);
+				// when we run out of space we allocate a new block of memory and just let the previous one live
+				_header = AllocateHeader();
+				return GetAvailableSpan(requiredSize, out startPtr);
             }
 
-            _header->CurrentOffset += requiredSize;
+            _header->CurrentOffset += requiredSize + (int)alignOffset;
 
-            return new Span<byte>(aligned, (int)sizeLeft);
-        }
-
-        void ExpandBuffer()
-        {
-            var newSize = (int)(_header->Size * 1.3F);
-            _header = (Header*)Heap.Realloc(_header, newSize);
-            _header->Size = newSize;
+            return new Span<byte>(aligned, requiredSize);
         }
 
         public CharPtr AddString(string str)
@@ -84,6 +81,7 @@ namespace Flecs
         }
     }
 
+
     public unsafe static class Heap
 	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -101,7 +99,7 @@ namespace Flecs
 		public static void Free<T>(T* ptr) where T : unmanaged => Marshal.FreeHGlobal((IntPtr)ptr);
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void Free(IntPtr ptr) => Marshal.FreeHGlobal((IntPtr)ptr);
+		public static void Free(IntPtr ptr) => Marshal.FreeHGlobal(ptr);
 
 		internal static void* Realloc(void* ptr, int newSize)
 			=> (void*)Marshal.ReAllocHGlobal((IntPtr)ptr, (IntPtr)newSize);

@@ -124,20 +124,20 @@ namespace Flecs
 
 		public static EntityId ECS_ENTITY(World world, string id, string expr)
 		{
-            var idPtr = world.StringBuffer.AddString(id);
+            var idPtr = Caches.AddUnmanagedString(id);
 			return ecs.new_entity(world, idPtr, expr);
 		}
 
 		public static TypeId ECS_TAG(World world, string tag)
 		{
-			var idPtr = world.StringBuffer.AddString(tag);
+			var idPtr = Caches.AddUnmanagedString(tag);
 			var entityId = ecs.new_component(world, idPtr, (UIntPtr)0);
 			return ecs.type_from_entity(world, entityId);
 		}
 
 		public static TypeId ECS_TYPE(World world, string id, string expr)
 		{
-			var idPtr = world.StringBuffer.AddString(id);
+			var idPtr = Caches.AddUnmanagedString(id);
 			var entityId = ecs.new_type(world, idPtr, expr);
 			return ecs.type_from_entity(world, entityId);
 		}

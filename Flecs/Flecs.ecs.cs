@@ -957,7 +957,7 @@ namespace Flecs
 		///</code>
 		// ecs_lookup: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1341
 		[DllImport(NativeLibName, EntryPoint = "ecs_lookup", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-		public static extern EntityId lookup(World world, CharPtr id);
+		public static extern EntityId lookup(World world, string id);
 
 		///<summary>
 		/// Lookup child of parent by id. This operation is the same as ecs_lookup, except for that it only searches entities that are children of the specified parent.
