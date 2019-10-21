@@ -74,13 +74,17 @@ namespace HelloWorld
 				var watch = System.Diagnostics.Stopwatch.StartNew();
 				for (var j = 0; j < 10000; j++)
 					world.NewEntity(new Position { X = 75, Y = 23 }, new Speed { SpeedValue = 66 });
-				Console.WriteLine($"-- add: {watch.ElapsedMilliseconds} ms, ticks: {watch.ElapsedTicks}");
+				Console.WriteLine($"-- add one-by-one: {watch.ElapsedMilliseconds} ms, ticks: {watch.ElapsedTicks}");
+
+				// bulk add with a template
+				watch.Restart();
+				BulkAddWithTemplate(world, 10000);
+				Console.WriteLine($"-- bulk add w template: {watch.ElapsedMilliseconds} ms, ticks: {watch.ElapsedTicks}");
 
 				// bulk add with an init system
-				world.AddSystem<Position, Speed>(OnAddMoveSystem, SystemKind.OnAdd);
 				watch.Restart();
-				world.NewEntitiesWithCount<Position, Speed>(10000);
-				Console.WriteLine($"-- add w count: {watch.ElapsedMilliseconds} ms, ticks: {watch.ElapsedTicks}");
+				BulkAddWithInitSystem(world, 10000);
+				Console.WriteLine($"-- add w init system: {watch.ElapsedMilliseconds} ms, ticks: {watch.ElapsedTicks}");
 
 				for (var j = 0; j < 10; j++)
 				{
@@ -97,6 +101,23 @@ namespace HelloWorld
 						break;
 				}
 			}
+		}
+
+		static void BulkAddWithTemplate(World world, uint count)
+		{
+			var templateEntity = ecs.ECS_ENTITY(world, "MyTemplate", "Position, Speed");
+			world.Set(templateEntity, new Position { X = 999, Y = 999 });
+			world.Set(templateEntity, new Speed { SpeedValue = 999 });
+
+			var templateType = ecs.ECS_TYPE(world, "MyType", "INSTANCEOF | MyTemplate, Position, Speed");
+
+			ecs.ecs_new_w_count(world, templateType, count);
+		}
+
+		static void BulkAddWithInitSystem(World world, uint count)
+		{
+			world.AddSystem<Position, Speed>(OnAddMoveSystem, SystemKind.OnAdd);
+			world.NewEntitiesWithCount<Position, Speed>(count);
 		}
 	}
 }

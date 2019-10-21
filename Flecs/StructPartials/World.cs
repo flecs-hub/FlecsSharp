@@ -13,6 +13,8 @@ namespace Flecs
 	{
 		static Dictionary<World, Dictionary<Type, TypeId>> typeMap = new Dictionary<World, Dictionary<Type, TypeId>>();
 		static Dictionary<World, Dictionary<string, TypeId>> tagTypeMap = new Dictionary<World, Dictionary<string, TypeId>>();
+		static Dictionary<World, List<SystemActionDelegate>> systemActions = new Dictionary<World, List<SystemActionDelegate>>();
+
 
 		public struct ContextData
 		{
@@ -28,6 +30,7 @@ namespace Flecs
 			var world = ecs.init();
 			typeMap[world] = new Dictionary<Type, TypeId>();
 			tagTypeMap[world] = new Dictionary<string, TypeId>();
+			systemActions[world] = new List<SystemActionDelegate>();
 
 			var context = Heap.Alloc<ContextData>();
 			context->stringBuffer = DynamicBuffer.Create(4096 * 100);
@@ -93,6 +96,7 @@ namespace Flecs
 			var components = BuildComponentQuery(componentTypes);
 			var signaturePtr = StringBuffer.AddUTF8String(components);
 			var entityId = ecs.new_system(this, systemNamePtr, kind, signaturePtr, systemImpl);
+			systemActions[this].Add(systemImpl);
 			return entityId;
 		}
 
