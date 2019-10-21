@@ -59,7 +59,7 @@ namespace Flecs
 		{
 			if (!Caches.TryGetComponentTypeId(this, compType, out var typeId))
 			{
-				var charPtr = StringBuffer.AddUTF8String(compType.Name);
+				var charPtr = StringBuffer.AddString(compType.Name);
 				var entityId = ecs.new_component(this, charPtr, (UIntPtr)Marshal.SizeOf(compType));
 				typeId = ecs.type_from_entity(this, entityId);
 				Caches.AddComponentTypeToTypeId(this, compType, typeId);
@@ -72,7 +72,7 @@ namespace Flecs
 		{
 			if (!Caches.TryGetTagTypeId(this, tag, out var typeId))
 			{
-				var charPtr = StringBuffer.AddUTF8String(tag);
+				var charPtr = StringBuffer.AddString(tag);
 				var entityId = ecs.new_component(this, charPtr, (UIntPtr)0);
 				typeId = ecs.type_from_entity(this, entityId);
 				Caches.AddTagToTypeId(this, tag, typeId);
@@ -82,11 +82,11 @@ namespace Flecs
 			return typeId;
 		}
 
-		public EntityId AddSystem(SystemKind kind, ReadOnlySpan<char> name, SystemActionDelegate systemImpl, params Type[] componentTypes)
+		public EntityId AddSystem(SystemKind kind, string name, SystemActionDelegate systemImpl, params Type[] componentTypes)
 		{
-			var systemNamePtr = StringBuffer.AddUTF8String(name);
+			var systemNamePtr = StringBuffer.AddString(name);
 			var components = BuildComponentQuery(componentTypes);
-			var signaturePtr = StringBuffer.AddUTF8String(components);
+			var signaturePtr = StringBuffer.AddString(components);
 			var entityId = ecs.new_system(this, systemNamePtr, kind, signaturePtr, systemImpl);
 			Caches.AddSystemAction(this, systemImpl);
 			return entityId;
@@ -143,7 +143,7 @@ namespace Flecs
 
 		EntityId NewEntity(string entityName, params Type[] componentTypes)
 		{
-			var entityNamePtr = StringBuffer.AddUTF8String(entityName);
+			var entityNamePtr = StringBuffer.AddString(entityName);
 			var components = BuildComponentQuery(componentTypes);
 			var entityId = ecs.new_entity(this, entityNamePtr, components);
 			return entityId;
@@ -152,7 +152,7 @@ namespace Flecs
 		EntityId NewEntity(params Type[] componentTypes)
 		{
 			var components = BuildComponentQuery(componentTypes);
-			var componentsQueryPtr = StringBuffer.AddUTF8String(components);
+			var componentsQueryPtr = StringBuffer.AddString(components);
 			var typeId = ecs.expr_to_type(this, componentsQueryPtr);
 			return _ecs.@new(this, typeId);
 		}
@@ -160,7 +160,7 @@ namespace Flecs
 		EntityId NewEntitiesWithCount(uint count, params Type[] componentTypes)
 		{
 			var components = BuildComponentQuery(componentTypes);
-			var componentsQueryPtr = StringBuffer.AddUTF8String(components);
+			var componentsQueryPtr = StringBuffer.AddString(components);
 			var typeId = ecs.expr_to_type(this, componentsQueryPtr);
 			return _ecs.new_w_count(this, typeId, count);
 		}

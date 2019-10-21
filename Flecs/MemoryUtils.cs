@@ -5,140 +5,86 @@ using System.Text;
 
 namespace Flecs
 {
-	public struct MemoryPage : IDisposable
-	{
-		public const int PageSize = 8192;
-		IntPtr ptr;
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static MemoryPage Create()
-		{
-			MemoryPage page;
-			page.ptr = Heap.Alloc(PageSize);
-			return page;
-		}
+    public unsafe struct DynamicBuffer : IDisposable
+    {
+        private struct Header
+        {
+            internal int Size;
+            internal int CurrentOffset;
+            internal int Start;
+        }
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void Dispose() => Heap.Free(ptr);
-	}
+        const int NATURAL_ALIGNMENT = 16;
+        const int STR_ALIGN = 8;
+        Header* _header;
 
-	public unsafe struct DynamicBuffer : IDisposable
-	{
-		Header* header;
-		private struct Header
-		{
-			internal int size;
-			internal int currentOffset;
-			internal int start;
-		}
+        byte* ThisPtr => (byte*)_header;
 
-		const int NATURAL_ALIGNMENT = 16;
-		private DynamicBuffer(Header* header) => this.header = header;
-		public static DynamicBuffer Create(int size = 4096)
-		{
-			Header* mem = (Header*)Heap.Alloc(size);
-			mem->size = size;
+        private DynamicBuffer(Header* header) => this._header = header;
 
-			var offset = Marshal.SizeOf<Header>();
-			offset += offset % NATURAL_ALIGNMENT;
-			mem->currentOffset = offset;
-			mem->start = offset;
-			return new DynamicBuffer(mem);
-		}
+        public static DynamicBuffer Create(int size = 4096)
+        {
+            var mem = (Header*)Heap.Alloc(size);
+            mem->Size = size;
 
-		public void Dispose() => Heap.Free(header);
+            var offset = Marshal.SizeOf<Header>();
+            offset += offset % NATURAL_ALIGNMENT;
 
+            mem->CurrentOffset = offset;
+            mem->Start = offset;
 
-		byte* thisPtr => (byte*)header;
-		byte* bufferEnd => thisPtr + header->size;
+            return new DynamicBuffer(mem);
+        }
 
-		byte* _aligned(int alignment, bool apply = false)
-		{
-			unchecked
-			{
-				var current = thisPtr + header->currentOffset;
-				current += ((long)current) % alignment;
+        public void Dispose() => Heap.Free(_header);
 
-				if (apply)
-					header->currentOffset = (int)(current - thisPtr);
+        public Span<byte> GetAvailableSpan(int requiredSize, out IntPtr startPtr)
+        {
+            var aligned = ThisPtr + _header->CurrentOffset;
+            aligned += ((long)aligned) % STR_ALIGN;
+            startPtr = (IntPtr)aligned;
 
-				return current;
-			}
-		}
+            var sizeLeft = _header->Size - (int)(aligned - ThisPtr);
+            if (sizeLeft <= requiredSize)
+            {
+                ExpandBuffer();
+                return GetAvailableSpan(requiredSize, out startPtr);
+            }
 
-		Span<byte> GetAvailableSpan(int align = NATURAL_ALIGNMENT)
-		{
-			unchecked
-			{
-				var aligned = _aligned(align);
-				var sizeLeft = header->size - (int)(aligned - thisPtr);
-				Console.WriteLine($"--- {sizeLeft}");
-				return new Span<byte>(aligned, (int)sizeLeft);
-			}
-		}
+            _header->CurrentOffset += requiredSize;
 
-		public Span<byte> AsSpan()
-		{
-			unchecked
-			{
-				var startPtr = thisPtr + header->start;
-				var offset = header->currentOffset - header->start;
-				return new Span<byte>(startPtr, offset);
-			}
-		}
+            return new Span<byte>(aligned, (int)sizeLeft);
+        }
 
-		public IntPtr Acquire(int size, int align = NATURAL_ALIGNMENT)
-		{
-			unchecked
-			{
-				var ptr = _aligned(align, true);
-				var nextPtr = ptr + size;
-				var newOffset = (int)(nextPtr - thisPtr);
+        void ExpandBuffer()
+        {
+            var newSize = (int)(_header->Size * 1.3F);
+            _header = (Header*)Heap.Realloc(_header, newSize);
+            _header->Size = newSize;
+        }
 
-				Console.WriteLine($"req: {size}, offset: {header->currentOffset}, newOffset: {newOffset}, tot: {header->size}, space: " + ((nextPtr >= bufferEnd) ? "no" : "yes"));
-				header->currentOffset = newOffset;
+        public CharPtr AddString(string str)
+        {
+            var strSize = Encoding.UTF8.GetByteCount(str);
 
-				if (nextPtr >= bufferEnd)
-				{
-					var newSize = (int)(newOffset * 1.3F); // grow by 30%
-					newSize += newOffset % 4096; // align to a pretty number
-					header = (Header*)Heap.Realloc(header, newSize);
-					header->size = newSize;
-				}
+            var available = GetAvailableSpan(strSize + 1, out var charPtr);
+            var len = Encoding.UTF8.GetBytes(str, available);
+            available[len] = 0; // null terminated
 
-				return (IntPtr)ptr;
-			}
-		}
+            return (CharPtr)charPtr;
+        }
 
-		public CharPtr AddUTF8String(ReadOnlySpan<char> str) => AddString(str, Encoding.UTF8);
+        public override string ToString()
+        {
+            var startPtr = ThisPtr + _header->Start;
+            var offset = _header->CurrentOffset - _header->Start;
+            var span = new Span<byte>(startPtr, offset);
 
-		public CharPtr AddASCIIString(ReadOnlySpan<char> str) => AddString(str, Encoding.ASCII);
+            return Encoding.UTF8.GetString(span);
+        }
+    }
 
-		public CharPtr AddString(ReadOnlySpan<char> str, Encoding encoding)
-		{
-			const int STR_ALIGN = 8; // 8 bytes alignment for string would be better to compute hashes
-
-			var available = GetAvailableSpan(STR_ALIGN);
-			if (available.Length < str.Length)
-			{
-				Console.WriteLine("-----fucked");
-				var newSize = (int)(header->size * 1.3F); // grow by 30%
-				newSize += newSize % 4096; // align to a pretty number
-				header = (Header*)Heap.Realloc(header, newSize);
-				header->size = newSize;
-
-				available = GetAvailableSpan(STR_ALIGN);
-			}
-
-			var len = encoding.GetBytes(str, available);
-			available[len] = 0; // null terminated
-			var charPtr = Acquire(len + 1, STR_ALIGN);
-			return (CharPtr)charPtr;
-		}
-
-		public override string ToString() => System.Text.Encoding.UTF8.GetString(AsSpan());
-	}
-
-	public unsafe static class Heap
+    public unsafe static class Heap
 	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static IntPtr Alloc(int size) => Marshal.AllocHGlobal((int)size);
