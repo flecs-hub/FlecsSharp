@@ -35,7 +35,7 @@ namespace Flecs
 		public static extern void os_set_api_defaults();
 
 		///<summary>
-		/// Logging (use functions to avoid using variadic macro arguments) 
+		/// Logging (use functions to avoid using variadic macro arguments)
 		///</summary>
 		///<code>
 		///void ecs_os_log(const char *fmt, ...)
@@ -80,7 +80,7 @@ namespace Flecs
 		public static extern bool os_dbg_enabled();
 
 		///<summary>
-		/// Sleep with floating point time 
+		/// Sleep with floating point time
 		///</summary>
 		///<code>
 		///void ecs_sleepf(double t)
@@ -90,7 +90,7 @@ namespace Flecs
 		public static extern void sleepf(double t);
 
 		///<summary>
-		/// Measure time since provided timestamp 
+		/// Measure time since provided timestamp
 		///</summary>
 		///<code>
 		///double ecs_time_measure(ecs_time_t *start)
@@ -582,7 +582,7 @@ namespace Flecs
 		public static extern void set_threads(World world, uint threads);
 
 		///<summary>
-		/// Get number of configured threads 
+		/// Get number of configured threads
 		///</summary>
 		///<code>
 		///uint32_t ecs_get_threads(ecs_world_t *world)
@@ -592,7 +592,7 @@ namespace Flecs
 		public static extern uint get_threads(World world);
 
 		///<summary>
-		/// Get index of current worker thread 
+		/// Get index of current worker thread
 		///</summary>
 		///<code>
 		///uint16_t ecs_get_thread_index(ecs_world_t *world)
@@ -618,7 +618,7 @@ namespace Flecs
 		public static extern void set_target_fps(World world, float fps);
 
 		///<summary>
-		/// Get number of configured threads 
+		/// Get number of configured threads
 		///</summary>
 		///<code>
 		///uint32_t ecs_get_target_fps(ecs_world_t *world)
@@ -643,7 +643,7 @@ namespace Flecs
 		public static extern int enable_admin(World world, ushort port);
 
 		///<summary>
-		/// Get last used delta time from world 
+		/// Get last used delta time from world
 		///</summary>
 		///<code>
 		///float ecs_get_delta_time(ecs_world_t *world)
@@ -751,7 +751,7 @@ namespace Flecs
 		/// The component data must be provided in the columns field. This is an array of component arrays. The component arrays must be provided in the same order as the components have been provided in the components array. For example, if the components array is set to {ecs_entity(Position), ecs_entity(Velocity)}, the columns must first specify the Position, and then the Velocity array. If no component data is provided, the components will be left uninitialized.
 		/// Both the entities array and the component data arrays in columns must contain exactly row_count elements. The columns array must contain exactly  column_count elements.
 		/// The operation allows for efficient insertion of data for the same set of entities, provided that the entities are specified in the same order for every invocation of this function. After executing this operation, entities will be ordered in the same order specified in the entities array.
-		/// If entities already exist in another table, they will be deleted from that table and inserted into the new table. 
+		/// If entities already exist in another table, they will be deleted from that table and inserted into the new table.
 		///</remarks>
 		///<code>
 		///ecs_entity_t ecs_set_w_data(ecs_world_t *world, ecs_table_data_t *data)
@@ -997,7 +997,7 @@ namespace Flecs
 		public static extern TypeId type_from_entity(World world, EntityId entity);
 
 		///<summary>
-		/// Get an entity from a type. This function is the reverse of ecs_type_from_entity. It only works for types that contain exactly one entity. 
+		/// Get an entity from a type. This function is the reverse of ecs_type_from_entity. It only works for types that contain exactly one entity.
 		///</summary>
 		///<param name="world"> [in]  The world. </param>
 		///<param name="type"> [in]  The entity for which to obtain the type. </param>
@@ -1005,7 +1005,7 @@ namespace Flecs
 		/// The entity associated with the type.
 		///</returns>
 		///<remarks>
-		/// If this operation is invoked on a type that contains more than just one  entity, the function will abort. Applications should only use types with this function that are guaranteed to have one entity, such as the types created  for prefabs. 
+		/// If this operation is invoked on a type that contains more than just one  entity, the function will abort. Applications should only use types with this function that are guaranteed to have one entity, such as the types created  for prefabs.
 		///</remarks>
 		///<code>
 		///ecs_entity_t ecs_type_to_entity(ecs_world_t *world, ecs_type_t type)
@@ -1123,7 +1123,7 @@ namespace Flecs
 		///</code>
 		// ecs_expr_to_type: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1528
 		[DllImport(NativeLibName, EntryPoint = "ecs_expr_to_type", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-		public static extern TypeId expr_to_type(World world, CharPtr expr);
+		public static extern TypeId expr_to_type(World world, string expr);
 
 		///<summary>
 		/// Get type expression from type.  This function converts a type to a type expression, which is a string representation of the type as it is provided to the ecs_new_entity and ecs_new_type functions. For more information on type expressions, see  ecs_expr_to_type.
@@ -1277,7 +1277,7 @@ namespace Flecs
 		///<param name="rows"> [in]  Pointer to the rows object passed into the system callback. </param>
 		///<param name="index"> [in]  An index identifying the column for which to obtain the component. </param>
 		///<returns>
-		/// The source entity for the column. 
+		/// The source entity for the column.
 		///</returns>
 		///<remarks>
 		/// If a column is specified for which the component is stored on the entities being iterated over, the operation will return 0, as the entity id in that case depends on the row, not on the column. To obtain the entity ids for a row, a system should access the entity column (column zero) like this:
@@ -1333,7 +1333,7 @@ namespace Flecs
 		public static extern TypeId column_type(ref Rows rows, uint column);
 
 		///<summary>
-		/// Get type of table that system is currently iterating over. 
+		/// Get type of table that system is currently iterating over.
 		///</summary>
 		///<code>
 		///ecs_type_t ecs_table_type(ecs_rows_t *rows)
@@ -1343,7 +1343,7 @@ namespace Flecs
 		public static extern TypeId table_type(ref Rows rows);
 
 		///<summary>
-		/// Get type of table that system is currently iterating over. 
+		/// Get type of table that system is currently iterating over.
 		///</summary>
 		///<code>
 		///void *ecs_table_column(ecs_rows_t *rows, uint32_t column)
@@ -1359,7 +1359,7 @@ namespace Flecs
 		///<param name="id"> [in]  The entity id. </param>
 		///<param name="expr"> [in]  A component expression. </param>
 		///<returns>
-		/// A handle to the created entity. 
+		/// A handle to the created entity.
 		///</returns>
 		///<remarks>
 		/// This function is wrapped by the ECS_ENTITY convenience macro.
@@ -1463,7 +1463,7 @@ namespace Flecs
 		public static extern EntityId new_prefab(World world, CharPtr id, CharPtr sig);
 
 		///<summary>
-		/// Get description for error code 
+		/// Get description for error code
 		///</summary>
 		///<code>
 		///const char *ecs_strerror(uint32_t error_code)

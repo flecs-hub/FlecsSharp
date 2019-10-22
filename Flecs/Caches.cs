@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
+
 
 namespace Flecs
 {
@@ -32,7 +34,7 @@ namespace Flecs
 		/// adds an unmanaged string to the buffer and returns a pointer to the null-terminated string. Caches the result so each string is only
 		/// ever created once.
 		/// </summary>
-		internal static CharPtr AddUnmanagedString(string str)
+		public static CharPtr AddUnmanagedString(string str)
 		{
 			var strHashCode = str.GetHashCode();
 			if (unmanagedStrings.ContainsKey(strHashCode))
@@ -42,6 +44,22 @@ namespace Flecs
 			unmanagedStrings[strHashCode] = ptr;
 
 			return ptr;
+		}
+
+		internal static TypeId GetComponentTypeId<T>(World world) where T : unmanaged
+			=> GetComponentTypeId(world, typeof(T));
+
+		internal static TypeId GetComponentTypeId(World world, Type compType)
+		{
+			if (!Caches.TryGetComponentTypeId(world, compType, out var typeId))
+			{
+				var charPtr = AddUnmanagedString(compType.Name);
+				var entityId = ecs.new_component(world, charPtr, (UIntPtr)Marshal.SizeOf(compType));
+				typeId = ecs.type_from_entity(world, entityId);
+				AddComponentTypeToTypeId(world, compType, typeId);
+			}
+
+			return typeId;
 		}
 
 		#region Add/Remove Type Caches

@@ -1,5 +1,7 @@
 ﻿using Flecs;
 using System;
+using System.Diagnostics;
+
 
 namespace HelloWorld
 {
@@ -18,12 +20,11 @@ namespace HelloWorld
 
 		static void PositionSystem(ref Rows rows, Span<Position> position)
 		{
+			Console.WriteLine($"PositionSystem: {rows.count}");
 			for (int i = 0; i < (int)rows.count; i++)
 			{
 				var entityId = rows[i];
 				ref var pos = ref position[i];
-				if (i == 0)
-					Console.WriteLine($"entityId: {entityId}, pos: {pos.X}, {pos.Y}");
 				pos.X += 1;
 				pos.Y += 1;
 			}
@@ -44,7 +45,7 @@ namespace HelloWorld
 		static void MoveSystem(ref Rows rows, Span<Position> position, Span<Speed> speed)
 		{
 			Console.WriteLine($"MoveSystem: {rows.count}");
-			for (int i = 0; i < (int)rows.count; i++)
+			for (var i = 0; i < (int)rows.count; i++)
 			{
 				var entityId = rows[i];
 				ref var pos = ref position[i];
@@ -57,8 +58,10 @@ namespace HelloWorld
 		{
 			using (var world = World.Create())
 			{
-				world.AddSystem<Position, Speed>(MoveSystem, SystemKind.OnUpdate);
-				world.AddSystem<Position>(PositionSystem, SystemKind.OnUpdate);
+				// world.AddSystem<Position, Speed>(MoveSystem, SystemKind.OnUpdate);
+				ecs.ECS_SYSTEM<Position, Speed>(world, MoveSystem, SystemKind.OnUpdate);
+				// world.AddSystem<Position>(PositionSystem, SystemKind.OnUpdate);
+				ecs.ECS_SYSTEM<Position>(world, PositionSystem, SystemKind.OnUpdate);
 
 				world.NewEntity("MyEntity1", new Position {X = 1, Y = 2}, new Speed {SpeedValue = 5});
 				world.NewEntity("MyEntity2", new Position {X = 1, Y = 2}, new Speed {SpeedValue = 5});
@@ -86,12 +89,7 @@ namespace HelloWorld
 				BulkAddWithInitSystem(world, 10000);
 				Console.WriteLine($"-- add w init system: {watch.ElapsedMilliseconds} ms, ticks: {watch.ElapsedTicks}");
 
-				for (var j = 0; j < 10; j++)
-				{
-					watch.Restart();
-					ecs.progress(world, 1);
-					Console.WriteLine($"-- progress: {watch.ElapsedMilliseconds} ms, ticks: {watch.ElapsedTicks}");
-				}
+				ProfileProgressTicks(world, 3);
 
 				ecs.set_target_fps(world, 60);
 				var i = 0;
@@ -100,6 +98,23 @@ namespace HelloWorld
 					if (i++ > 3)
 						break;
 				}
+			}
+		}
+
+		static void ProfileProgressTicks(World world, int iterations = 3)
+		{
+			var watch = new Stopwatch();
+			ecs.measure_frame_time(world, true);
+			ecs.measure_system_time(world, true);
+			for (var j = 0; j < iterations; j++)
+			{
+				watch.Restart();
+				ecs.progress(world, 10);
+				Console.WriteLine($"---- progress: {watch.ElapsedMilliseconds} ms, ticks: {watch.ElapsedTicks}");
+
+				ecs.get_stats(world, out var stats);
+				Console.WriteLine($"---- frame time: {stats.frameTime} ms, system time: {stats.systemTime}, systems: {stats.systemCount}, entities: {stats.entityCount}");
+				ecs.free_stats(ref stats);
 			}
 		}
 
@@ -116,8 +131,10 @@ namespace HelloWorld
 
 		static void BulkAddWithInitSystem(World world, uint count)
 		{
-			world.AddSystem<Position, Speed>(OnAddMoveSystem, SystemKind.OnAdd);
-			world.NewEntitiesWithCount<Position, Speed>(count);
+			ecs.ECS_SYSTEM<Position, Speed>(world, OnAddMoveSystem, SystemKind.OnAdd);
+
+			var typeId = ecs.expr_to_type(world, "Position, Speed");
+			ecs.ecs_new_w_count(world, typeId, count);
 		}
 	}
 }
