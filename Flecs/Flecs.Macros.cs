@@ -12,15 +12,12 @@ namespace Flecs
 	{
 		#region Imperitive Macros
 
-		public static EntityId ecs_new(World world, TypeId typeId)
-		{
-			return _ecs.@new(world, typeId);
-		}
+		public static EntityId ecs_new(World world, TypeId typeId) => _ecs.@new(world, typeId);
 
-		public static EntityId ecs_new(World world, Type componentType)
-		{
-			return _ecs.@new(world, Caches.GetComponentTypeId(world, componentType));
-		}
+		public static EntityId ecs_new<T>(World world) where T : unmanaged
+			=> _ecs.@new(world, Caches.GetComponentTypeId(world, typeof(T)));
+
+		public static EntityId ecs_new(World world, Type componentType) => _ecs.@new(world, Caches.GetComponentTypeId(world, componentType));
 
 		public static bool ecs_has(World world, EntityId entity, TypeId typeId)
 		{
@@ -67,49 +64,56 @@ namespace Flecs
 			return (T*)_ecs.column(ref rows, (UIntPtr)Marshal.SizeOf<T>(), columnIndex);
 		}
 
-		public static void ecs_set(World world, EntityId entity)
+		public static EntityId ecs_set<T>(World world, EntityId entity, T value = default) where T : unmanaged
 		{
-			//#define ecs_set(world, entity, component, ...)\
-			//		_ecs_set_ptr(world, entity, ecs_entity(component), sizeof(component), &(component) __VA_ARGS__)
+			var type = Caches.GetComponentTypeId<T>(world);
+			T* val = &value;
+			return _ecs.set_ptr(world, entity, ecs.type_to_entity(world, type), (UIntPtr)Marshal.SizeOf<T>(), (IntPtr)val);
 		}
 
-		public static void ecs_set_ptr(World world)
+		public static EntityId ecs_set_ptr<T>(World world, EntityId entity, T* value) where T : unmanaged
 		{
-			//#define ecs_set_ptr(world, entity, component, ptr)\
-			//		_ecs_set_ptr(world, entity, ecs_entity(component), sizeof(component), ptr)
+			var type = Caches.GetComponentTypeId<T>(world);
+			return _ecs.set_ptr(world, entity, ecs.type_to_entity(world, type), (UIntPtr)Marshal.SizeOf<T>(), (IntPtr)value);
 		}
 
-		public static IntPtr ecs_get_ptr(World world, EntityId entity, TypeId type)
+		public static IntPtr ecs_get_ptr(World world, EntityId entity, TypeId type) => _ecs.get_ptr(world, entity, type);
+
+		public static T* ecs_get_ptr<T>(World world, EntityId entity, TypeId type) where T : unmanaged
+			=> (T*)_ecs.get_ptr(world, entity, type);
+
+		public static EntityId ecs_set_singleton<T>(World world, T value = default) where T : unmanaged
 		{
-			return _ecs.get_ptr(world, entity, type);
+			var componentType = ecs.ECS_COMPONENT<T>(world);
+			var componentEntityId = ecs.type_to_entity(world, componentType);
+			T* val = &value;
+			return _ecs.set_singleton_ptr(world, componentEntityId, (UIntPtr)Marshal.SizeOf<T>(), (IntPtr)val);
 		}
 
-		public static void ecs_set_singleton(World world)
+		public static EntityId ecs_set_singleton_ptr<T>(World world, T* value) where T : unmanaged
 		{
-			//#define ecs_set_singleton(world, component, ...)\
-			//		_ecs_set_singleton_ptr(world, ecs_entity(component), sizeof(component), &(component) __VA_ARGS__)
+			var componentType = ecs.ECS_COMPONENT<T>(world);
+			var componentEntityId = ecs.type_to_entity(world, componentType);
+			return _ecs.set_singleton_ptr(world, componentEntityId, (UIntPtr)Marshal.SizeOf<T>(), (IntPtr)value);
 		}
 
-		public static void ecs_set_singleton_ptr(World world)
-		{
-			//#define ecs_set_singleton_ptr(world, component, ptr)\
-			//    _ecs_set_singleton_ptr(world, ecs_entity(component), sizeof(component), ptr)
-		}
+		public static IntPtr ecs_get_singleton_ptr(World world, TypeId type) => _ecs.get_ptr(world, ECS_SINGLETON, type);
 
-		public static void ecs_add(World world, EntityId entity, TypeId type)
-		{
-			_ecs.add(world, entity, type);
-		}
+		public static T* ecs_get_singleton_ptr<T>(World world, TypeId type) where T : unmanaged
+				=> (T*)_ecs.get_ptr(world, ECS_SINGLETON, type);
 
-		public static void ecs_remove(World world, EntityId entity, TypeId type)
-		{
-			_ecs.remove(world, entity, type);
-		}
+		public static void ecs_add(World world, EntityId entity, TypeId type) => _ecs.add(world, entity, type);
+
+		public static void ecs_add<T>(World world, EntityId entity) where T : unmanaged
+			=> _ecs.add(world, entity, Caches.GetComponentTypeId<T>(world));
+
+		public static void ecs_remove(World world, EntityId entity, TypeId type) => _ecs.remove(world, entity, type);
+
+		public static void ecs_remove<T>(World world, EntityId entity) where T : unmanaged
+			=> _ecs.remove(world, entity, Caches.GetComponentTypeId<T>(world));
 
 		public static void ecs_add_remove(World world, EntityId entity, TypeId typeToAdd, TypeId typeToRemove)
-		{
-			_ecs.add_remove(world, entity, typeToAdd, typeToRemove);
-		}
+			=> _ecs.add_remove(world, entity, typeToAdd, typeToRemove);
 
 		#endregion
 
@@ -230,6 +234,34 @@ namespace Flecs
 //    ECS_TYPE_VAR(id) = ecs_type_from_entity(world, id);\
 //    (void)id;\
 //    (void)ecs_type(id);\
+		}
+
+		#endregion
+
+		#region Module Imperitive Macros
+
+		public static EntityId ecs_import(World world, string id, ModuleInitActionDelegate module, int flags)
+		{
+			var moduleNamePtr = Caches.AddUnmanagedString(id);
+			return _ecs.import(world, module, moduleNamePtr, flags, (IntPtr)0, (UIntPtr)0);
+			//_ecs_import(world, module##Import, #module, flags, handles_out, sizeof(module))
+		}
+
+		#endregion
+
+		#region Module Declarative Macros
+
+		public static T* ECS_MODULE<T>(World world) where T : unmanaged
+		{
+			var typeId = ECS_COMPONENT<T>(world);
+			ecs.ecs_set_singleton<T>(world);
+			return (T*)ecs.ecs_get_singleton_ptr(world, typeId);
+		}
+
+		public static TypeId ECS_IMPORT(World world, string id, ModuleInitActionDelegate module, int flags)
+		{
+			var moduleEntityId = ecs_import(world, id, module, flags);
+			return ecs.type_from_entity(world, moduleEntityId);
 		}
 
 		#endregion

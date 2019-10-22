@@ -20,6 +20,13 @@ namespace Flecs
 		public static readonly TypeId TEcsHidden = InteropUtils.LoadTypedSymbol<TypeId>("TEcsHidden");
 		public static readonly TypeId TEcsDisabled = InteropUtils.LoadTypedSymbol<TypeId>("TEcsDisabled");
 
+		public static readonly EntityId ECS_INSTANCEOF = (EntityId)(1UL << 63);
+		public static readonly EntityId ECS_CHILDOF = (EntityId)(1UL << 62);
+		public static readonly EntityId ECS_ENTITY_FLAGS_MASK = (EntityId)(ECS_INSTANCEOF.Value | ECS_CHILDOF.Value);
+		public static readonly EntityId ECS_ENTITY_MASK = (EntityId)~ECS_ENTITY_FLAGS_MASK.Value;
+		public static readonly EntityId ECS_SINGLETON = (EntityId)(ECS_ENTITY_MASK.Value - 1);
+		public static readonly EntityId ECS_INVALID_ENTITY = (EntityId)0;
+
 		///<code>
 		///void ecs_os_set_api(ecs_os_api_t *)
 		///</code>

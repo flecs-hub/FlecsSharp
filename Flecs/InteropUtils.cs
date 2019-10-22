@@ -42,7 +42,7 @@ namespace Flecs
 			}
 			else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
 			{
-				var library = dlopen_macos(ecs.NativeLibName + ".dylib", RTLD_NOW);
+				var library = dlopen_macos("lib" + ecs.NativeLibName + ".dylib", RTLD_NOW);
 				LoadSymbol = symbol => dlsym_macos(library, symbol);
 			}
 			else
