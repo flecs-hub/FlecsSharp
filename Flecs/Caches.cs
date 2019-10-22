@@ -51,7 +51,7 @@ namespace Flecs
 
 		internal static TypeId GetComponentTypeId(World world, Type compType)
 		{
-			if (!Caches.TryGetComponentTypeId(world, compType, out var typeId))
+			if (!TryGetComponentTypeId(world, compType, out var typeId))
 			{
 				var charPtr = AddUnmanagedString(compType.Name);
 				var entityId = ecs.new_component(world, charPtr, (UIntPtr)Marshal.SizeOf(compType));

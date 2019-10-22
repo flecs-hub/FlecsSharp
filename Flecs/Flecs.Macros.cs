@@ -79,6 +79,11 @@ namespace Flecs
 			//		_ecs_set_ptr(world, entity, ecs_entity(component), sizeof(component), ptr)
 		}
 
+		public static IntPtr ecs_get_ptr(World world, EntityId entity, TypeId type)
+		{
+			return _ecs.get_ptr(world, entity, type);
+		}
+
 		public static void ecs_set_singleton(World world)
 		{
 			//#define ecs_set_singleton(world, component, ...)\
@@ -188,8 +193,20 @@ namespace Flecs
 
 		public static EntityId ECS_ENTITY(World world, string id, string expr)
 		{
-            var idPtr = Caches.AddUnmanagedString(id);
+			var idPtr = Caches.AddUnmanagedString(id);
 			return ecs.new_entity(world, idPtr, expr);
+		}
+
+		public static EntityId ECS_ENTITY<T1>(World world, string id, string expr) where T1 : unmanaged
+		{
+			var idPtr = Caches.AddUnmanagedString(id);
+			return ecs.new_entity(world, idPtr, typeof(T1).Name);
+		}
+
+		public static EntityId ECS_ENTITY<T1, T2>(World world, string id, string expr) where T1 : unmanaged where T2 : unmanaged
+		{
+			var idPtr = Caches.AddUnmanagedString(id);
+			return ecs.new_entity(world, idPtr, $"{typeof(T1).Name}, {typeof(T2).Name}");
 		}
 
 		public static TypeId ECS_TAG(World world, string tag)

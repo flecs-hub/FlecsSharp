@@ -18,6 +18,9 @@ namespace HelloWorld
 			public int SpeedValue;
 		}
 
+		static void GenericSystem(ref Rows rows)
+		{}
+
 		static void PositionSystem(ref Rows rows, Span<Position> position)
 		{
 			Console.WriteLine($"PositionSystem: {rows.count}");
@@ -58,9 +61,7 @@ namespace HelloWorld
 		{
 			using (var world = World.Create())
 			{
-				// world.AddSystem<Position, Speed>(MoveSystem, SystemKind.OnUpdate);
 				ecs.ECS_SYSTEM<Position, Speed>(world, MoveSystem, SystemKind.OnUpdate);
-				// world.AddSystem<Position>(PositionSystem, SystemKind.OnUpdate);
 				ecs.ECS_SYSTEM<Position>(world, PositionSystem, SystemKind.OnUpdate);
 
 				world.NewEntity("MyEntity1", new Position {X = 1, Y = 2}, new Speed {SpeedValue = 5});

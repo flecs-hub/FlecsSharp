@@ -19,9 +19,8 @@ namespace Flecs.Tests
 
 			for (var i = 0; i < ctx->column_count; i++)
 			{
-				ctx->c[ctx->invoked * i] = rows.Components[i].Value;
-				// ctx.c[ctx->invoked][i] = rows->components[i];
-				// ctx.s[ctx->invoked][i] = ecs_column_source(rows, i + 1);
+				ctx->SetC(ctx->invoked, i, rows.Components[i].Value);
+				ctx->SetS(ctx->invoked, i, ecs.column_source(ref rows, (uint)i + 1).Value);
 
 				// Make sure ecs_column functions work
 				var t = ecs.column_type(ref rows, (uint)i + 1);
@@ -72,16 +71,26 @@ namespace Flecs.Tests
 		public float rotation;
 	}
 
+	public struct Speed
+	{
+		public int SpeedValue;
+	}
+
 	public unsafe struct SysTestData
 	{
 		public EntityId system;
 		public uint offset;
 		public uint count;
-		public uint invoked;
+		public int invoked;
 		public uint column_count;
 		public fixed UInt64 e[64];
-		public fixed UInt64 c[1024 * 20];
-		// public fixed UInt64 s[1024 * 20];
+		public fixed UInt64 c[64 * 20];
+		public fixed UInt64 s[64 * 20];
 		public IntPtr parameters;
+
+		public UInt64 GetC(int row, int col) => c[row * 64 + col];
+		public void SetC(int row, int col, UInt64 val) => c[row * 64 + col] = val;
+		public UInt64 GetS(int row, int col) => s[row * 64 + col];
+		public void SetS(int row, int col, UInt64 val) => s[row * 64 + col] = val;
 	}
 }
