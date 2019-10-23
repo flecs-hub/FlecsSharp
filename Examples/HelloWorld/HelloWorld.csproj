@@ -7,6 +7,12 @@
 		<!--<RunWorkingDirectory>$(MSBuildProjectDirectory)/../runtime</RunWorkingDirectory>-->
 	</PropertyGroup>
 	
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	  <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	  <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	</PropertyGroup>
 	<ItemGroup>
 		<None Include="..\..\NativeLibs\macOS\libflecs_shared.dylib" Visible="false">
 			<Link>libflecs_shared.dylib</Link>

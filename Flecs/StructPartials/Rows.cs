@@ -12,22 +12,28 @@ namespace Flecs
 			get => entities[i];
 		}
 
-		public Span<int> Columns
+		public EntityId this[uint i]
 		{
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			get => new Span<int>(columns, columnCount);
+			get => entities[i];
 		}
 
-		public Span<EntityId> Components
+		public Set<int> Columns
 		{
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			get => new Span<EntityId>(components, columnCount);
+			get => new Set<int>(columns, columnCount);
 		}
 
-		public Span<EntityId> Entities
+		public Set<EntityId> Components
 		{
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			get => new Span<EntityId>(entities, (int)count);
+			get => new Set<EntityId>(components, columnCount);
+		}
+
+		public Set<EntityId> Entities
+		{
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			get => new Set<EntityId>(entities, count);
 		}
 
 		///<summary>
@@ -49,6 +55,9 @@ namespace Flecs
 		///</code>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public IntPtr Column(UIntPtr size, uint column) => _ecs.column(ref this, size, column);
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public T* Column<T>(uint column) where T : unmanaged => (T*)_ecs.column(ref this, Heap.SizeOf<T>(), column);
 
 		///<summary>
 		/// Test if column is shared or not.  The following signature shows an example of owned components and shared components:
@@ -78,7 +87,7 @@ namespace Flecs
 		///void *_ecs_field(ecs_rows_t *rows, size_t size, uint32_t column, uint32_t row)
 		///</code>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public IntPtr Field(UIntPtr size, uint column, uint row) => _ecs.field(ref this, size, column, row);
+		public T* Field<T>(uint column, uint row) where T : unmanaged => (T*)_ecs.field(ref this, Heap.SizeOf<T>(), column, row);
 
 		///<summary>
 		/// Obtain the source of a column from inside a system. This operation lets you obtain the entity from which the column data was resolved. In most cases a component will come from the entities being iterated over, but when using prefabs or containers, the component can be shared between entities. For shared components, this function will return the original entity on which the component is stored.

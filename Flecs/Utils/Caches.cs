@@ -62,7 +62,7 @@ namespace Flecs
 			if (!TryGetComponentTypeId(world, compType, out var typeId))
 			{
 				var charPtr = AddUnmanagedString(compType.Name);
-				var entityId = ecs.new_component(world, charPtr, (UIntPtr)Marshal.SizeOf(compType));
+				var entityId = ecs.new_component(world, charPtr, Heap.SizeOf(compType));
 				typeId = ecs.type_from_entity(world, entityId);
 				AddComponentTypeToTypeId(world, compType, typeId);
 			}

@@ -5,7 +5,7 @@ using static Flecs.Macros;
 
 namespace HelloWorld
 {
-	class Program
+	unsafe class Program
 	{
 		public struct Position
 		{
@@ -21,10 +21,14 @@ namespace HelloWorld
 		static void GenericSystem(ref Rows rows)
 		{}
 
-		static void PositionSystem(ref Rows rows, Span<Position> position)
+		static void PositionSystem(ref Rows rows, Set<Position> position)
 		{
+			var enitityColumn = ecs.column<EntityId>(ref rows, 0);
+			var posColumn = ecs.column<Position>(ref rows, 1);
+			var p3 = posColumn[3];
+
 			Console.WriteLine($"PositionSystem: {rows.count}");
-			for (int i = 0; i < (int)rows.count; i++)
+			for (var i = 0; i < rows.count; i++)
 			{
 				var entityId = rows[i];
 				ref var pos = ref position[i];
@@ -33,22 +37,22 @@ namespace HelloWorld
 			}
 		}
 
-		static void OnAddMoveSystem(ref Rows rows, Span<Position> position, Span<Speed> speed)
+		static void OnAddMoveSystem(ref Rows rows, Set<Position> position, Set<Speed> speed)
 		{
 			Console.WriteLine($"OnAddMoveSystem: {rows.count}");
-			for (int i = 0; i < (int)rows.count; i++)
+			for (var i = 0; i < rows.count; i++)
 			{
 				var entityId = rows[i];
-				ref var pos = ref position[i];
+				var pos = position[i];
 				pos.X = i;
 				pos.Y = i;
 			}
 		}
 
-		static void MoveSystem(ref Rows rows, Span<Position> position, Span<Speed> speed)
+		static void MoveSystem(ref Rows rows, Set<Position> position, Set<Speed> speed)
 		{
 			Console.WriteLine($"MoveSystem: {rows.count}");
-			for (var i = 0; i < (int)rows.count; i++)
+			for (var i = 0; i < rows.count; i++)
 			{
 				var entityId = rows[i];
 				ref var pos = ref position[i];

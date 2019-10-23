@@ -73,5 +73,55 @@ namespace Flecs.Tests
 			Assert.IsTrue(v_2 != default);
 			Assert.IsTrue(v_1 != v_2);
 		}
+
+		void Prefab_w_field(ref Rows rows)
+		{
+			TestData.ProbeSystem(ref rows);
+
+			for (int i = 0; i < (int)rows.count; i++)
+			{
+				var p = ecs.field<Position>(ref rows, 1, (uint)i);
+				var v = ecs.field<Velocity>(ref rows, 2, (uint)i);
+				p->x += v->x;
+				p->y += v->y;
+			}
+		}
+
+		[Test]
+		public void Prefab_iterate_w_prefab_field()
+		{
+			var posTypeId = ECS_COMPONENT<Position>(world);
+			var velTypeId = ECS_COMPONENT<Velocity>(world);
+			var (prefabEntity, prefabType) = ECS_PREFAB(world, "Prefab", "Velocity");
+			var typeTypeId = ECS_TYPE(world, "Type", "INSTANCEOF | Prefab, Position");
+			var systemEntity = ECS_SYSTEM(world, Prefab_w_field, SystemKind.OnUpdate, "Position, Velocity");
+
+			ecs.set(world, prefabEntity, new Velocity { x = 1, y = 2 });
+
+			var e_1 = ecs.new_entity(world, typeTypeId);
+			Assert.NotZero((UInt64)e_1);
+			ecs.set(world, e_1, new Position());
+
+			var ctx = Heap.Alloc<SysTestData>();
+			ecs.set_context(world, (IntPtr)ctx);
+
+			ecs.progress(world, 1);
+
+			Assert.IsTrue(ctx->count == 1);
+			Assert.IsTrue(ctx->invoked == 1);
+			Assert.IsTrue(ctx->system.Value == systemEntity.Value);
+			Assert.IsTrue(ctx->column_count == 2);
+
+			Assert.IsTrue(ctx->e[0] == e_1.Value);
+			Assert.IsTrue(ctx->GetC(0, 0) == ecs.type_to_entity(world, posTypeId).Value);
+			Assert.IsTrue(ctx->GetS(0, 0) == 0);
+			Assert.IsTrue(ctx->GetC(0, 1) == ecs.type_to_entity(world, velTypeId).Value);
+			Assert.IsTrue(ctx->GetS(0, 1) == prefabEntity.Value);
+
+			var p = ecs.get_ptr<Position>(world, e_1);
+			Assert.IsTrue(p != null);
+			Assert.IsTrue(p->x == 1);
+			Assert.IsTrue(p->y == 2);
+		}
 	}
 }

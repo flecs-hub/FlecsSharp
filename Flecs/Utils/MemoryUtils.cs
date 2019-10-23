@@ -101,7 +101,11 @@ namespace Flecs
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void Free(IntPtr ptr) => Marshal.FreeHGlobal(ptr);
 
-		internal static void* Realloc(void* ptr, int newSize)
+		public static void* Realloc(void* ptr, int newSize)
 			=> (void*)Marshal.ReAllocHGlobal((IntPtr)ptr, (IntPtr)newSize);
+
+		public static UIntPtr SizeOf<T>() where T : unmanaged => (UIntPtr)Marshal.SizeOf<T>();
+
+		public static UIntPtr SizeOf(Type type) => (UIntPtr)Marshal.SizeOf(type);
 	}
 }
