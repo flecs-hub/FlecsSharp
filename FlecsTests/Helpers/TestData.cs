@@ -1,6 +1,6 @@
 ﻿using System;
 using NUnit.Framework;
-
+using static Flecs.Macros;
 
 namespace Flecs.Tests
 {
@@ -32,7 +32,7 @@ namespace Flecs.Tests
 
 			if (rows.tableColumns != IntPtr.Zero)
 			{
-				var e = new Span<EntityId>(ecs.ecs_column<EntityId>(ref rows, 0), (int)rows.count);
+				var e = new Span<EntityId>(ecs_column<EntityId>(ref rows, 0), (int)rows.count);
 				if (e != null)
 				{
 					for (var i = 0; i < rows.count; i++)
