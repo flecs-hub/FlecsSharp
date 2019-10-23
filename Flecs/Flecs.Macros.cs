@@ -79,8 +79,13 @@ namespace Flecs
 
 		public static IntPtr ecs_get_ptr(World world, EntityId entity, TypeId type) => _ecs.get_ptr(world, entity, type);
 
-		public static T* ecs_get_ptr<T>(World world, EntityId entity, TypeId type) where T : unmanaged
-			=> (T*)_ecs.get_ptr(world, entity, type);
+		public static T* ecs_get_ptr<T>(World world, EntityId entity) where T : unmanaged
+			=> (T*)_ecs.get_ptr(world, entity, Caches.GetComponentTypeId<T>(world));
+
+		public static T ecs_get<T>(World world, EntityId entity) where T : unmanaged => *(T*)ecs_get_ptr<T>(world, entity);
+
+		public static T ecs_get<T>(World world, EntityId entity, TypeId type) where T : unmanaged
+			=> *(T*)ecs_get_ptr(world, entity, type);
 
 		public static EntityId ecs_set_singleton<T>(World world, T value = default) where T : unmanaged
 		{
@@ -192,7 +197,7 @@ namespace Flecs
 		public static void ECS_COLUMN<T>(ref Rows rows, out Span<T> column, uint columnIndex) where T : unmanaged
 		{
 			var set = ecs_column<T>(ref rows, columnIndex);
-			column = new Span<T>(set, (int)rows.count);
+			column = set != null ? new Span<T>(set, (int)rows.count) : null;
 		}
 
 		public static EntityId ECS_ENTITY(World world, string id, string expr)
