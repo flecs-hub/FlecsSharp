@@ -1,6 +1,7 @@
 ﻿using Flecs;
 using System;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using static Flecs.Macros;
 
 namespace HelloWorld

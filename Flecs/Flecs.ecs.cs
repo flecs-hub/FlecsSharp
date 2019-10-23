@@ -765,7 +765,7 @@ namespace Flecs
 		///</code>
 		// ecs_set_w_data: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L758
 		[DllImport(NativeLibName, EntryPoint = "ecs_set_w_data", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-		public static extern EntityId set_w_data(World world, out TableData data);
+		public static extern EntityId set_w_data(World world, ref TableData data);
 
 		///<summary>
 		/// Create new entity with same components as specified entity. This operation creates a new entity which has the same components as the specified entity. This includes prefabs and entity-components (entities to which the EcsComponent component has been added manually).
