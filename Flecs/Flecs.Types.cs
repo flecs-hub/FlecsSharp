@@ -285,6 +285,7 @@ namespace Flecs
 	//type
 	public unsafe partial struct TypeId
 	{
+		public static TypeId Zero = (TypeId)0;
 		internal IntPtr ptr;
 		public TypeId(IntPtr ptr) => this.ptr = ptr;
 		internal TypeId* Ptr => (TypeId*)ptr;

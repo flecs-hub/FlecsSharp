@@ -231,13 +231,12 @@ namespace Flecs
 			return ecs.type_from_entity(world, entityId);
 		}
 
-		public static void ECS_PREFAB(World world)
+		public static (EntityId, TypeId) ECS_PREFAB(World world, string id, string expr)
 		{
-//#define ECS_PREFAB(world, id, ...) \
-//			ecs_entity_t id = ecs_new_prefab(world, #id, #__VA_ARGS__);\
-//    ECS_TYPE_VAR(id) = ecs_type_from_entity(world, id);\
-//    (void)id;\
-//    (void)ecs_type(id);\
+			var idPtr = Caches.AddUnmanagedString(id);
+			var entityId = ecs.new_prefab(world, idPtr, expr);
+			var typeId = ecs.type_from_entity(world, entityId);
+			return (entityId, typeId);
 		}
 
 		#endregion

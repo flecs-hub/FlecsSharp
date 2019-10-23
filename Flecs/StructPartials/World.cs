@@ -39,7 +39,7 @@ namespace Flecs
 
 		public unsafe EntityId NewEntity<T1>(string entityName, T1 comp1 = default) where T1 : unmanaged
 		{
-			var entt = _ecs.@new(this, (TypeId)0);
+			var entt = _ecs.@new(this, TypeId.Zero);
 			Set(entt, comp1);
 			return entt;
 		}

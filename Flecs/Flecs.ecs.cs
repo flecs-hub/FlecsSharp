@@ -1467,7 +1467,7 @@ namespace Flecs
 		///</code>
 		// ecs_new_prefab: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L2030
 		[DllImport(NativeLibName, EntryPoint = "ecs_new_prefab", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-		public static extern EntityId new_prefab(World world, CharPtr id, CharPtr sig);
+		public static extern EntityId new_prefab(World world, CharPtr id, string sig);
 
 		///<summary>
 		/// Get description for error code

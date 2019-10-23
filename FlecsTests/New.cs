@@ -10,7 +10,7 @@ namespace Flecs.Tests
 		[Test]
 		public void New_empty()
 		{
-			var e = ecs_new(world, (TypeId)0);
+			var e = ecs_new(world, TypeId.Zero);
 			Assert.NotZero((UInt64)e);
 			Assert.IsTrue(ecs.is_empty(world, e));
 		}

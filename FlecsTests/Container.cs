@@ -9,8 +9,8 @@ namespace Flecs.Tests
 		[Test]
 		public void Container_child()
 		{
-			var parent = ecs_new(world, (TypeId)0);
-			var child = ecs_new_child(world, parent, (TypeId)0);
+			var parent = ecs_new(world, TypeId.Zero);
+			var child = ecs_new_child(world, parent, TypeId.Zero);
 
 			Assert.IsTrue(ecs.contains(world, parent, child));
 		}
@@ -20,7 +20,7 @@ namespace Flecs.Tests
 		{
 			var typeId = ECS_COMPONENT<Position>(world);
 
-			var parent = ecs_new(world, (TypeId)0);
+			var parent = ecs_new(world, TypeId.Zero);
 			var child = ecs_new_child(world, parent, typeId);
 
 			Assert.IsTrue(ecs.contains(world, parent, child));
@@ -33,7 +33,7 @@ namespace Flecs.Tests
 			ECS_COMPONENT<Position>(world);
 			var typeId = ECS_TYPE(world, "Type", "Position");
 
-			var parent = ecs_new(world, (TypeId)0);
+			var parent = ecs_new(world, TypeId.Zero);
 			var child = ecs_new_child(world, parent, typeId);
 
 			Assert.IsTrue(ecs.contains(world, parent, child));
