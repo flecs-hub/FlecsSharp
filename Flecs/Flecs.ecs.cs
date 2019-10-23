@@ -523,7 +523,7 @@ namespace Flecs
 		///<remarks>
 		/// To ensure consistency of the data, mutations that add/remove components or create/delete entities are staged and merged after all systems are evaluated. When using multiple threads, each thread will have its own "staging area". Threads will be able to see their own changes, but may not see changes from other threads until changes are merged.
 		/// Staging only occurs when ecs_progress is executing systems. The operations that use staging are:
-		/// - ecs_new - ecs_new_w_count - ecs_clone - ecs_delete - ecs_add - ecs_remove - ecs_set
+		/// - new_entity - new_w_count - ecs_clone - ecs_delete - add - remove - set
 		/// By default, staged data is merged each time ecs_progress has evaluated all systems. An application may choose to manually merge instead, by setting auto-merging to false with ecs_set_automerge and invoking ecs_merge when a merge is required. In applications with relatively lots of data to merge, this can significantly boost performance.
 		/// It should be noted that delaying a merge in a multithreaded application causes temporary inconsistencies between threads. A thread will be able to see changes from the previous iteration, but will not be able to see updates from other threads until a merge has taken place.
 		/// Note that staging only occurs for changes caused by the aforementioned functions. If a system makes in-place modifications to components (through pointers obtained with ecs_data) they will be "instantly" visible to other threads.
@@ -719,13 +719,13 @@ namespace Flecs
 		public static extern void dim(World world, uint entityCount);
 
 		///<summary>
-		/// Set a range for issueing new entity ids. This function constrains the entity identifiers returned by ecs_new to the  specified range. This operation can be used to ensure that multiple processes can run in the same simulation without requiring a central service that coordinates issueing identifiers.
+		/// Set a range for issueing new entity ids. This function constrains the entity identifiers returned by new_entity to the  specified range. This operation can be used to ensure that multiple processes can run in the same simulation without requiring a central service that coordinates issueing identifiers.
 		///</summary>
 		///<param name="world"> [in]  The world. </param>
 		///<param name="id_start"> [in]  The start of the range. </param>
 		///<param name="id_end"> [in]  The end of the range.</param>
 		///<remarks>
-		/// If id_end is set to 0, the range is infinite. If id_end is set to a non-zero value, it has to be larger than id_start. If id_end is set and ecs_new is invoked after an id is issued that is equal to id_end, the application will abort. Flecs does not automatically recycle ids.
+		/// If id_end is set to 0, the range is infinite. If id_end is set to a non-zero value, it has to be larger than id_start. If id_end is set and new_entity is invoked after an id is issued that is equal to id_end, the application will abort. Flecs does not automatically recycle ids.
 		/// The id_end parameter has to be smaller than the last issued identifier.
 		///</remarks>
 		///<code>
@@ -822,7 +822,7 @@ namespace Flecs
 		///<param name="parent"> [in]  The parent entity to add to the entity.</param>
 		///<remarks>
 		/// If the parent was already added to the entity, this operation will have no effect.
-		/// This operation is similar to an ecs_add, with as difference that instead of a  type it accepts any entity handle.
+		/// This operation is similar to an add, with as difference that instead of a  type it accepts any entity handle.
 		///</remarks>
 		///<code>
 		///void ecs_adopt(ecs_world_t *world, ecs_entity_t entity, ecs_entity_t parent)
@@ -838,7 +838,7 @@ namespace Flecs
 		///<param name="entity"> [in]  The entity to orphan. </param>
 		///<param name="parent"> [in]  The parent entity to remove from the entity.</param>
 		///<remarks>
-		/// This operation is similar to ecs_remove, with as difference that instead of a type it accepts any entity handle.
+		/// This operation is similar to remove, with as difference that instead of a type it accepts any entity handle.
 		///</remarks>
 		///<code>
 		///void ecs_orphan(ecs_world_t *world, ecs_entity_t entity, ecs_entity_t parent)
@@ -890,7 +890,7 @@ namespace Flecs
 		/// true if the parent contains the child, otherwise false.
 		///</returns>
 		///<remarks>
-		/// This function is similar to ecs_has, with as difference that instead of a  type it accepts a handle to any entity.
+		/// This function is similar to has, with as difference that instead of a  type it accepts a handle to any entity.
 		///</remarks>
 		///<code>
 		///bool ecs_contains(ecs_world_t *world, ecs_entity_t parent, ecs_entity_t child)
@@ -992,7 +992,7 @@ namespace Flecs
 		/// Get a type from an entity. This function returns a type that can be added/removed to entities. If you create a new component, type or prefab with the ecs_new_* function, you get an ecs_entity_t handle which provides access to builtin components associated with the component, type or prefab.
 		///</summary>
 		///<remarks>
-		/// To add a component to an entity, you first have to obtain its type. Types uniquely identify sets of one or more components, and can be used with functions like ecs_add and ecs_remove.
+		/// To add a component to an entity, you first have to obtain its type. Types uniquely identify sets of one or more components, and can be used with functions like add and remove.
 		/// You can only obtain types from entities that have EcsComponent, EcsPrefab, or EcsTypeComponent. These components are automatically added by the ecs_new_* functions, but can also be added manually.
 		/// The ECS_COMPONENT, ECS_TAG, ECS_TYPE or ECS_PREFAB macro's will auto- declare a variable containing the type called tFoo (where 'Foo' is the id provided to the macro).
 		///</remarks>
@@ -1288,7 +1288,7 @@ namespace Flecs
 		///</returns>
 		///<remarks>
 		/// If a column is specified for which the component is stored on the entities being iterated over, the operation will return 0, as the entity id in that case depends on the row, not on the column. To obtain the entity ids for a row, a system should access the entity column (column zero) like this:
-		/// ecs_entity_t *entities = ecs_column(rows, ecs_entity_t, 0);
+		/// ecs_entity_t *entities = column(rows, ecs_entity_t, 0);
 		///</remarks>
 		///<code>
 		///ecs_entity_t ecs_column_source(ecs_rows_t *rows, uint32_t column)
@@ -1327,10 +1327,10 @@ namespace Flecs
 		///</returns>
 		///<remarks>
 		/// ecs_type_from_entity( ecs_column_entity(rows, index));
-		/// This function is wrapped in the following convenience macro which ensures that the type variable is named so it can be used with functions like ecs_add and ecs_set:
+		/// This function is wrapped in the following convenience macro which ensures that the type variable is named so it can be used with functions like add and set:
 		/// ECS_COLUMN_COMPONENT(rows, Position, 1);
-		/// After this macro you can invoke functions like ecs_set as you normally would:
-		/// ecs_set(world, e, Position, {10, 20});
+		/// After this macro you can invoke functions like set as you normally would:
+		/// set(world, e, Position, {10, 20});
 		///</remarks>
 		///<code>
 		///ecs_type_t ecs_column_type(ecs_rows_t *rows, uint32_t column)
@@ -1360,7 +1360,7 @@ namespace Flecs
 		public static extern IntPtr table_column(ref Rows rows, uint column);
 
 		///<summary>
-		/// Convenience function to create an entity with id and component expression. This is equivalent to calling ecs_new with a type that contains all  components provided in the 'component' expression. In addition, this function also adds the EcsId component, which will be set to the provided id string.
+		/// Convenience function to create an entity with id and component expression. This is equivalent to calling new_entity with a type that contains all  components provided in the 'component' expression. In addition, this function also adds the EcsId component, which will be set to the provided id string.
 		///</summary>
 		///<param name="world"> [in]  The world. </param>
 		///<param name="id"> [in]  The entity id. </param>
@@ -1370,7 +1370,7 @@ namespace Flecs
 		///</returns>
 		///<remarks>
 		/// This function is wrapped by the ECS_ENTITY convenience macro.
-		/// ecs_new_component ecs_new_system ecs_new_prefab ecs_new_type ecs_new_child ecs_new ecs_new_w_count
+		/// ecs_new_component ecs_new_system ecs_new_prefab ecs_new_type new_child new_entity new_w_count
 		///</remarks>
 		///<code>
 		///ecs_entity_t ecs_new_entity(ecs_world_t *world, const char *id,
@@ -1381,7 +1381,7 @@ namespace Flecs
 		public static extern EntityId new_entity(World world, CharPtr id, string expr);
 
 		///<summary>
-		/// Create a new component. This operation creates a new component with a specified id and size. After this operation is called, the component can be added to entities by using the returned handle with ecs_add.
+		/// Create a new component. This operation creates a new component with a specified id and size. After this operation is called, the component can be added to entities by using the returned handle with add.
 		///</summary>
 		///<param name="world"> [in]  The world. </param>
 		///<param name="id"> [in]  A unique component identifier. </param>
@@ -1429,7 +1429,7 @@ namespace Flecs
 		public static extern EntityId new_system(World world, CharPtr id, SystemKind kind, CharPtr sig, SystemActionDelegate action);
 
 		///<summary>
-		/// Get handle to type. This operation obtains a handle to a type that can be used with ecs_new. Predefining types has performance benefits over using ecs_add/ecs_remove multiple times, as it provides constant creation time regardless of the number of components. This function will internally create a table for the type.
+		/// Get handle to type. This operation obtains a handle to a type that can be used with new_entity. Predefining types has performance benefits over using add/remove multiple times, as it provides constant creation time regardless of the number of components. This function will internally create a table for the type.
 		///</summary>
 		///<param name="world"> [in]  The world. </param>
 		///<param name="expr"> [in]  A comma-separated string with the component identifiers. </param>
@@ -1455,8 +1455,8 @@ namespace Flecs
 		/// A prefab is a regular entity, with the only difference that it has the EcsPrefab component.
 		/// The ECS_PREFAB macro wraps around this function.
 		/// Changing the value of one of the components on the prefab will change the value for all entities that added the prefab, as components are stored only once in memory. This makes prefabs also a memory-saving mechanism; there can be many entities that reuse component records from the prefab.
-		/// Entities can override components from a prefab by adding the component with ecs_add. When a component is overridden, its value will be copied from the prefab. This technique can be combined with families to automatically initialize entities, like this:
-		/// ECS_PREFAB(world, MyPrefab, Foo); ECS_TYPE(world, MyType, MyPrefab, Foo); ecs_entity_t e = ecs_new(world, MyType);
+		/// Entities can override components from a prefab by adding the component with add. When a component is overridden, its value will be copied from the prefab. This technique can be combined with families to automatically initialize entities, like this:
+		/// ECS_PREFAB(world, MyPrefab, Foo); ECS_TYPE(world, MyType, MyPrefab, Foo); ecs_entity_t e = new_entity(world, MyType);
 		/// In this code, the entity will be created with the prefab and directly override 'Foo', which will copy the value of 'Foo' from the prefab.
 		/// Prefabs are explicitly stored on the component list of an entity. This means that two entities with the same set of components but a different prefab are stored in different tables.
 		/// Prefabs can be part of the component list of other prefabs. This allows for creating hierarchies of prefabs, where the leaves are the most specialized.

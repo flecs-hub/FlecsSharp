@@ -18,8 +18,8 @@ namespace Flecs
 		///</returns>
 		///<remarks>
 		/// Entities are accessed through handles instead of direct pointers. Certain operations may move an entity in memory. Handles provide a safe mechanism for addressing entities.
-		/// Flecs does not require applications to explicitly create handles, as entities do not have an explicit lifecycle. The ecs_new operation merely provides a convenient way to dispense handles. It is guaranteed that the handle returned by ecs_new has not bee returned before.
-		/// ecs_new_entity ecs_new_component ecs_new_system ecs_new_prefab ecs_new_type ecs_new_child ecs_new_w_count
+		/// Flecs does not require applications to explicitly create handles, as entities do not have an explicit lifecycle. The new_entity operation merely provides a convenient way to dispense handles. It is guaranteed that the handle returned by new_entity has not bee returned before.
+		/// ecs_new_entity ecs_new_component ecs_new_system ecs_new_prefab ecs_new_type new_child new_w_count
 		///</remarks>
 		///<code>
 		///ecs_entity_t _ecs_new(ecs_world_t *world, ecs_type_t type)
@@ -29,7 +29,7 @@ namespace Flecs
 		public static extern EntityId @new(World world, TypeId type);
 
 		///<summary>
-		/// Create new entities in a batch. This operation creates the number of specified entities with one API call which is a more efficient alternative to calling ecs_new in a loop.
+		/// Create new entities in a batch. This operation creates the number of specified entities with one API call which is a more efficient alternative to calling new_entity in a loop.
 		///</summary>
 		///<param name="world"> [in]  The world. </param>
 		///<param name="type"> [in]  Zero if no type, or handle to a component, type or prefab. </param>
@@ -74,9 +74,9 @@ namespace Flecs
 		///<param name="entity"> [in]  The entity on which to set the component. </param>
 		///<param name="component"> [in]  The component to set.</param>
 		///<remarks>
-		/// This function can be used like this: Foo value = {.x = 10, .y = 20}; ecs_set_ptr(world, e, ecs_type(Foo), &value);
-		/// This function is wrapped by the ecs_set convenience macro, which can be used like this:
-		/// ecs_set(world, e, Foo, {.x = 10, .y = 20});
+		/// This function can be used like this: Foo value = {.x = 10, .y = 20}; set_ptr(world, e, ecs_type(Foo), &value);
+		/// This function is wrapped by the set convenience macro, which can be used like this:
+		/// set(world, e, Foo, {.x = 10, .y = 20});
 		///</remarks>
 		///<code>
 		///ecs_entity_t _ecs_set_ptr(ecs_world_t *world, ecs_entity_t entity,
@@ -197,8 +197,8 @@ namespace Flecs
 		/// A handle to the created entity. 
 		///</returns>
 		///<remarks>
-		/// This function is equivalent to calling ecs_new with a type that combines both the type specified in this function and the type id for the container.
-		/// ecs_new_entity ecs_new_component ecs_new_system ecs_new_prefab ecs_new_type ecs_new ecs_new_w_count
+		/// This function is equivalent to calling new_entity with a type that combines both the type specified in this function and the type id for the container.
+		/// ecs_new_entity ecs_new_component ecs_new_system ecs_new_prefab ecs_new_type new_entity new_w_count
 		///</remarks>
 		///<code>
 		///ecs_entity_t _ecs_new_child(ecs_world_t *world, ecs_entity_t parent,
@@ -209,7 +209,7 @@ namespace Flecs
 		public static extern EntityId new_child(World world, EntityId parent, TypeId type);
 
 		///<summary>
-		/// Create new child entities in batch. This operation is similar to ecs_new_w_count, with as only difference that the parent is added to the type of the new entities.
+		/// Create new child entities in batch. This operation is similar to new_w_count, with as only difference that the parent is added to the type of the new entities.
 		///</summary>
 		///<param name="world"> [in]  The world. </param>
 		///<param name="parent"> [in]  The parent. </param>
@@ -288,7 +288,7 @@ namespace Flecs
 		public static extern void remove(World world, EntityId entity, TypeId type);
 
 		///<summary>
-		/// Add and remove types from an entity. This operation is a combination of ecs_add and ecs_remove. The operation behaves as if the specified to_remove type is removed first, and  subsequently the to_add type is added. This operation is more efficient than adding/removing components separately with ecs_add/ecs_remove, as the entity is moved between tables at most once.
+		/// Add and remove types from an entity. This operation is a combination of add and remove. The operation behaves as if the specified to_remove type is removed first, and  subsequently the to_add type is added. This operation is more efficient than adding/removing components separately with add/remove, as the entity is moved between tables at most once.
 		///</summary>
 		///<param name="world"> [in]  The world. </param>
 		///<param name="entity"> [in]  The entity from which to remove, and to which to add the types. </param>
@@ -303,7 +303,7 @@ namespace Flecs
 		public static extern void add_remove(World world, EntityId entity, TypeId toAdd, TypeId toRemove);
 
 		///<summary>
-		/// Add/remove one or more components from a set of tables. This operation adds/removes one or more components from a set of tables  matching a filter. This operation is more efficient than calling ecs_add  or ecs_remove on the individual entities.
+		/// Add/remove one or more components from a set of tables. This operation adds/removes one or more components from a set of tables  matching a filter. This operation is more efficient than calling add  or remove on the individual entities.
 		///</summary>
 		///<param name="world"> [in]  The world. </param>
 		///<param name="to_add"> [in]  The components to add. </param>
@@ -341,7 +341,7 @@ namespace Flecs
 		public static extern bool has(World world, EntityId entity, TypeId type);
 
 		///<summary>
-		/// Same as ecs_has, but only returns true if entity owns the component(s). 
+		/// Same as has, but only returns true if entity owns the component(s). 
 		///</summary>
 		///<code>
 		///bool _ecs_has_owned(ecs_world_t *world, ecs_entity_t entity, ecs_type_t type)
@@ -455,7 +455,7 @@ namespace Flecs
 		public static extern IntPtr column(ref Rows rows, UIntPtr size, uint column);
 
 		///<summary>
-		/// Obtain a single field.  This is an alternative method to ecs_column to access data in a system, which accesses data from individual fields (one column per row). This method is slower than iterating over a column array, but has the added benefit that it automatically abstracts between shared components and owned components. 
+		/// Obtain a single field.  This is an alternative method to column to access data in a system, which accesses data from individual fields (one column per row). This method is slower than iterating over a column array, but has the added benefit that it automatically abstracts between shared components and owned components. 
 		///</summary>
 		///<remarks>
 		/// This is particularly useful if a system is unaware whether a particular  column is from a prefab, as a system does not explicitly state in an argument expression whether prefabs should be matched with, thus it is possible that a system receives both shared and non-shared data for the same column.

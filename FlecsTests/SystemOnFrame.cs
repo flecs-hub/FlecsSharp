@@ -14,17 +14,17 @@ namespace Flecs.Tests
 			Span<Velocity> v = null;
 			Span<Mass> m = null;
 
-			var wtf = ecs_column<Velocity>(ref rows, 2);
+			var wtf = ecs.column<Velocity>(ref rows, 2);
 			if (rows.columnCount >= 2)
 			{
-				var column = ecs_column<Velocity>(ref rows, 2);
+				var column = ecs.column<Velocity>(ref rows, 2);
 				if (column != null)
 					v = new Span<Velocity>(column, (int)rows.count);
 			}
 
 			if (rows.columnCount >= 3)
 			{
-				var column = ecs_column<Mass>(ref rows, 3);
+				var column = ecs.column<Mass>(ref rows, 3);
 				if (column != null)
 					m = new Span<Mass>(column, (int)rows.count);
 			}
@@ -110,27 +110,27 @@ namespace Flecs.Tests
 			Assert.IsTrue(ctx->GetC(0, 2) == ecs.type_to_entity(world, massTypeId).Value);
 			Assert.IsTrue(ctx->GetS(0, 2) == 0);
 
-			var p = (Position*)ecs_get_ptr(world, e_1, positionTypeId);
+			var p = (Position*)ecs.get_ptr(world, e_1, positionTypeId);
 			Assert.IsTrue(p->x == 10);
 			Assert.IsTrue(p->y == 20);
 
-			p = (Position*)ecs_get_ptr(world, e_2, positionTypeId);
+			p = (Position*)ecs.get_ptr(world, e_2, positionTypeId);
 			Assert.IsTrue(p->x == 10);
 			Assert.IsTrue(p->y == 20);
 
-			p = (Position*)ecs_get_ptr(world, e_3, positionTypeId);
+			p = (Position*)ecs.get_ptr(world, e_3, positionTypeId);
 			Assert.IsTrue(p->x == 10);
 			Assert.IsTrue(p->y == 20);
 
-			var v = (Velocity*)ecs_get_ptr(world, e_1, velTypeId);
+			var v = (Velocity*)ecs.get_ptr(world, e_1, velTypeId);
 			Assert.IsTrue(v->x == 30);
 			Assert.IsTrue(v->y == 40);
 
-			v = (Velocity*)ecs_get_ptr(world, e_2, velTypeId);
+			v = (Velocity*)ecs.get_ptr(world, e_2, velTypeId);
 			Assert.IsTrue(v->x == 30);
 			Assert.IsTrue(v->y == 40);
 
-			v = (Velocity*)ecs_get_ptr(world, e_3, velTypeId);
+			v = (Velocity*)ecs.get_ptr(world, e_3, velTypeId);
 			Assert.IsTrue(v->x == 30);
 			Assert.IsTrue(v->y == 40);
 		}
@@ -165,11 +165,11 @@ namespace Flecs.Tests
 			Assert.IsTrue(ctx->GetC(0, 1) == ecs.type_to_entity(world, velTypeId).Value);
 			Assert.IsTrue(ctx->GetS(0, 1) == 0);
 
-			var p = (Position*)ecs_get_ptr(world, e_1, positionTypeId);
+			var p = (Position*)ecs.get_ptr(world, e_1, positionTypeId);
 			Assert.IsTrue(p->x == 10);
 			Assert.IsTrue(p->y == 20);
 
-			p = (Position*)ecs_get_ptr(world, e_2, positionTypeId);
+			p = (Position*)ecs.get_ptr(world, e_2, positionTypeId);
 			Assert.IsTrue(p->x == 10);
 			Assert.IsTrue(p->y == 20);
 		}

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 
@@ -10,9 +12,9 @@ namespace Flecs
 	/// </summary>
 	public static class Caches
 	{
-		static Dictionary<World, Dictionary<Type, TypeId>> typeMap = new Dictionary<World, Dictionary<Type, TypeId>>();
-		static Dictionary<World, Dictionary<string, TypeId>> tagTypeMap = new Dictionary<World, Dictionary<string, TypeId>>();
-		static Dictionary<World, List<SystemActionDelegate>> systemActions = new Dictionary<World, List<SystemActionDelegate>>();
+		static Dictionary<IntPtr, Dictionary<Type, TypeId>> typeMap = new Dictionary<IntPtr, Dictionary<Type, TypeId>>();
+		static Dictionary<IntPtr, Dictionary<string, TypeId>> tagTypeMap = new Dictionary<IntPtr, Dictionary<string, TypeId>>();
+		static Dictionary<IntPtr, List<SystemActionDelegate>> systemActions = new Dictionary<IntPtr, List<SystemActionDelegate>>();
 		static Dictionary<int, CharPtr> unmanagedStrings = new Dictionary<int, CharPtr>();
 		static UnmanagedStringBuffer stringBuffer = UnmanagedStringBuffer.Create();
 
@@ -23,8 +25,11 @@ namespace Flecs
 			systemActions[world] = new List<SystemActionDelegate>();
 		}
 
-		internal static void DeregisterWorld(World world)
+		internal unsafe static void DeregisterWorld(World world)
 		{
+			if (!typeMap.ContainsKey(world))
+				throw new Exception("Attempting to deregister a world that has not been registered");
+
 			typeMap.Remove(world);
 			tagTypeMap.Remove(world);
 			systemActions.Remove(world);
@@ -34,6 +39,7 @@ namespace Flecs
 		/// adds an unmanaged string to the buffer and returns a pointer to the null-terminated string. Caches the result so each string is only
 		/// ever created once.
 		/// </summary>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static CharPtr AddUnmanagedString(string str)
 		{
 			var strHashCode = str.GetHashCode();
@@ -46,9 +52,11 @@ namespace Flecs
 			return ptr;
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		internal static TypeId GetComponentTypeId<T>(World world) where T : unmanaged
 			=> GetComponentTypeId(world, typeof(T));
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		internal static TypeId GetComponentTypeId(World world, Type compType)
 		{
 			if (!TryGetComponentTypeId(world, compType, out var typeId))
@@ -64,14 +72,19 @@ namespace Flecs
 
 		#region Add/Remove Type Caches
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		internal static bool TryGetComponentTypeId(World world, Type compType, out TypeId typeId) => typeMap[world].TryGetValue(compType, out typeId);
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		internal static void AddComponentTypeToTypeId(World world, Type compType, TypeId typeId) => typeMap[world][compType] = typeId;
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		internal static bool TryGetTagTypeId(World world, string tag, out TypeId typeId) => tagTypeMap[world].TryGetValue(tag, out typeId);
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		internal static void AddTagToTypeId(World world, string tag, TypeId typeId) => tagTypeMap[world][tag] = typeId;
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		internal static void AddSystemAction(World world, SystemActionDelegate del) => systemActions[world].Add(del);
 
 		#endregion

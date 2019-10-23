@@ -9,8 +9,8 @@ namespace Flecs.Tests
 		[Test]
 		public void Container_child()
 		{
-			var parent = ecs_new(world, TypeId.Zero);
-			var child = ecs_new_child(world, parent, TypeId.Zero);
+			var parent = ecs.new_entity(world, TypeId.Zero);
+			var child = ecs.new_child(world, parent, TypeId.Zero);
 
 			Assert.IsTrue(ecs.contains(world, parent, child));
 		}
@@ -20,11 +20,11 @@ namespace Flecs.Tests
 		{
 			var typeId = ECS_COMPONENT<Position>(world);
 
-			var parent = ecs_new(world, TypeId.Zero);
-			var child = ecs_new_child(world, parent, typeId);
+			var parent = ecs.new_entity(world, TypeId.Zero);
+			var child = ecs.new_child(world, parent, typeId);
 
 			Assert.IsTrue(ecs.contains(world, parent, child));
-			Assert.IsTrue(ecs_has<Position>(world, child));
+			Assert.IsTrue(ecs.has<Position>(world, child));
 		}
 
 		[Test]
@@ -33,12 +33,12 @@ namespace Flecs.Tests
 			ECS_COMPONENT<Position>(world);
 			var typeId = ECS_TYPE(world, "Type", "Position");
 
-			var parent = ecs_new(world, TypeId.Zero);
-			var child = ecs_new_child(world, parent, typeId);
+			var parent = ecs.new_entity(world, TypeId.Zero);
+			var child = ecs.new_child(world, parent, typeId);
 
 			Assert.IsTrue(ecs.contains(world, parent, child));
-			Assert.IsTrue(ecs_has(world, child, typeId));
-			Assert.IsTrue(ecs_has<Position>(world, child));
+			Assert.IsTrue(ecs.has(world, child, typeId));
+			Assert.IsTrue(ecs.has<Position>(world, child));
 		}
 
 		[Test]
@@ -48,7 +48,7 @@ namespace Flecs.Tests
 			var parent = ECS_ENTITY(world, "parent", "");
 			var typeId = ECS_TYPE(world, "Type", "Position, CHILDOF | parent");
 
-			var child = ecs_new_child(world, parent, typeId);
+			var child = ecs.new_child(world, parent, typeId);
 			Assert.NotZero((UInt64)child);
 
 			var childType = ecs.get_type(world, child);

@@ -64,20 +64,21 @@ namespace HelloWorld
 				ECS_SYSTEM<Position, Speed>(world, MoveSystem, SystemKind.OnUpdate);
 				ECS_SYSTEM<Position>(world, PositionSystem, SystemKind.OnUpdate);
 
-				world.NewEntity("MyEntity1", new Position {X = 1, Y = 2}, new Speed {SpeedValue = 5});
-				world.NewEntity("MyEntity2", new Position {X = 1, Y = 2}, new Speed {SpeedValue = 5});
+				ecs.new_entity(world, new Position {X = 1, Y = 2}, new Speed {SpeedValue = 5});
+				ecs.new_entity(world, new Position {X = 1, Y = 2}, new Speed {SpeedValue = 5});
+				ecs.new_entity(world, new Position {X = 1, Y = 2}, new Speed {SpeedValue = 5});
 
-				world.NewEntity("MyEntity3", new Position {X = 14, Y = 2});
-				world.NewEntity("MyEntity4", new Position {X = 13, Y = 2});
+				ecs.new_entity(world, new Position {X = 14, Y = 2});
+				ecs.new_entity(world, new Position {X = 13, Y = 2});
 
-				world.NewEntity<Position, Speed>();
-				world.NewEntity<Speed, Position>();
+				ecs.new_entity<Position, Speed>(world);
+				ecs.new_entity<Position, Speed>(world);
 
-				world.NewEntity(new Position {X = 75, Y = 23}, new Speed {SpeedValue = 66});
+				ecs.new_entity(world, new Position {X = 75, Y = 23}, new Speed {SpeedValue = 66});
 
 				var watch = System.Diagnostics.Stopwatch.StartNew();
 				for (var j = 0; j < 10000; j++)
-					world.NewEntity(new Position { X = 75, Y = 23 }, new Speed { SpeedValue = 66 });
+					ecs.new_entity(world, new Position { X = 75, Y = 23 }, new Speed { SpeedValue = 66 });
 				Console.WriteLine($"-- add one-by-one: {watch.ElapsedMilliseconds} ms, ticks: {watch.ElapsedTicks}");
 
 				// bulk add with a template
@@ -122,12 +123,11 @@ namespace HelloWorld
 		static void BulkAddWithTemplate(World world, uint count)
 		{
 			var templateEntity = ECS_ENTITY(world, "MyTemplate", "Position, Speed");
-			world.Set(templateEntity, new Position { X = 999, Y = 999 });
-			world.Set(templateEntity, new Speed { SpeedValue = 999 });
+			ecs.set(world, templateEntity, new Position { X = 999, Y = 999 });
+			ecs.set(world, templateEntity, new Speed { SpeedValue = 999 });
 
 			var templateType = ECS_TYPE(world, "MyType", "INSTANCEOF | MyTemplate, Position, Speed");
-
-			ecs_new_w_count(world, templateType, count);
+			ecs.new_w_count(world, templateType, count);
 		}
 
 		static void BulkAddWithInitSystem(World world, uint count)
@@ -135,7 +135,7 @@ namespace HelloWorld
 			ECS_SYSTEM<Position, Speed>(world, OnAddMoveSystem, SystemKind.OnAdd);
 
 			var typeId = ecs.expr_to_type(world, "Position, Speed");
-			ecs_new_w_count(world, typeId, count);
+			ecs.new_w_count(world, typeId, count);
 		}
 	}
 }

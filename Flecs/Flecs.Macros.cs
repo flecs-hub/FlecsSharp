@@ -7,122 +7,125 @@ namespace Flecs
 	public delegate void SystemAction<T1, T2>(ref Rows ids, Span<T1> comp1, Span<T2> comp2) where T1 : unmanaged where T2 : unmanaged;
 	public delegate void SystemAction<T1, T2, T3>(ref Rows ids, Span<T1> comp1, Span<T2> comp2, Span<T3> comp3) where T1 : unmanaged where T2 : unmanaged;
 
-	public unsafe static class Macros
+	public unsafe static partial class ecs
 	{
-		#region Imperitive Macros
+		public static EntityId new_entity(World world, TypeId typeId) => _ecs.@new(world, typeId);
+		public static EntityId new_entity(World world, Type componentType) => _ecs.@new(world, Caches.GetComponentTypeId(world, componentType));
 
-		public static EntityId ecs_new(World world, TypeId typeId) => _ecs.@new(world, typeId);
-
-		public static EntityId ecs_new<T>(World world) where T : unmanaged
+		public static EntityId new_entity<T>(World world) where T : unmanaged
 			=> _ecs.@new(world, Caches.GetComponentTypeId(world, typeof(T)));
 
-		public static EntityId ecs_new(World world, Type componentType) => _ecs.@new(world, Caches.GetComponentTypeId(world, componentType));
-
-		public static bool ecs_has(World world, EntityId entity, TypeId typeId)
+		public static EntityId new_entity<T>(World world, T value) where T : unmanaged
 		{
-			return _ecs.has(world, entity, typeId);
+			var e = _ecs.@new(world, TypeId.Zero);
+			set(world, e, value);
+			return e;
 		}
 
-		public static bool ecs_has(World world, EntityId entity, Type componentType)
+		public static EntityId new_entity<T1, T2>(World world, T1 value1 = default, T2 value2 = default) where T1 : unmanaged where T2 : unmanaged
 		{
-			return _ecs.has(world, entity, Caches.GetComponentTypeId(world, componentType));
+			var e = _ecs.@new(world, TypeId.Zero);
+			set(world, e, value1);
+			set(world, e, value2);
+			return e;
 		}
 
-		public static bool ecs_has<T>(World world, EntityId entity) where T : unmanaged
-		{
-			return _ecs.has(world, entity, Caches.GetComponentTypeId<T>(world));
-		}
+		public static bool has(World world, EntityId entity, TypeId typeId)
+			=> _ecs.has(world, entity, typeId);
 
-		public static EntityId ecs_new_w_count(World world, TypeId typeId, uint count)
-		{
-			return _ecs.new_w_count(world, typeId, count);
-		}
+		public static bool has(World world, EntityId entity, Type componentType)
+			=> _ecs.has(world, entity, Caches.GetComponentTypeId(world, componentType));
 
-		public static EntityId ecs_new_child(World world, EntityId parent, TypeId type)
-		{
-			return _ecs.new_child(world, parent, type);
-		}
+		public static bool has<T>(World world, EntityId entity) where T : unmanaged
+			=> _ecs.has(world, entity, Caches.GetComponentTypeId<T>(world));
 
-		public static EntityId ecs_new_child_w_count(World world, EntityId parent, TypeId type, uint count)
-		{
-			return _ecs.new_child_w_count(world, parent, type, count);
-		}
+		public static EntityId new_w_count(World world, TypeId typeId, uint count)
+			=> _ecs.new_w_count(world, typeId, count);
 
-		public static EntityId ecs_new_instance(World world, EntityId baseEntityId, TypeId type)
-		{
-			return _ecs.new_instance(world, baseEntityId, type);
-		}
+		public static EntityId new_child(World world, EntityId parent, TypeId type)
+			=> _ecs.new_child(world, parent, type);
 
-		public static EntityId ecs_new_instance_w_count(World world, EntityId baseEntityId, TypeId type, uint count)
-		{
-			return _ecs.new_instance_w_count(world, baseEntityId, type, count);
-		}
+		public static EntityId new_child_w_count(World world, EntityId parent, TypeId type, uint count)
+			=> _ecs.new_child_w_count(world, parent, type, count);
 
-		public static T* ecs_column<T>(ref Rows rows, uint columnIndex) where T : unmanaged
-		{
-			return (T*)_ecs.column(ref rows, (UIntPtr)Marshal.SizeOf<T>(), columnIndex);
-		}
+		public static EntityId new_instance(World world, EntityId baseEntityId)
+			=> new_instance(world, baseEntityId, TypeId.Zero);
 
-		public static EntityId ecs_set<T>(World world, EntityId entity, T value = default) where T : unmanaged
+		public static EntityId new_instance(World world, EntityId baseEntityId, TypeId type)
+			=> _ecs.new_instance(world, baseEntityId, type);
+
+		public static EntityId new_instance_w_count(World world, EntityId baseEntityId, TypeId type, uint count)
+			=> _ecs.new_instance_w_count(world, baseEntityId, type, count);
+
+		public static T* column<T>(ref Rows rows, uint columnIndex) where T : unmanaged
+			=> (T*)_ecs.column(ref rows, (UIntPtr)Marshal.SizeOf<T>(), columnIndex);
+
+		public static EntityId set<T>(World world, EntityId entity, T value = default) where T : unmanaged
 		{
 			var type = Caches.GetComponentTypeId<T>(world);
 			T* val = &value;
-			return _ecs.set_ptr(world, entity, ecs.type_to_entity(world, type), (UIntPtr)Marshal.SizeOf<T>(), (IntPtr)val);
+			return _ecs.set_ptr(world, entity, type_to_entity(world, type), (UIntPtr)Marshal.SizeOf<T>(), (IntPtr)val);
 		}
 
-		public static EntityId ecs_set_ptr<T>(World world, EntityId entity, T* value) where T : unmanaged
+		public static EntityId set_ptr<T>(World world, EntityId entity, T* value) where T : unmanaged
 		{
 			var type = Caches.GetComponentTypeId<T>(world);
-			return _ecs.set_ptr(world, entity, ecs.type_to_entity(world, type), (UIntPtr)Marshal.SizeOf<T>(), (IntPtr)value);
+			return _ecs.set_ptr(world, entity, type_to_entity(world, type), (UIntPtr)Marshal.SizeOf<T>(), (IntPtr)value);
 		}
 
-		public static IntPtr ecs_get_ptr(World world, EntityId entity, TypeId type) => _ecs.get_ptr(world, entity, type);
+		public static IntPtr get_ptr(World world, EntityId entity, TypeId type) => _ecs.get_ptr(world, entity, type);
 
-		public static T* ecs_get_ptr<T>(World world, EntityId entity) where T : unmanaged
+		public static T* get_ptr<T>(World world, EntityId entity) where T : unmanaged
 			=> (T*)_ecs.get_ptr(world, entity, Caches.GetComponentTypeId<T>(world));
 
-		public static T ecs_get<T>(World world, EntityId entity) where T : unmanaged => *(T*)ecs_get_ptr<T>(world, entity);
+		public static T ecs_get<T>(World world, EntityId entity) where T : unmanaged => *(T*)get_ptr<T>(world, entity);
 
 		public static T ecs_get<T>(World world, EntityId entity, TypeId type) where T : unmanaged
-			=> *(T*)ecs_get_ptr(world, entity, type);
+			=> *(T*)get_ptr(world, entity, type);
 
-		public static EntityId ecs_set_singleton<T>(World world, T value = default) where T : unmanaged
+		public static EntityId set_singleton<T>(World world, T value = default) where T : unmanaged
 		{
-			var componentType = ECS_COMPONENT<T>(world);
-			var componentEntityId = ecs.type_to_entity(world, componentType);
+			var componentType = Macros.ECS_COMPONENT<T>(world);
+			var componentEntityId = type_to_entity(world, componentType);
 			T* val = &value;
 			return _ecs.set_singleton_ptr(world, componentEntityId, (UIntPtr)Marshal.SizeOf<T>(), (IntPtr)val);
 		}
 
-		public static EntityId ecs_set_singleton_ptr<T>(World world, T* value) where T : unmanaged
+		public static EntityId set_singleton_ptr<T>(World world, T* value) where T : unmanaged
 		{
-			var componentType = ECS_COMPONENT<T>(world);
-			var componentEntityId = ecs.type_to_entity(world, componentType);
+			var componentType = Macros.ECS_COMPONENT<T>(world);
+			var componentEntityId = type_to_entity(world, componentType);
 			return _ecs.set_singleton_ptr(world, componentEntityId, (UIntPtr)Marshal.SizeOf<T>(), (IntPtr)value);
 		}
 
-		public static IntPtr ecs_get_singleton_ptr(World world, TypeId type) => _ecs.get_ptr(world, ecs.ECS_SINGLETON, type);
+		public static IntPtr get_singleton_ptr(World world, TypeId type) => _ecs.get_ptr(world, ECS_SINGLETON, type);
 
-		public static T* ecs_get_singleton_ptr<T>(World world, TypeId type) where T : unmanaged
-				=> (T*)_ecs.get_ptr(world, ecs.ECS_SINGLETON, type);
+		public static T* get_singleton_ptr<T>(World world, TypeId type) where T : unmanaged
+				=> (T*)_ecs.get_ptr(world, ECS_SINGLETON, type);
 
-		public static void ecs_add(World world, EntityId entity, TypeId type) => _ecs.add(world, entity, type);
+		public static void add(World world, EntityId entity, TypeId type) => _ecs.add(world, entity, type);
 
-		public static void ecs_add<T>(World world, EntityId entity) where T : unmanaged
+		public static void add<T>(World world, EntityId entity) where T : unmanaged
 			=> _ecs.add(world, entity, Caches.GetComponentTypeId<T>(world));
 
-		public static void ecs_remove(World world, EntityId entity, TypeId type) => _ecs.remove(world, entity, type);
+		public static void remove(World world, EntityId entity, TypeId type) => _ecs.remove(world, entity, type);
 
-		public static void ecs_remove<T>(World world, EntityId entity) where T : unmanaged
+		public static void remove<T>(World world, EntityId entity) where T : unmanaged
 			=> _ecs.remove(world, entity, Caches.GetComponentTypeId<T>(world));
 
-		public static void ecs_add_remove(World world, EntityId entity, TypeId typeToAdd, TypeId typeToRemove)
+		public static void add_remove(World world, EntityId entity, TypeId typeToAdd, TypeId typeToRemove)
 			=> _ecs.add_remove(world, entity, typeToAdd, typeToRemove);
 
-		#endregion
+		public static EntityId import(World world, string id, ModuleInitActionDelegate module, int flags)
+		{
+			var moduleNamePtr = Caches.AddUnmanagedString(id);
+			return _ecs.import(world, module, moduleNamePtr, flags, (IntPtr)0, (UIntPtr)0);
+			//_ecs_import(world, module##Import, #module, flags, handles_out, sizeof(module))
+		}
+	}
 
-		#region Declarative Macros
-
+	public unsafe static class Macros
+	{
 		public static TypeId ECS_COMPONENT(World world, Type componentType) => Caches.GetComponentTypeId(world, componentType);
 
 		public static TypeId ECS_COMPONENT<T>(World world) where T : unmanaged => Caches.GetComponentTypeId<T>(world);
@@ -187,6 +190,7 @@ namespace Flecs
 			Caches.AddSystemAction(world, del);
 			Caches.GetComponentTypeId<T1>(world);
 			Caches.GetComponentTypeId<T2>(world);
+			Caches.GetComponentTypeId<T3>(world);
 
 			var systemNamePtr = Caches.AddUnmanagedString(systemImpl.Method.Name);
 			var signaturePtr = Caches.AddUnmanagedString($"{typeof(T1).Name}, {typeof(T2).Name}");
@@ -195,7 +199,7 @@ namespace Flecs
 
 		public static void ECS_COLUMN<T>(ref Rows rows, out Span<T> column, uint columnIndex) where T : unmanaged
 		{
-			var set = ecs_column<T>(ref rows, columnIndex);
+			var set = ecs.column<T>(ref rows, columnIndex);
 			column = set != null ? new Span<T>(set, (int)rows.count) : null;
 		}
 
@@ -239,34 +243,17 @@ namespace Flecs
 			return (entityId, typeId);
 		}
 
-		#endregion
-
-		#region Module Imperitive Macros
-
-		public static EntityId ecs_import(World world, string id, ModuleInitActionDelegate module, int flags)
-		{
-			var moduleNamePtr = Caches.AddUnmanagedString(id);
-			return _ecs.import(world, module, moduleNamePtr, flags, (IntPtr)0, (UIntPtr)0);
-			//_ecs_import(world, module##Import, #module, flags, handles_out, sizeof(module))
-		}
-
-		#endregion
-
-		#region Module Declarative Macros
-
 		public static T* ECS_MODULE<T>(World world) where T : unmanaged
 		{
 			var typeId = ECS_COMPONENT<T>(world);
-			ecs_set_singleton<T>(world);
-			return (T*)ecs_get_singleton_ptr(world, typeId);
+			ecs.set_singleton<T>(world);
+			return (T*)ecs.get_singleton_ptr(world, typeId);
 		}
 
 		public static TypeId ECS_IMPORT(World world, string id, ModuleInitActionDelegate module, int flags)
 		{
-			var moduleEntityId = ecs_import(world, id, module, flags);
+			var moduleEntityId = ecs.import(world, id, module, flags);
 			return ecs.type_from_entity(world, moduleEntityId);
 		}
-
-		#endregion
 	}
 }

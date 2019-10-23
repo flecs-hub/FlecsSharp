@@ -338,6 +338,8 @@ namespace Flecs
 		readonly IntPtr ptr;
 		public World(IntPtr ptr) => this.ptr = ptr;
 		internal World* Ptr => (World*)ptr;
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static implicit operator IntPtr(World w) => w.ptr;
 	}
 
 	#endregion

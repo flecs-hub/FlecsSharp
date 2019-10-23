@@ -22,7 +22,7 @@ namespace Flecs.Tests
 				ctx->SetC(ctx->invoked, i, rows.Components[i].Value);
 				ctx->SetS(ctx->invoked, i, ecs.column_source(ref rows, (uint)i + 1).Value);
 
-				// Make sure ecs_column functions work
+				// Make sure column functions work
 				var t = ecs.column_type(ref rows, (uint)i + 1);
 				Assert.IsTrue(t.ptr != IntPtr.Zero);
 
@@ -32,7 +32,7 @@ namespace Flecs.Tests
 
 			if (rows.tableColumns != IntPtr.Zero)
 			{
-				var e = new Span<EntityId>(ecs_column<EntityId>(ref rows, 0), (int)rows.count);
+				var e = new Span<EntityId>(ecs.column<EntityId>(ref rows, 0), (int)rows.count);
 				if (e != null)
 				{
 					for (var i = 0; i < rows.count; i++)

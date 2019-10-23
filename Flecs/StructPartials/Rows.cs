@@ -68,7 +68,7 @@ namespace Flecs
 		public bool IsShared(uint column) => ecs.is_shared(ref this, column);
 
 		///<summary>
-		/// Obtain a single field.  This is an alternative method to ecs_column to access data in a system, which accesses data from individual fields (one column per row). This method is slower than iterating over a column array, but has the added benefit that it automatically abstracts between shared components and owned components.
+		/// Obtain a single field.  This is an alternative method to column to access data in a system, which accesses data from individual fields (one column per row). This method is slower than iterating over a column array, but has the added benefit that it automatically abstracts between shared components and owned components.
 		///</summary>
 		///<remarks>
 		/// This is particularly useful if a system is unaware whether a particular  column is from a prefab, as a system does not explicitly state in an argument expression whether prefabs should be matched with, thus it is possible that a system receives both shared and non-shared data for the same column.
@@ -90,7 +90,7 @@ namespace Flecs
 		///</returns>
 		///<remarks>
 		/// If a column is specified for which the component is stored on the entities being iterated over, the operation will return 0, as the entity id in that case depends on the row, not on the column. To obtain the entity ids for a row, a system should access the entity column (column zero) like this:
-		/// ecs_entity_t *entities = ecs_column(rows, ecs_entity_t, 0);
+		/// ecs_entity_t *entities = column(rows, ecs_entity_t, 0);
 		///</remarks>
 		///<code>
 		///ecs_entity_t ecs_column_source(ecs_rows_t *rows, uint32_t column)
@@ -127,10 +127,10 @@ namespace Flecs
 		///</returns>
 		///<remarks>
 		/// ecs_type_from_entity( ecs_column_entity(rows, index));
-		/// This function is wrapped in the following convenience macro which ensures that the type variable is named so it can be used with functions like ecs_add and ecs_set:
+		/// This function is wrapped in the following convenience macro which ensures that the type variable is named so it can be used with functions like add and set:
 		/// ECS_COLUMN_COMPONENT(rows, Position, 1);
-		/// After this macro you can invoke functions like ecs_set as you normally would:
-		/// ecs_set(world, e, Position, {10, 20});
+		/// After this macro you can invoke functions like set as you normally would:
+		/// set(world, e, Position, {10, 20});
 		///</remarks>
 		///<code>
 		///ecs_type_t ecs_column_type(ecs_rows_t *rows, uint32_t column)

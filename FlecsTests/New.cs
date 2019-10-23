@@ -10,7 +10,7 @@ namespace Flecs.Tests
 		[Test]
 		public void New_empty()
 		{
-			var e = ecs_new(world, TypeId.Zero);
+			var e = ecs.new_entity(world, TypeId.Zero);
 			Assert.NotZero((UInt64)e);
 			Assert.IsTrue(ecs.is_empty(world, e));
 		}
@@ -20,9 +20,9 @@ namespace Flecs.Tests
 		{
 			ECS_COMPONENT(world, typeof(Position));
 
-			var e = ecs_new(world, typeof(Position));
+			var e = ecs.new_entity(world, typeof(Position));
 			Assert.NotZero((UInt64)e);
-			Assert.IsTrue(ecs_has(world, e, typeof(Position)));
+			Assert.IsTrue(ecs.has(world, e, typeof(Position)));
 		}
 
 		[Test]
@@ -31,9 +31,9 @@ namespace Flecs.Tests
 			ECS_COMPONENT(world, typeof(Position));
 			var typeId = ECS_TYPE(world, "Type", "Position");
 
-			var e = ecs_new(world, typeId);
+			var e = ecs.new_entity(world, typeId);
 			Assert.NotZero((UInt64)e);
-			Assert.IsTrue(ecs_has(world, e, typeof(Position)));
+			Assert.IsTrue(ecs.has(world, e, typeof(Position)));
 		}
 
 		[Test]
@@ -43,10 +43,10 @@ namespace Flecs.Tests
 			ECS_COMPONENT(world, typeof(Velocity));
 			var typeId = ECS_TYPE(world, "Type", "Position, Velocity");
 
-			var e = ecs_new(world, typeId);
+			var e = ecs.new_entity(world, typeId);
 			Assert.NotZero((UInt64)e);
-			Assert.IsTrue(ecs_has(world, e, typeof(Position)));
-			Assert.IsTrue(ecs_has(world, e, typeof(Velocity)));
+			Assert.IsTrue(ecs.has(world, e, typeof(Position)));
+			Assert.IsTrue(ecs.has(world, e, typeof(Velocity)));
 		}
 
 		[Test]
@@ -56,9 +56,9 @@ namespace Flecs.Tests
 			ECS_TYPE(world, "Type_1", "Position");
 			var typeId2 = ECS_TYPE(world, "Type_2", "Type_1");
 
-			var e = ecs_new(world, typeId2);
+			var e = ecs.new_entity(world, typeId2);
 			Assert.NotZero((UInt64)e);
-			Assert.IsTrue(ecs_has<Position>(world, e));
+			Assert.IsTrue(ecs.has<Position>(world, e));
 		}
 
 		[Test]
@@ -71,10 +71,10 @@ namespace Flecs.Tests
 			ECS_TYPE(world, "Type_2", "Velocity");
 			var typeId3 = ECS_TYPE(world, "Type_3", "Type_1, Type_2");
 
-			var e = ecs_new(world, typeId3);
+			var e = ecs.new_entity(world, typeId3);
 			Assert.NotZero((UInt64)e);
-			Assert.IsTrue(ecs_has<Position>(world, e));
-			Assert.IsTrue(ecs_has<Velocity>(world, e));
+			Assert.IsTrue(ecs.has<Position>(world, e));
+			Assert.IsTrue(ecs.has<Velocity>(world, e));
 		}
 
 		[Test]
@@ -86,10 +86,10 @@ namespace Flecs.Tests
 			ECS_TYPE(world, "Type_1", "Position");
 			var typeId2 = ECS_TYPE(world, "Type_2", "Type_1, Velocity");
 
-			var e = ecs_new(world, typeId2);
+			var e = ecs.new_entity(world, typeId2);
 			Assert.NotZero((UInt64)e);
-			Assert.IsTrue(ecs_has<Position>(world, e));
-			Assert.IsTrue(ecs_has<Velocity>(world, e));
+			Assert.IsTrue(ecs.has<Position>(world, e));
+			Assert.IsTrue(ecs.has<Velocity>(world, e));
 		}
 
 		[Test]
@@ -97,9 +97,9 @@ namespace Flecs.Tests
 		{
 			var typeId = ECS_TAG(world, "Tag");
 
-			var e = ecs_new(world, typeId);
+			var e = ecs.new_entity(world, typeId);
 			Assert.NotZero((UInt64)e);
-			Assert.IsTrue(ecs_has(world, e, typeId));
+			Assert.IsTrue(ecs.has(world, e, typeId));
 		}
 
 		[Test]
@@ -108,9 +108,9 @@ namespace Flecs.Tests
 			var tagTypeId = ECS_TAG(world, "Tag");
 			var typeId = ECS_TYPE(world, "Type", "Tag");
 
-			var e = ecs_new(world, typeId);
+			var e = ecs.new_entity(world, typeId);
 			Assert.NotZero((UInt64)e);
-			Assert.IsTrue(ecs_has(world, e, tagTypeId));
+			Assert.IsTrue(ecs.has(world, e, tagTypeId));
 		}
 
 		[Test]
@@ -121,10 +121,10 @@ namespace Flecs.Tests
 
 			var typeId = ECS_TYPE(world, "Type", "Tag_1, Tag_2");
 
-			var e = ecs_new(world, typeId);
+			var e = ecs.new_entity(world, typeId);
 			Assert.NotZero((UInt64)e);
-			Assert.IsTrue(ecs_has(world, e, tag1Type));
-			Assert.IsTrue(ecs_has(world, e, tag2Type));
+			Assert.IsTrue(ecs.has(world, e, tag1Type));
+			Assert.IsTrue(ecs.has(world, e, tag2Type));
 		}
 
 		[Test]
@@ -135,10 +135,10 @@ namespace Flecs.Tests
 
 			var typeId = ECS_TYPE(world, "Type", "Position, Tag");
 
-			var e = ecs_new(world, typeId);
+			var e = ecs.new_entity(world, typeId);
 			Assert.NotZero((UInt64)e);
-			Assert.IsTrue(ecs_has(world, e, tagTypeId));
-			Assert.IsTrue(ecs_has(world, e, posTypeId));
+			Assert.IsTrue(ecs.has(world, e, tagTypeId));
+			Assert.IsTrue(ecs.has(world, e, posTypeId));
 		}
 
 		[Test]
