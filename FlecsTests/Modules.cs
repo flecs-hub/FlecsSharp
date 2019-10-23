@@ -1,5 +1,6 @@
 ﻿using System;
 using NUnit.Framework;
+using static Flecs.Macros;
 
 namespace Flecs.Tests
 {
@@ -16,10 +17,10 @@ namespace Flecs.Tests
 
 		void SimpleModuleImport(World world, int flags)
 		{
-			var handles = ecs.ECS_MODULE<SimpleModule>(world);
+			var handles = ECS_MODULE<SimpleModule>(world);
 
-			var posTypeId = ecs.ECS_COMPONENT<Position>(world);
-			var velTypeId = ecs.ECS_COMPONENT<Velocity>(world);
+			var posTypeId = ECS_COMPONENT<Position>(world);
+			var velTypeId = ECS_COMPONENT<Velocity>(world);
 
 			handles->PositionEntityId = ecs.type_to_entity(world, posTypeId);
 			handles->PositionTypeId = posTypeId;
@@ -30,62 +31,62 @@ namespace Flecs.Tests
 		[Test]
 		public void Modules_simple_module()
 		{
-			ecs.ECS_IMPORT(world, "SimpleModule", SimpleModuleImport, 0);
+			ECS_IMPORT(world, "SimpleModule", SimpleModuleImport, 0);
 
-			var e = ecs.ecs_new<Position>(world);
+			var e = ecs_new<Position>(world);
 			Assert.NotZero((UInt64)e);
-			Assert.IsTrue(ecs.ecs_has<Position>(world, e));
+			Assert.IsTrue(ecs_has<Position>(world, e));
 
-			ecs.ecs_add<Velocity>(world, e);
-			Assert.IsTrue(ecs.ecs_has<Velocity>(world, e));
+			ecs_add<Velocity>(world, e);
+			Assert.IsTrue(ecs_has<Velocity>(world, e));
 		}
 
 		void AddVtoP(ref Rows rows)
 		{
-			var modulePtr = ecs.ecs_column<SimpleModule>(ref rows, 2);
+			var modulePtr = ecs_column<SimpleModule>(ref rows, 2);
 
 			for (var i = 0; i < rows.count; i++)
-				ecs.ecs_add(world, rows[i], modulePtr->VelocityTypeId);
+				ecs_add(world, rows[i], modulePtr->VelocityTypeId);
 		}
 
 		[Test]
 		public void Modules_import_module_from_system()
 		{
-			var moduleTypeId = ecs.ECS_IMPORT(world, "SimpleModule", SimpleModuleImport, 0);
-			ecs.ECS_SYSTEM(world, AddVtoP, SystemKind.OnUpdate, "Position, $.SimpleModule");
+			var moduleTypeId = ECS_IMPORT(world, "SimpleModule", SimpleModuleImport, 0);
+			ECS_SYSTEM(world, AddVtoP, SystemKind.OnUpdate, "Position, $.SimpleModule");
 
-			var module_ptr = ecs.ecs_get_singleton_ptr(world, moduleTypeId);
+			var module_ptr = ecs_get_singleton_ptr(world, moduleTypeId);
 			Assert.IsTrue(module_ptr != IntPtr.Zero);
 
-			var e = ecs.ecs_new<Position>(world);
+			var e = ecs_new<Position>(world);
 			Assert.NotZero((UInt64)e);
-			Assert.IsTrue(ecs.ecs_has<Position>(world, e));
+			Assert.IsTrue(ecs_has<Position>(world, e));
 
 			ecs.progress(world, 1);
 
-			Assert.IsTrue(ecs.ecs_has<Velocity>(world, e));
+			Assert.IsTrue(ecs_has<Velocity>(world, e));
 		}
 
 		[Test]
 		public void Modules_import_from_on_add_system()
 		{
-			var moduleTypeId = ecs.ECS_IMPORT(world, "SimpleModule", SimpleModuleImport, 0);
-			ecs.ECS_SYSTEM(world, AddVtoP, SystemKind.OnAdd, "Position, $.SimpleModule");
+			var moduleTypeId = ECS_IMPORT(world, "SimpleModule", SimpleModuleImport, 0);
+			ECS_SYSTEM(world, AddVtoP, SystemKind.OnAdd, "Position, $.SimpleModule");
 
-			var module_ptr = ecs.ecs_get_singleton_ptr(world, moduleTypeId);
+			var module_ptr = ecs_get_singleton_ptr(world, moduleTypeId);
 			Assert.IsTrue(module_ptr != IntPtr.Zero);
 
-			var e = ecs.ecs_new<Position>(world);
+			var e = ecs_new<Position>(world);
 			Assert.NotZero((UInt64)e);
-			Assert.IsTrue(ecs.ecs_has<Position>(world, e));
-			Assert.IsTrue(ecs.ecs_has<Velocity>(world, e));
+			Assert.IsTrue(ecs_has<Position>(world, e));
+			Assert.IsTrue(ecs_has<Velocity>(world, e));
 		}
 
 		[Test]
 		public void Modules_import_again() {
 
-			var moduleTypeId = ecs.ECS_IMPORT(world, "SimpleModule", SimpleModuleImport, 0);
-			var moduleTypeId2 = ecs.ECS_IMPORT(world, "SimpleModule", SimpleModuleImport, 0);
+			var moduleTypeId = ECS_IMPORT(world, "SimpleModule", SimpleModuleImport, 0);
+			var moduleTypeId2 = ECS_IMPORT(world, "SimpleModule", SimpleModuleImport, 0);
 
 			Assert.AreEqual(moduleTypeId.ptr, moduleTypeId2.ptr);
 		}

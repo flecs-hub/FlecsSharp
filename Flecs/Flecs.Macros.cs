@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-
 namespace Flecs
 {
 	public delegate void SystemAction<T>(ref Rows ids, Span<T> comp) where T : unmanaged;
 	public delegate void SystemAction<T1, T2>(ref Rows ids, Span<T1> comp1, Span<T2> comp2) where T1 : unmanaged where T2 : unmanaged;
 	public delegate void SystemAction<T1, T2, T3>(ref Rows ids, Span<T1> comp1, Span<T2> comp2, Span<T3> comp3) where T1 : unmanaged where T2 : unmanaged;
 
-	public unsafe static partial class ecs
+	public unsafe static class Macros
 	{
 		#region Imperitive Macros
 
@@ -89,7 +88,7 @@ namespace Flecs
 
 		public static EntityId ecs_set_singleton<T>(World world, T value = default) where T : unmanaged
 		{
-			var componentType = ecs.ECS_COMPONENT<T>(world);
+			var componentType = ECS_COMPONENT<T>(world);
 			var componentEntityId = ecs.type_to_entity(world, componentType);
 			T* val = &value;
 			return _ecs.set_singleton_ptr(world, componentEntityId, (UIntPtr)Marshal.SizeOf<T>(), (IntPtr)val);
@@ -97,15 +96,15 @@ namespace Flecs
 
 		public static EntityId ecs_set_singleton_ptr<T>(World world, T* value) where T : unmanaged
 		{
-			var componentType = ecs.ECS_COMPONENT<T>(world);
+			var componentType = ECS_COMPONENT<T>(world);
 			var componentEntityId = ecs.type_to_entity(world, componentType);
 			return _ecs.set_singleton_ptr(world, componentEntityId, (UIntPtr)Marshal.SizeOf<T>(), (IntPtr)value);
 		}
 
-		public static IntPtr ecs_get_singleton_ptr(World world, TypeId type) => _ecs.get_ptr(world, ECS_SINGLETON, type);
+		public static IntPtr ecs_get_singleton_ptr(World world, TypeId type) => _ecs.get_ptr(world, ecs.ECS_SINGLETON, type);
 
 		public static T* ecs_get_singleton_ptr<T>(World world, TypeId type) where T : unmanaged
-				=> (T*)_ecs.get_ptr(world, ECS_SINGLETON, type);
+				=> (T*)_ecs.get_ptr(world, ecs.ECS_SINGLETON, type);
 
 		public static void ecs_add(World world, EntityId entity, TypeId type) => _ecs.add(world, entity, type);
 
@@ -259,8 +258,8 @@ namespace Flecs
 		public static T* ECS_MODULE<T>(World world) where T : unmanaged
 		{
 			var typeId = ECS_COMPONENT<T>(world);
-			ecs.ecs_set_singleton<T>(world);
-			return (T*)ecs.ecs_get_singleton_ptr(world, typeId);
+			ecs_set_singleton<T>(world);
+			return (T*)ecs_get_singleton_ptr(world, typeId);
 		}
 
 		public static TypeId ECS_IMPORT(World world, string id, ModuleInitActionDelegate module, int flags)

@@ -1,7 +1,7 @@
 ﻿using Flecs;
 using System;
 using System.Diagnostics;
-
+using static Flecs.Macros;
 
 namespace HelloWorld
 {
@@ -61,8 +61,8 @@ namespace HelloWorld
 		{
 			using (var world = World.Create())
 			{
-				ecs.ECS_SYSTEM<Position, Speed>(world, MoveSystem, SystemKind.OnUpdate);
-				ecs.ECS_SYSTEM<Position>(world, PositionSystem, SystemKind.OnUpdate);
+				ECS_SYSTEM<Position, Speed>(world, MoveSystem, SystemKind.OnUpdate);
+				ECS_SYSTEM<Position>(world, PositionSystem, SystemKind.OnUpdate);
 
 				world.NewEntity("MyEntity1", new Position {X = 1, Y = 2}, new Speed {SpeedValue = 5});
 				world.NewEntity("MyEntity2", new Position {X = 1, Y = 2}, new Speed {SpeedValue = 5});
@@ -121,21 +121,21 @@ namespace HelloWorld
 
 		static void BulkAddWithTemplate(World world, uint count)
 		{
-			var templateEntity = ecs.ECS_ENTITY(world, "MyTemplate", "Position, Speed");
+			var templateEntity = ECS_ENTITY(world, "MyTemplate", "Position, Speed");
 			world.Set(templateEntity, new Position { X = 999, Y = 999 });
 			world.Set(templateEntity, new Speed { SpeedValue = 999 });
 
-			var templateType = ecs.ECS_TYPE(world, "MyType", "INSTANCEOF | MyTemplate, Position, Speed");
+			var templateType = ECS_TYPE(world, "MyType", "INSTANCEOF | MyTemplate, Position, Speed");
 
-			ecs.ecs_new_w_count(world, templateType, count);
+			ecs_new_w_count(world, templateType, count);
 		}
 
 		static void BulkAddWithInitSystem(World world, uint count)
 		{
-			ecs.ECS_SYSTEM<Position, Speed>(world, OnAddMoveSystem, SystemKind.OnAdd);
+			ECS_SYSTEM<Position, Speed>(world, OnAddMoveSystem, SystemKind.OnAdd);
 
 			var typeId = ecs.expr_to_type(world, "Position, Speed");
-			ecs.ecs_new_w_count(world, typeId, count);
+			ecs_new_w_count(world, typeId, count);
 		}
 	}
 }
