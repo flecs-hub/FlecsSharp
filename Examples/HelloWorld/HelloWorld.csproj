@@ -4,6 +4,8 @@
 		<OutputType>Exe</OutputType>
 		<TargetFramework>netcoreapp3.0</TargetFramework>
 		<LangVersion>7.3</LangVersion>
+		<AssemblyName>Flecs.Samples</AssemblyName>
+		<RootNamespace>Samples</RootNamespace>
 		<!--<RunWorkingDirectory>$(MSBuildProjectDirectory)/../runtime</RunWorkingDirectory>-->
 	</PropertyGroup>
 	
