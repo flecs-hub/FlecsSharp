@@ -50,7 +50,7 @@ namespace Samples
 			}
 		}
 
-		static void PositionSystem(ref Rows rows, Span<Position> position)
+		static void PositionSystem(ref Rows rows, Set<Position> position)
 		{
 			Console.WriteLine($"PositionSystem: {rows.count}");
 			for (int i = 0; i < (int)rows.count; i++)
@@ -62,7 +62,7 @@ namespace Samples
 			}
 		}
 
-		static void OnAddMoveSystem(ref Rows rows, Span<Position> position, Span<Speed> speed)
+		static void OnAddMoveSystem(ref Rows rows, Set<Position> position, Set<Speed> speed)
 		{
 			Console.WriteLine($"OnAddMoveSystem: {rows.count}");
 			for (int i = 0; i < (int)rows.count; i++)
@@ -74,7 +74,7 @@ namespace Samples
 			}
 		}
 
-		static void MoveSystem(ref Rows rows, Span<Position> position, Span<Speed> speed)
+		static void MoveSystem(ref Rows rows, Set<Position> position, Set<Speed> speed)
 		{
 			Console.WriteLine($"MoveSystem: {rows.count}");
 			for (var i = 0; i < (int)rows.count; i++)
