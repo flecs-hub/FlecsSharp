@@ -52,6 +52,10 @@ namespace Flecs
 			return ptr;
 		}
 
+		/// <summary>
+		/// Provides a cache of all C# Types to TypeId. This avoids having to create unmanaged strings excessively. Each Type only needs
+		/// to have one unmanaged string with this cache.
+		/// </summary>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		internal static TypeId GetComponentTypeId<T>(World world) where T : unmanaged
 			=> GetComponentTypeId(world, typeof(T));
