@@ -9,7 +9,10 @@ namespace Flecs
 
 	public unsafe static partial class ecs
 	{
+		public static uint count(World world, TypeId type) => _ecs.count(world, type);
+
 		public static EntityId new_entity(World world, TypeId typeId) => _ecs.@new(world, typeId);
+
 		public static EntityId new_entity(World world, Type componentType) => _ecs.@new(world, Caches.GetComponentTypeId(world, componentType));
 
 		public static EntityId new_entity<T>(World world) where T : unmanaged
@@ -122,6 +125,73 @@ namespace Flecs
 			return _ecs.import(world, module, moduleNamePtr, flags, (IntPtr)0, (UIntPtr)0);
 			//_ecs_import(world, module##Import, #module, flags, handles_out, sizeof(module))
 		}
+
+		public static EntityId set_w_data<T1>(World world, uint columnCount, uint rowCount, EntityId[] entities, T1[] compValues) where T1 : unmanaged
+		{
+			var compType = Caches.GetComponentTypeId<T1>(world);
+			var compEntityId = ecs.type_to_entity(world, compType);
+			var components = new[] {compEntityId};
+
+			fixed (void* compValuesPtr = compValues)
+			{
+				var columns = new[] {(IntPtr)compValuesPtr};
+				fixed (void* columnsPtr = columns)
+				{
+					fixed (EntityId* componentsPtr = components)
+					{
+						var tableData = new TableData
+						{
+							columnCount = 1,
+							rowCount = 3,
+							entities = null,
+							components = componentsPtr,
+							columns = columnsPtr
+						};
+
+						return set_w_data(world, ref tableData);
+					}
+				}
+			}
+		}
+
+		public static EntityId set_w_data<T1, T2>(World world, uint columnCount, uint rowCount, EntityId[] entities, T1[] comp1Values, T2[] comp2Values)
+			where T1 : unmanaged where T2 : unmanaged
+		{
+			var comp1Type = Caches.GetComponentTypeId<T1>(world);
+			var comp1EntityId = ecs.type_to_entity(world, comp1Type);
+
+			var comp2Type = Caches.GetComponentTypeId<T1>(world);
+			var comp2EntityId = ecs.type_to_entity(world, comp2Type);
+
+			var components = new[] {comp1EntityId, comp2EntityId};
+
+			fixed (void* comp1ValuesPtr = comp1Values)
+			{
+				fixed (void* comp2ValuesPtr = comp2Values)
+				{
+					var columns = new[] {(IntPtr)comp1ValuesPtr, (IntPtr)comp2ValuesPtr};
+					fixed (void* columnsPtr = columns)
+					{
+						fixed (EntityId* componentsPtr = components)
+						{
+							var tableData = new TableData
+							{
+								columnCount = 1,
+								rowCount = 3,
+								entities = null,
+								components = componentsPtr,
+								columns = columnsPtr
+							};
+
+							return set_w_data(world, ref tableData);
+						}
+					}
+				}
+			}
+		}
+
+
+
 	}
 
 	public unsafe static class Macros
