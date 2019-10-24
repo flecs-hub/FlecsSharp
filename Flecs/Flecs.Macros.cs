@@ -55,6 +55,9 @@ namespace Flecs
 		public static EntityId new_w_count(World world, TypeId typeId, uint count)
 			=> _ecs.new_w_count(world, typeId, count);
 
+		public static EntityId new_child(World world, EntityId parent)
+			=> _ecs.new_child(world, parent, TypeId.Zero);
+
 		public static EntityId new_child(World world, EntityId parent, TypeId type)
 			=> _ecs.new_child(world, parent, type);
 
@@ -72,6 +75,9 @@ namespace Flecs
 
 		public static T* column<T>(ref Rows rows, uint columnIndex) where T : unmanaged
 			=> (T*)_ecs.column(ref rows, Heap.SizeOf<T>(), columnIndex);
+
+		public static EntityId set_id(World world, EntityId entity, string id)
+			=> set_ptr(world, entity, ecs.TEcsId, Caches.AddUnmanagedString(id).Ptr());
 
 		public static EntityId set<T>(World world, EntityId entity, T value = default) where T : unmanaged
 		{

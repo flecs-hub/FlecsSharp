@@ -2,15 +2,14 @@ using System;
 using Flecs;
 using static Flecs.Macros;
 
-
 namespace Samples
 {
-	public unsafe class Hierarchy
+	public unsafe class HierarchyApi
 	{
 		public static void Run(World world)
 		{
 			/* Define components */
-			Caches.AddTypedef<Position>(world, "WorldPosition");
+			var worldPosType = Caches.AddTypedef<Position>(world, "WorldPosition");
 			ECS_COMPONENT<Position>(world);
 			ECS_COMPONENT<Velocity>(world);
 
@@ -24,22 +23,32 @@ namespace Samples
 			ECS_SYSTEM(world, Transform, SystemKind.OnUpdate, "CASCADE.WorldPosition, WorldPosition, Position");
 
 			/* Create root of the hierarchy which moves around */
-			var e = ECS_ENTITY(world, "Root", "WorldPosition, Position, Velocity");
-			ecs.set(world, e, new Position {X = 0, Y = 0});
-			ecs.set(world, e, new Velocity {X = 1, Y = 2});
+			var root = ecs.new_entity(world);
+			ecs.set_ptr(world, root, ecs.TEcsId, Caches.AddUnmanagedString("Root").Ptr());
+			ecs.add(world, root, worldPosType);
+			ecs.set(world, root, new Position {X = 0, Y = 0});
+			ecs.set(world, root, new Velocity {X = 1, Y = 2});
 
 			/* Create children that don't move and are relative to the parent */
-			var child1 = ECS_ENTITY(world, "Child1", "WorldPosition, Position, CHILDOF | Root");
+			var child1 = ecs.new_child(world, root);
+			ecs.set_id(world, child1, "Child1");
+			ecs.add(world, child1, worldPosType);
 			ecs.set(world, child1, new Position {X = 100, Y = 100});
 			{
-				var gChild1 = ECS_ENTITY(world, "GChild1", "WorldPosition, Position, CHILDOF | Child1");
+				var gChild1 = ecs.new_child(world, child1);
+				ecs.set_id(world, gChild1, "GChild1");
+				ecs.add(world, gChild1, worldPosType);
 				ecs.set(world, gChild1, new Position {X = 1000, Y = 1000});
 			}
 
-			var child2 = ECS_ENTITY(world, "Child2", "WorldPosition, Position, CHILDOF | Root");
+			var child2 = ecs.new_child(world, root);
+			ecs.set_id(world, child2, "Child2");
+			ecs.add(world, child2, worldPosType);
 			ecs.set(world, child2, new Position {X = 200, Y = 200});
 			{
-				var gChild2 = ECS_ENTITY(world, "GChild2", "WorldPosition, Position, CHILDOF | Child2");
+				var gChild2 = ecs.new_child(world, child2);
+				ecs.set_id(world, gChild2, "GChild2");
+				ecs.add(world, gChild2, worldPosType);
 				ecs.set(world, gChild2, new Position {X = 2000, Y = 2000});
 			}
 

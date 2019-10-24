@@ -39,6 +39,11 @@ namespace Flecs
 		public static TypeId AddTypedef<TFrom>(World world, string newTypeName) where TFrom : unmanaged
 			=> AddTypedef(world, typeof(TFrom), newTypeName);
 
+		/// <summary>
+		/// adds a component of type newTypeName with a size of sizeof(type). This allows you to use a single struct Type with multiple
+		/// different component types. For example, Vector2 could be used for Position and Velocity. Beware name clashes though! You
+		/// cannot use a typedef with a name that matches an actual Type.Name that you use as a component.
+		/// </summary>
 		public static TypeId AddTypedef(World world, Type type, string newTypeName)
 		{
 			if (typedefMap[world].ContainsKey(newTypeName))
