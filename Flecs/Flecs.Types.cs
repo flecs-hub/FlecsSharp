@@ -80,7 +80,7 @@ namespace Flecs
 		public static explicit operator UInt64(OsDl val) => val.Value;
 	}
 
-	public unsafe partial struct EntityId
+	public unsafe partial struct EntityId : IEquatable<EntityId>
 	{
 		public EntityId(UInt64 value) => Value = value;
 
@@ -89,6 +89,12 @@ namespace Flecs
 		public static explicit operator EntityId(UInt64 val) => new EntityId(val);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static explicit operator UInt64(EntityId val) => val.Value;
+
+		public static bool operator ==(EntityId obj1, EntityId obj2) => obj1.Value == obj2.Value;
+		public static bool operator !=(EntityId obj1, EntityId obj2) => obj1.Value != obj2.Value;
+		public bool Equals(EntityId other) => Value == other.Value;
+		public override bool Equals(object obj) => obj is EntityId other && Equals(other);
+		public override int GetHashCode() => Value.GetHashCode();
 
 		public override string ToString() => Value.ToString();
 	}
@@ -283,7 +289,7 @@ namespace Flecs
 	#region RefPtr
 
 	//type
-	public unsafe partial struct TypeId
+	public unsafe partial struct TypeId : IEquatable<TypeId>
 	{
 		public static TypeId Zero = (TypeId)0;
 		internal IntPtr ptr;
@@ -294,6 +300,12 @@ namespace Flecs
 		public static explicit operator TypeId(int val) => new TypeId(new IntPtr(val));
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static implicit operator Vector(TypeId type) => new Vector(type.ptr);
+
+		public static bool operator ==(TypeId obj1, TypeId obj2) => obj1.ptr == obj2.ptr;
+		public static bool operator !=(TypeId obj1, TypeId obj2) => obj1.ptr != obj2.ptr;
+		public bool Equals(TypeId other) => ptr == other.ptr;
+		public override bool Equals(object obj) => obj is TypeId other && Equals(other);
+		public override int GetHashCode() => ptr.GetHashCode();
 	}
 
 	//ecs_table_columns_t

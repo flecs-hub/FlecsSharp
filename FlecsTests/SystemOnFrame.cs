@@ -14,7 +14,6 @@ namespace Flecs.Tests
 			Span<Velocity> v = null;
 			Span<Mass> m = null;
 
-			var wtf = ecs.column<Velocity>(ref rows, 2);
 			if (rows.columnCount >= 2)
 			{
 				var column = ecs.column<Velocity>(ref rows, 2);

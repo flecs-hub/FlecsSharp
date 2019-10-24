@@ -14,7 +14,7 @@ namespace Flecs
 		///<param name="world"> [in]  The world to which to add the entity. </param>
 		///<param name="type"> [in]  Zero if no type, or handle to a component, type or prefab. </param>
 		///<returns>
-		/// A handle to the new entity. 
+		/// A handle to the new entity.
 		///</returns>
 		///<remarks>
 		/// Entities are accessed through handles instead of direct pointers. Certain operations may move an entity in memory. Handles provide a safe mechanism for addressing entities.
@@ -194,7 +194,7 @@ namespace Flecs
 		///<param name="parent"> [in]  The container to which to add the child entity. </param>
 		///<param name="type"> [in]  The type with which to create the child entity. </param>
 		///<returns>
-		/// A handle to the created entity. 
+		/// A handle to the created entity.
 		///</returns>
 		///<remarks>
 		/// This function is equivalent to calling new_entity with a type that combines both the type specified in this function and the type id for the container.
@@ -319,7 +319,7 @@ namespace Flecs
 		///</code>
 		// _ecs_add_remove_w_filter: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1054
 		[DllImport(ecs.NativeLibName, EntryPoint = "_ecs_add_remove_w_filter", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-		public static extern void add_remove_w_filter(World world, TypeId toAdd, TypeId toRemove, out TypeFilter filter);
+		public static extern void add_remove_w_filter(World world, TypeId toAdd, TypeId toRemove, ref TypeFilter filter);
 
 		///<summary>
 		/// Check if entity has the specified type. This operation checks if the entity has the components associated with the specified type. It accepts component handles, families and prefabs.
@@ -341,7 +341,7 @@ namespace Flecs
 		public static extern bool has(World world, EntityId entity, TypeId type);
 
 		///<summary>
-		/// Same as has, but only returns true if entity owns the component(s). 
+		/// Same as has, but only returns true if entity owns the component(s).
 		///</summary>
 		///<code>
 		///bool _ecs_has_owned(ecs_world_t *world, ecs_entity_t entity, ecs_type_t type)
@@ -370,7 +370,7 @@ namespace Flecs
 		public static extern bool has_any(World world, EntityId entity, TypeId type);
 
 		///<summary>
-		/// Same as ecs_has_any, but only returns true if entity owns the component(s). 
+		/// Same as ecs_has_any, but only returns true if entity owns the component(s).
 		///</summary>
 		///<code>
 		///bool _ecs_has_any_owned(ecs_world_t *world, ecs_entity_t entity,
@@ -455,7 +455,7 @@ namespace Flecs
 		public static extern IntPtr column(ref Rows rows, UIntPtr size, uint column);
 
 		///<summary>
-		/// Obtain a single field.  This is an alternative method to column to access data in a system, which accesses data from individual fields (one column per row). This method is slower than iterating over a column array, but has the added benefit that it automatically abstracts between shared components and owned components. 
+		/// Obtain a single field.  This is an alternative method to column to access data in a system, which accesses data from individual fields (one column per row). This method is slower than iterating over a column array, but has the added benefit that it automatically abstracts between shared components and owned components.
 		///</summary>
 		///<remarks>
 		/// This is particularly useful if a system is unaware whether a particular  column is from a prefab, as a system does not explicitly state in an argument expression whether prefabs should be matched with, thus it is possible that a system receives both shared and non-shared data for the same column.
@@ -469,7 +469,7 @@ namespace Flecs
 		public static extern IntPtr field(ref Rows rows, UIntPtr size, uint column, uint row);
 
 		///<summary>
-		/// Abort 
+		/// Abort
 		///</summary>
 		///<code>
 		///void _ecs_abort(uint32_t error_code, const char *param, const char *file,
@@ -480,7 +480,7 @@ namespace Flecs
 		public static extern void abort(uint errorCode, string param, string file, uint line);
 
 		///<summary>
-		/// Assert 
+		/// Assert
 		///</summary>
 		///<code>
 		///void _ecs_assert(bool condition, uint32_t error_code, const char *param,
