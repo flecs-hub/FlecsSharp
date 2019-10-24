@@ -26,6 +26,9 @@ namespace Samples
 
 			using (var world = World.Create())
 				SetSystem.Run(world);
+
+			using (var world = World.Create())
+				NoMacros.Run(world);
 		}
 	}
 }

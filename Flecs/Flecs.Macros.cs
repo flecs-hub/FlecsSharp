@@ -86,6 +86,9 @@ namespace Flecs
 			return _ecs.set_ptr(world, entity, type_to_entity(world, type), Heap.SizeOf<T>(), (IntPtr)value);
 		}
 
+		public static EntityId set_ptr(World world, EntityId entity, TypeId type, void* value)
+			=> _ecs.set_ptr(world, entity, type_to_entity(world, type), Heap.SizeOf<IntPtr>(), (IntPtr)value);
+
 		public static IntPtr get_ptr(World world, EntityId entity, TypeId type) => _ecs.get_ptr(world, entity, type);
 
 		public static T* get_ptr<T>(World world, EntityId entity) where T : unmanaged

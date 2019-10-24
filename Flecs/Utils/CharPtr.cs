@@ -2,13 +2,14 @@
 
 namespace Flecs
 {
-	public readonly struct CharPtr
+	public unsafe readonly struct CharPtr
 	{
 		readonly IntPtr _ptr;
 
 		public CharPtr(IntPtr ptr) => this._ptr = ptr;
 		public static explicit operator CharPtr(IntPtr ptr) => new CharPtr(ptr);
 		public static implicit operator IntPtr(CharPtr charPtr) => charPtr._ptr;
+		public CharPtr* Ptr() { fixed (CharPtr* ptr = &this) return ptr; }
 
 		public unsafe ReadOnlySpan<byte> AsSpan()
 		{
