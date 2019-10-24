@@ -7,11 +7,6 @@ namespace Samples
 {
 	public class MoveSystem
 	{
-		struct Message
-		{
-			public CharPtr text;
-		}
-
 		public static void Run(World world)
 		{
 			/* Define components */
@@ -47,7 +42,7 @@ namespace Samples
 			ECS_COLUMN<Position>(ref rows, out var p, 1);
 			ECS_COLUMN<Velocity>(ref rows, out var v, 2);
 
-			/* Iterate all the messages */
+			/* Iterate all the entities */
 			for (var i = 0; i < rows.count; i++)
 			{
 				p[i].X += v[i].X;

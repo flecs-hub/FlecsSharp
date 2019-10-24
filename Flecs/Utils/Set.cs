@@ -37,6 +37,8 @@ namespace Flecs
 			}
 		}
 
+		public uint Count => _length;
+
 		[Conditional("DEBUG")]
 		void BoundsCheck(uint i)
 		{

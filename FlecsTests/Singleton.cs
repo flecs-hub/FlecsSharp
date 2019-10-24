@@ -39,11 +39,11 @@ namespace Flecs.Tests
 		{
 			ECS_COLUMN<Position>(ref rows, out var p, 1);
 			ECS_COLUMN<Velocity>(ref rows, out var v, 2);
-			Assert.IsTrue(v == null || ecs.is_shared(ref rows, 2));
+			Assert.IsTrue(v.Count == 0 || ecs.is_shared(ref rows, 2));
 
 			TestData.ProbeSystem(ref rows);
 
-			if (v != null)
+			if (v.Count != 0)
 			{
 				for (var i = 0; i < rows.count; i++)
 				{

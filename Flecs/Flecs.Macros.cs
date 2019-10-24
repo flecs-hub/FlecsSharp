@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace Flecs
 {
+
 	public delegate void SystemAction<T>(ref Rows ids, Set<T> comp) where T : unmanaged;
 	public delegate void SystemAction<T1, T2>(ref Rows ids, Set<T1> comp1, Set<T2> comp2) where T1 : unmanaged where T2 : unmanaged;
 	public delegate void SystemAction<T1, T2, T3>(ref Rows ids, Set<T1> comp1, Set<T2> comp2, Set<T3> comp3)
@@ -241,6 +242,10 @@ namespace Flecs
 				}
 			}
 		}
+
+		public static T* field<T>(ref Rows rows, uint column, uint row) where T : unmanaged
+			=> (T*)_ecs.field(ref rows, Heap.SizeOf<T>(), column, row);
+
 	}
 
 	/// <summary>
