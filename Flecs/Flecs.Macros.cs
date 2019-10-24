@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Runtime.InteropServices;
 
 
@@ -99,6 +100,12 @@ namespace Flecs
 			return _ecs.set_singleton_ptr(world, componentEntityId, (UIntPtr)Marshal.SizeOf<T>(), (IntPtr)val);
 		}
 
+		public static EntityId set_singleton_ptr<T>(World world, ref T value) where T : unmanaged
+		{
+			fixed (T* val = &value)
+				return set_singleton_ptr(world, val);
+		}
+
 		public static EntityId set_singleton_ptr<T>(World world, T* value) where T : unmanaged
 		{
 			var componentType = Macros.ECS_COMPONENT<T>(world);
@@ -108,8 +115,8 @@ namespace Flecs
 
 		public static IntPtr get_singleton_ptr(World world, TypeId type) => _ecs.get_ptr(world, ECS_SINGLETON, type);
 
-		public static T* get_singleton_ptr<T>(World world, TypeId type) where T : unmanaged
-			=> (T*)_ecs.get_ptr(world, ECS_SINGLETON, type);
+		public static T* get_singleton_ptr<T>(World world) where T : unmanaged
+			=> (T*)_ecs.get_ptr(world, ECS_SINGLETON, Caches.GetComponentTypeId<T>(world));
 
 		public static void add(World world, EntityId entity, TypeId type) => _ecs.add(world, entity, type);
 
