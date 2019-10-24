@@ -16,8 +16,10 @@ namespace Samples
 			ecs.new_entity(world, new Position {X = 1, Y = 2}, new Speed {SpeedValue = 5});
 			ecs.new_entity(world, new Position {X = 1, Y = 2}, new Speed {SpeedValue = 5});
 
-			ecs.new_entity(world, new Position {X = 14, Y = 2});
-			ecs.new_entity(world, new Position {X = 13, Y = 2});
+			var e = ecs.new_entity(world);
+			ecs.set(world, e, new Position {X = 14, Y = 2});
+			e = ecs.new_entity(world);
+			ecs.set(world, e, new Position {X = 13, Y = 2});
 
 			ecs.new_entity<Position, Speed>(world);
 			ecs.new_entity<Position, Speed>(world);

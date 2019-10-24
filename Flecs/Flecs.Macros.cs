@@ -28,12 +28,20 @@ namespace Flecs
 		public static EntityId new_entity<T>(World world) where T : unmanaged
 			=> _ecs.@new(world, Caches.GetComponentTypeId(world, typeof(T)));
 
-		public static EntityId new_entity<T>(World world, T value) where T : unmanaged
+		public static EntityId new_entity(World world, string id)
 		{
 			var e = _ecs.@new(world, TypeId.Zero);
-			set(world, e, value);
+			set_id(world, e, id);
 			return e;
 		}
+
+		public static EntityId new_entity<T1>(World world, T1 value1 = default) where T1 : unmanaged
+		{
+			var e = _ecs.@new(world, TypeId.Zero);
+			set(world, e, value1);
+			return e;
+		}
+
 
 		public static EntityId new_entity<T1, T2>(World world, T1 value1 = default, T2 value2 = default) where T1 : unmanaged where T2 : unmanaged
 		{
@@ -82,9 +90,14 @@ namespace Flecs
 		public static EntityId set<T>(World world, EntityId entity, T value = default) where T : unmanaged
 		{
 			var type = Caches.GetComponentTypeId<T>(world);
-			T* val = &value;
-			return _ecs.set_ptr(world, entity, type_to_entity(world, type), Heap.SizeOf<T>(), (IntPtr)val);
+			return _ecs.set_ptr(world, entity, type_to_entity(world, type), Heap.SizeOf<T>(), (IntPtr)(&value));
 		}
+
+		/// <summary>
+		/// helper that allows
+		/// </summary>
+		public static EntityId set_typedef<TFrom>(World world, EntityId entity, TypeId type, TFrom value) where TFrom : unmanaged
+			=> _ecs.set_ptr(world, entity, type_to_entity(world, type), Heap.SizeOf<TFrom>(), (IntPtr)(&value));
 
 		public static EntityId set_ptr<T>(World world, EntityId entity, T* value) where T : unmanaged
 		{

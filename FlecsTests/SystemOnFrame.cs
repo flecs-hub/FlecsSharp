@@ -150,6 +150,10 @@ namespace Flecs.Tests
 			var e_2 = ECS_ENTITY(world, "e_2", "Position, CustomVelocity, CustomMass");
 			var e_3 = ECS_ENTITY(world, "e_3", "Position, CustomVelocity, CustomMass");
 
+			// when setting a typedef'd component, we need to use the set_typedef method so that the type is not bound to the actual
+			// struct we are sending.
+			ecs.set_typedef(world, e_1, velTypeId, new Position {x = 10, y = 10});
+
 			ecs.progress(world, 1);
 
 			Assert.IsTrue(ctx->count == 3);

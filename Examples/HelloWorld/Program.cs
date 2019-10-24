@@ -9,7 +9,8 @@ namespace Samples
 		static Type[] exampleTypes = new[]
 		{
 			typeof(HelloWorld), typeof(SimpleSystem), typeof(MoveSystem), typeof(SimpleModuleExample),
-			typeof(AddRemoveSystem), typeof(SetSystem), typeof(NoMacros), typeof(Hierarchy), typeof(HierarchyApi)
+			typeof(AddRemoveSystem), typeof(SetSystem), typeof(NoMacros), typeof(Hierarchy), typeof(HierarchyApi),
+			typeof(Inheritance), typeof(InheritanceApi)
 		};
 
 		static void Main(string[] args)
