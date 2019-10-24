@@ -17,7 +17,7 @@ namespace Samples
 			var velType = ecs.type_from_entity(world, velEntity);
 
 			/* Register system */
-			ecs.new_system(world, Caches.AddUnmanagedString("Move"), SystemKind.OnUpdate, Caches.AddUnmanagedString("Position, Velocity"), Move);
+			ecs.new_system(world, Caches.AddUnmanagedString("Move"), SystemKind.OnUpdate, "Position, Velocity", Move);
 			ECS_SYSTEM(world, Move, SystemKind.OnUpdate, "Position, Velocity");
 
 			/* Create an entity */

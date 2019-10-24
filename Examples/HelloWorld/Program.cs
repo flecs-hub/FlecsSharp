@@ -1,34 +1,31 @@
-﻿using Flecs;
+﻿using System;
+using System.Reflection;
+using Flecs;
 
 namespace Samples
 {
 	class Program
 	{
+		static Type[] exampleTypes = new[]
+		{
+			typeof(HelloWorld), typeof(SimpleSystem), typeof(MoveSystem), typeof(SimpleModuleExample),
+			typeof(AddRemoveSystem), typeof(SetSystem), typeof(NoMacros), typeof(Hierarchy)
+		};
+
 		static void Main(string[] args)
 		{
 			// using (var world = World.Create())
 			// 	Dump.Run(world);
 
-			using (var world = World.Create())
-				HelloWorld.Run(world);
+			foreach (var type in exampleTypes)
+			{
+				var runMethod = type.GetMethod("Run", BindingFlags.Static | BindingFlags.Public);
 
-			using (var world = World.Create())
-				SimpleSystem.Run(world);
-
-			using (var world = World.Create())
-				MoveSystem.Run(world);
-
-			using (var world = World.Create())
-				SimpleModuleExample.Run(world);
-
-			using (var world = World.Create())
-				AddRemoveSystem.Run(world);
-
-			using (var world = World.Create())
-				SetSystem.Run(world);
-
-			using (var world = World.Create())
-				NoMacros.Run(world);
+				Console.WriteLine($"---- Running {type.Name} ----");
+				using (var world = World.Create())
+					runMethod.Invoke(null, new object[] {world});
+				Console.WriteLine();
+			}
 		}
 	}
 }

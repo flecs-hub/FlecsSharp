@@ -12,6 +12,12 @@ namespace Samples
 		public float Y;
 	}
 
+	// public struct WorldPosition
+	// {
+	// 	public float X;
+	// 	public float Y;
+	// }
+
 	public struct Speed
 	{
 		public int SpeedValue;

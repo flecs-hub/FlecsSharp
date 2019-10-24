@@ -1426,7 +1426,7 @@ namespace Flecs
 		///</code>
 		// ecs_new_system: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1963
 		[DllImport(NativeLibName, EntryPoint = "ecs_new_system", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-		public static extern EntityId new_system(World world, CharPtr id, SystemKind kind, CharPtr sig, SystemActionDelegate action);
+		public static extern EntityId new_system(World world, CharPtr id, SystemKind kind, string sig, SystemActionDelegate action);
 
 		///<summary>
 		/// Get handle to type. This operation obtains a handle to a type that can be used with new_entity. Predefining types has performance benefits over using add/remove multiple times, as it provides constant creation time regardless of the number of components. This function will internally create a table for the type.

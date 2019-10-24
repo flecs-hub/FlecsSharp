@@ -265,10 +265,8 @@ namespace Flecs
 		public static EntityId ECS_SYSTEM(World world, SystemActionDelegate method, SystemKind kind, string expr)
 		{
 			var systemNamePtr = Caches.AddUnmanagedString(method.Method.Name);
-			var signaturePtr = Caches.AddUnmanagedString(expr);
 			Caches.AddSystemAction(world, method);
-
-			return ecs.new_system(world, systemNamePtr, kind, signaturePtr, method);
+			return ecs.new_system(world, systemNamePtr, kind, expr, method);
 		}
 
 		public static EntityId ECS_SYSTEM<T1>(World world, SystemAction<T1> systemImpl, SystemKind kind) where T1 : unmanaged
@@ -284,8 +282,7 @@ namespace Flecs
 			Caches.GetComponentTypeId<T1>(world);
 
 			var systemNamePtr = Caches.AddUnmanagedString(systemImpl.Method.Name);
-			var signaturePtr = Caches.AddUnmanagedString(typeof(T1).Name);
-			return ecs.new_system(world, systemNamePtr, kind, signaturePtr, del);
+			return ecs.new_system(world, systemNamePtr, kind, typeof(T1).Name, del);
 		}
 
 		public static EntityId ECS_SYSTEM<T1, T2>(World world, SystemAction<T1, T2> systemImpl, SystemKind kind) where T1 : unmanaged where T2 : unmanaged
@@ -303,8 +300,7 @@ namespace Flecs
 			Caches.GetComponentTypeId<T2>(world);
 
 			var systemNamePtr = Caches.AddUnmanagedString(systemImpl.Method.Name);
-			var signaturePtr = Caches.AddUnmanagedString($"{typeof(T1).Name}, {typeof(T2).Name}");
-			return ecs.new_system(world, systemNamePtr, kind, signaturePtr, del);
+			return ecs.new_system(world, systemNamePtr, kind, $"{typeof(T1).Name}, {typeof(T2).Name}", del);
 		}
 
 		public static EntityId ECS_SYSTEM<T1, T2, T3>(World world, SystemAction<T1, T2, T3> systemImpl, SystemKind kind)
@@ -325,8 +321,7 @@ namespace Flecs
 			Caches.GetComponentTypeId<T3>(world);
 
 			var systemNamePtr = Caches.AddUnmanagedString(systemImpl.Method.Name);
-			var signaturePtr = Caches.AddUnmanagedString($"{typeof(T1).Name}, {typeof(T2).Name}");
-			return ecs.new_system(world, systemNamePtr, kind, signaturePtr, del);
+			return ecs.new_system(world, systemNamePtr, kind, $"{typeof(T1).Name}, {typeof(T2).Name}, {typeof(T3).Name}", del);
 		}
 
 		public static void ECS_COLUMN<T>(ref Rows rows, out Set<T> column, uint columnIndex) where T : unmanaged
