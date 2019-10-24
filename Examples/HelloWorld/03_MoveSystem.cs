@@ -27,9 +27,6 @@ namespace Samples
 			ecs.set(world, e, new Position {X = 0, Y = 0});
 			ecs.set(world, e, new Velocity {X = 1, Y = 1});
 
-			/* Set target FPS for main loop to 1 frame per second */
-			ecs.set_target_fps(world, 1);
-
 			/* Run systems */
 			ecs.progress(world, 0);
 			ecs.progress(world, 0);

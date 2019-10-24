@@ -17,6 +17,15 @@ namespace Samples
 
 			using (var world = World.Create())
 				MoveSystem.Run(world);
+
+			using (var world = World.Create())
+				SimpleModuleExample.Run(world);
+
+			using (var world = World.Create())
+				AddRemoveSystem.Run(world);
+
+			using (var world = World.Create())
+				SetSystem.Run(world);
 		}
 	}
 }
