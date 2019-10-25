@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Flecs;
 using static Flecs.Macros;
 
@@ -7,26 +8,18 @@ namespace Samples
 {
 	public unsafe class GetChildren
 	{
-		static VectorParams entity_params = new VectorParams {elementSize = (uint)Heap.SizeOf<EntityId>()};
+		static List<EntityId> EntityList = new List<EntityId>();
 
 		static void GetChildrenSystem(ref Rows rows)
 		{
-			var children = new Vector(rows.param);
-
 			for (var i = 0; i < rows.count; i++)
-			{
-				var elem = ecs.vector_add(ref children, ref entity_params);
-				UInt64* elemPtr = (UInt64*)elem.ToPointer();
-				*elemPtr = rows.Entities[i].Value;
-			}
+				EntityList.Add(rows.Entities[i]);
 		}
 
-		static void PrintChildren(World world, string parentId, ref Vector children)
+		static void PrintChildren(World world, string parentId)
 		{
-			var entities = children.ToSpan<EntityId>();
-
-			for (var i = 0; i < entities.Length; i++)
-				Console.WriteLine("Child found: '{0}.{1}'", parentId, ecs.get_id(world, entities[i]));
+			for (var i = 0; i < EntityList.Count; i++)
+				Console.WriteLine("Child found: '{0}.{1}'", parentId, ecs.get_id(world, EntityList[i]));
 		}
 
 		public static void Run(World world)
@@ -57,27 +50,21 @@ namespace Samples
 			ecs.set_id(world, child_2_1, "child_2_1");
 			ecs.set_id(world, child_2_2, "child_2_2");
 
-			/* Create vector to store child entities */
-			// TODO: we have to allocate all the vector elements we need because we lose the pointer when it realloced in Flecs
-			var children = ecs.vector_new(ref entity_params, 10);
-
 			/* Collect children for parent_1 */
-			ecs.run_w_filter(world, systemEntity, 0, 0, 0, parent_1Type, children.ptr);
+			ecs.run_w_filter(world, systemEntity, 0, 0, 0, parent_1Type, IntPtr.Zero);
 
-			PrintChildren(world, "parent_1", ref children);
+			PrintChildren(world, "parent_1");
 			Console.WriteLine("---\n");
 
-			ecs.vector_clear(children);
-
-			var cnt = ecs.vector_count(children);
+			EntityList.Clear();
 
 			/* Collect children for parent_2 */
-			ecs.run_w_filter(world, systemEntity, 0, 0, 0, parent_2Type, children.ptr);
+			ecs.run_w_filter(world, systemEntity, 0, 0, 0, parent_2Type, IntPtr.Zero);
 
-			PrintChildren(world, "parent_2", ref children);
+			PrintChildren(world, "parent_2");
 
 			/* Cleanup */
-			ecs.vector_free(children);
+			EntityList.Clear();
 		}
 	}
 }
