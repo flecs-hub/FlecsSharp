@@ -31,7 +31,7 @@ namespace Samples
 			ecs.remove(world, e, movableType);
 
 			/* Test if entity has the components */
-			Console.WriteLine("After new with type:");
+			Console.WriteLine("After remove with type:");
 			Console.WriteLine("Has Position? {0}", ecs.has<Position>(world, e));
 			Console.WriteLine("Has Velocity? {0}", ecs.has<Velocity>(world, e));
 		}
