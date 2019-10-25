@@ -31,7 +31,7 @@ namespace Flecs.Tests
 		public void Container_child_w_type()
 		{
 			ECS_COMPONENT<Position>(world);
-			var typeId = ECS_TYPE(world, "Type", "Position");
+			var (_, typeId) = ECS_TYPE(world, "Type", "Position");
 
 			var parent = ecs.new_entity(world, TypeId.Zero);
 			var child = ecs.new_child(world, parent, typeId);
@@ -46,7 +46,7 @@ namespace Flecs.Tests
 		{
 			var posTypeId = ECS_COMPONENT<Position>(world);
 			var parent = ECS_ENTITY(world, "parent", "");
-			var typeId = ECS_TYPE(world, "Type", "Position, CHILDOF | parent");
+			var (_, typeId) = ECS_TYPE(world, "Type", "Position, CHILDOF | parent");
 
 			var child = ecs.new_child(world, parent, typeId);
 			Assert.NotZero((UInt64)child);

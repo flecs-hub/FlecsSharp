@@ -7,6 +7,11 @@ namespace Flecs
 	[SuppressUnmanagedCodeSecurity]
 	public unsafe static partial class ecs
 	{
+		public struct EcsPrefab
+		{
+			public EntityId parent;
+		}
+
 		internal const string NativeLibName = "flecs_shared";
 
 		public static readonly TypeId TEcsComponent = InteropUtils.LoadTypedSymbol<TypeId>("TEcsComponent");
@@ -986,7 +991,7 @@ namespace Flecs
 		///</code>
 		// ecs_lookup_child: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L1362
 		[DllImport(NativeLibName, EntryPoint = "ecs_lookup_child", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-		public static extern EntityId lookup_child(World world, EntityId parent, CharPtr id);
+		public static extern EntityId lookup_child(World world, EntityId parent, string id);
 
 		///<summary>
 		/// Get a type from an entity. This function returns a type that can be added/removed to entities. If you create a new component, type or prefab with the ecs_new_* function, you get an ecs_entity_t handle which provides access to builtin components associated with the component, type or prefab.

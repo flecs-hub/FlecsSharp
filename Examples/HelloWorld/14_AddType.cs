@@ -18,7 +18,7 @@ namespace Samples
 		     * to create entities with a specific type, or add multiple components in a
 		     * single operation. This is much more efficient than adding each component
 		     * individually to an entity */
-			var movableType = ECS_TYPE(world, "Movable", "Position, Velocity");
+			var (_, movableType) = ECS_TYPE(world, "Movable", "Position, Velocity");
 
 			var e = ecs.new_entity(world, movableType);
 

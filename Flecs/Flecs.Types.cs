@@ -2,6 +2,7 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
+
 namespace Flecs
 {
 	#region Enums
@@ -41,8 +42,10 @@ namespace Flecs
 		public OsThread(UInt64 value) => Value = value;
 
 		UInt64 Value;
+
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static explicit operator OsThread(UInt64 val) => new OsThread(val);
+
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static explicit operator UInt64(OsThread val) => val.Value;
 	}
@@ -52,8 +55,10 @@ namespace Flecs
 		public OsMutex(UInt64 value) => Value = value;
 
 		UInt64 Value;
+
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static explicit operator OsMutex(UInt64 val) => new OsMutex(val);
+
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static explicit operator UInt64(OsMutex val) => val.Value;
 	}
@@ -63,8 +68,10 @@ namespace Flecs
 		public OsCond(UInt64 value) => Value = value;
 
 		UInt64 Value;
+
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static explicit operator OsCond(UInt64 val) => new OsCond(val);
+
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static explicit operator UInt64(OsCond val) => val.Value;
 	}
@@ -74,8 +81,10 @@ namespace Flecs
 		public OsDl(UInt64 value) => Value = value;
 
 		UInt64 Value;
+
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static explicit operator OsDl(UInt64 val) => new OsDl(val);
+
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static explicit operator UInt64(OsDl val) => val.Value;
 	}
@@ -85,8 +94,10 @@ namespace Flecs
 		public EntityId(UInt64 value) => Value = value;
 
 		public readonly UInt64 Value;
+
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static explicit operator EntityId(UInt64 val) => new EntityId(val);
+
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static explicit operator UInt64(EntityId val) => val.Value;
 
@@ -107,7 +118,11 @@ namespace Flecs
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct OsApi
 	{
-		public OsApi* Ptr() { fixed (OsApi* ptr = &this) return ptr; }
+		public OsApi* Ptr()
+		{
+			fixed (OsApi* ptr = &this) return ptr;
+		}
+
 		internal IntPtr _malloc;
 		internal IntPtr _realloc;
 		internal IntPtr _calloc;
@@ -140,7 +155,11 @@ namespace Flecs
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct Time
 	{
-		public Time* Ptr() { fixed (Time* ptr = &this) return ptr; }
+		public Time* Ptr()
+		{
+			fixed (Time* ptr = &this) return ptr;
+		}
+
 		public int sec; //size: 4, offset:0
 		public uint nanosec; //size: 4, offset:4
 	}
@@ -149,7 +168,11 @@ namespace Flecs
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct VectorParams
 	{
-		public VectorParams* Ptr() { fixed (VectorParams* ptr = &this) return ptr; }
+		public VectorParams* Ptr()
+		{
+			fixed (VectorParams* ptr = &this) return ptr;
+		}
+
 		internal IntPtr _moveAction;
 		public IntPtr moveCtx; //size: 8, offset:8
 		public IntPtr ctx; //size: 8, offset:16
@@ -160,7 +183,11 @@ namespace Flecs
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct MapIter
 	{
-		public MapIter* Ptr() { fixed (MapIter* ptr = &this) return ptr; }
+		public MapIter* Ptr()
+		{
+			fixed (MapIter* ptr = &this) return ptr;
+		}
+
 		public Map map; //size: 8, offset:0
 		public uint bucketIndex; //size: 4, offset:8
 		public uint node; //size: 4, offset:12
@@ -170,7 +197,11 @@ namespace Flecs
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct WorldStats
 	{
-		public WorldStats* Ptr() { fixed (WorldStats* ptr = &this) return ptr; }
+		public WorldStats* Ptr()
+		{
+			fixed (WorldStats* ptr = &this) return ptr;
+		}
+
 		public uint systemCount; //size: 4, offset:0
 		public uint tableCount; //size: 4, offset:4
 		public uint componentCount; //size: 4, offset:8
@@ -197,17 +228,19 @@ namespace Flecs
 		public Vector onRemoveSystems; //size: 8, offset:208
 		public Vector onSetSystems; //size: 8, offset:216
 		public Vector components; //size: 8, offset:224
-		[MarshalAs(UnmanagedType.U1)]
-		public bool frameProfiling; //size: 1, offset:232
-		[MarshalAs(UnmanagedType.U1)]
-		public bool systemProfiling; //size: 1, offset:233
+		[MarshalAs(UnmanagedType.U1)] public bool frameProfiling; //size: 1, offset:232
+		[MarshalAs(UnmanagedType.U1)] public bool systemProfiling; //size: 1, offset:233
 	}
 
 	//EcsMemoryStats
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct MemoryStats
 	{
-		public MemoryStats* Ptr() { fixed (MemoryStats* ptr = &this) return ptr; }
+		public MemoryStats* Ptr()
+		{
+			fixed (MemoryStats* ptr = &this) return ptr;
+		}
+
 		public MemoryStat total; //size: 8, offset:0
 		public MemoryStat components; //size: 8, offset:8
 		public MemoryStat entities; //size: 8, offset:16
@@ -222,7 +255,11 @@ namespace Flecs
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct MemoryStat
 	{
-		public MemoryStat* Ptr() { fixed (MemoryStat* ptr = &this) return ptr; }
+		public MemoryStat* Ptr()
+		{
+			fixed (MemoryStat* ptr = &this) return ptr;
+		}
+
 		internal uint allocd; //size: 4, offset:0
 		internal uint used; //size: 4, offset:4
 	}
@@ -231,7 +268,11 @@ namespace Flecs
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct TableData
 	{
-		public TableData* Ptr() { fixed (TableData* ptr = &this) return ptr; }
+		public TableData* Ptr()
+		{
+			fixed (TableData* ptr = &this) return ptr;
+		}
+
 		public uint rowCount; //size: 4, offset:0
 		public uint columnCount; //size: 4, offset:4
 		internal EntityId* entities; //size: 8, offset:8
@@ -243,7 +284,11 @@ namespace Flecs
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct TypeFilter
 	{
-		public TypeFilter* Ptr() { fixed (TypeFilter* ptr = &this) return ptr; }
+		public TypeFilter* Ptr()
+		{
+			fixed (TypeFilter* ptr = &this) return ptr;
+		}
+
 		public TypeId include; //size: 8, offset:0
 		public TypeId exclude; //size: 8, offset:8
 		public TypeFilterKind includeKind; //size: 4, offset:16
@@ -254,7 +299,11 @@ namespace Flecs
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct Rows
 	{
-		public Rows* Ptr() { fixed (Rows* ptr = &this) return ptr; }
+		public Rows* Ptr()
+		{
+			fixed (Rows* ptr = &this) return ptr;
+		}
+
 		public World world; //size: 8, offset:0
 		public EntityId system; //size: 8, offset:8
 		internal int* columns; //size: 8, offset:16
@@ -278,7 +327,11 @@ namespace Flecs
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct Reference
 	{
-		public Reference* Ptr() { fixed (Reference* ptr = &this) return ptr; }
+		public Reference* Ptr()
+		{
+			fixed (Reference* ptr = &this) return ptr;
+		}
+
 		internal EntityId entity; //size: 8, offset:0
 		internal EntityId component; //size: 8, offset:8
 		internal IntPtr cachedPtr; //size: 8, offset:16
@@ -293,11 +346,12 @@ namespace Flecs
 	{
 		public static TypeId Zero = (TypeId)0;
 
-		internal IntPtr ptr;
+		public IntPtr ptr;
 		public TypeId(IntPtr ptr) => this.ptr = ptr;
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static explicit operator TypeId(int val) => new TypeId(new IntPtr(val));
+
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static implicit operator Vector(TypeId type) => new Vector(type.ptr);
 
@@ -325,9 +379,12 @@ namespace Flecs
 	//ecs_vector_t
 	public unsafe partial struct Vector
 	{
-		readonly IntPtr ptr;
+		public IntPtr ptr;
 		public Vector(IntPtr ptr) => this.ptr = ptr;
-		internal Vector* Ptr => (Vector*)ptr;
+		public Vector* Ptr => (Vector*)ptr;
+
+		public Span<T> ToSpan<T>() where T : unmanaged
+			=> new Span<T>((void*)ecs.vector_first(this), (int)ecs.vector_count(this));
 	}
 
 	//ecs_chunked_t
@@ -352,6 +409,7 @@ namespace Flecs
 		readonly IntPtr ptr;
 		public World(IntPtr ptr) => this.ptr = ptr;
 		internal World* Ptr => (World*)ptr;
+
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static implicit operator IntPtr(World w) => w.ptr;
 	}

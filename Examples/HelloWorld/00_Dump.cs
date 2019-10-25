@@ -167,7 +167,7 @@ namespace Samples
 			ecs.set(world, templateEntity, new Position { X = 999, Y = 999 });
 			ecs.set(world, templateEntity, new Speed { SpeedValue = 999 });
 
-			var templateType = ECS_TYPE(world, "MyType", "INSTANCEOF | MyTemplate, Position, Speed");
+			var (_, templateType) = ECS_TYPE(world, "MyType", "INSTANCEOF | MyTemplate, Position, Speed");
 			ecs.new_w_count(world, templateType, count);
 		}
 

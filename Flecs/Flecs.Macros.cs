@@ -62,6 +62,9 @@ namespace Flecs
 		public static bool has_owned(World world, EntityId entity, TypeId type)
 			=> _ecs.has_owned(world, entity, type);
 
+		public static bool has_owned<T>(World world, EntityId entity) where T : unmanaged
+			=> _ecs.has_owned(world, entity, Caches.GetComponentTypeId<T>(world));
+
 		public static EntityId new_w_count(World world, TypeId typeId, uint count)
 			=> _ecs.new_w_count(world, typeId, count);
 
@@ -161,6 +164,9 @@ namespace Flecs
 
 		public static void add_remove_w_filter(World world, TypeId toAdd, TypeId toRemove, ref TypeFilter filter)
 			=> _ecs.add_remove_w_filter(world, toAdd, toRemove, ref filter);
+
+		public static void run_w_filter(World world, EntityId system, float deltaTime, uint offset, uint limit, TypeId filter, IntPtr param)
+			=> _ecs.run_w_filter(world, system, deltaTime, offset, limit, filter, param);
 
 		public static EntityId import(World world, string id, ModuleInitActionDelegate module, int flags)
 		{
@@ -376,11 +382,11 @@ namespace Flecs
 			return ecs.type_from_entity(world, entityId);
 		}
 
-		public static TypeId ECS_TYPE(World world, string id, string expr)
+		public static (EntityId, TypeId) ECS_TYPE(World world, string id, string expr)
 		{
 			var idPtr = Caches.AddUnmanagedString(id);
 			var entityId = ecs.new_type(world, idPtr, expr);
-			return ecs.type_from_entity(world, entityId);
+			return (entityId, ecs.type_from_entity(world, entityId));
 		}
 
 		public static (EntityId, TypeId) ECS_PREFAB(World world, string id, string expr)

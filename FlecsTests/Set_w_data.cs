@@ -117,7 +117,7 @@ namespace Flecs.Tests
 		{
 			var posTypeId = ECS_COMPONENT<Position>(world);
 			var velTypeId = ECS_COMPONENT<Velocity>(world);
-			var typeId = ECS_TYPE(world, "Type", "Position, Velocity");
+			var (_, typeId) = ECS_TYPE(world, "Type", "Position, Velocity");
 
 			var positions = new[] {new Position {x = 10, y = 20}, new Position {x = 11, y = 21}, new Position {x = 12, y = 22}};
 			var velocities = new[] {new Velocity {x = 30, y = 40}, new Velocity {x = 31, y = 41}, new Velocity {x = 32, y = 42}};
@@ -175,7 +175,7 @@ namespace Flecs.Tests
 		{
 			var posTypeId = ECS_COMPONENT<Position>(world);
 			var velTypeId = ECS_COMPONENT<Velocity>(world);
-			var typeId = ECS_TYPE(world, "Type", "Position, Velocity");
+			var (_, typeId) = ECS_TYPE(world, "Type", "Position, Velocity");
 			var entities = new[] {(EntityId)5000, (EntityId)5001, (EntityId)5002};
 
 			var e = ecs.set_w_data<Position, Velocity>(world, 3, entities, null, null);

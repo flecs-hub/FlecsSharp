@@ -14,8 +14,8 @@ namespace Flecs.Tests
 			ECS_COMPONENT<Velocity>(world);
 			var massType = ECS_COMPONENT<Mass>(world);
 
-			var type1 = ECS_TYPE(world, "Type_1", "Position, Velocity");
-			var type2 = ECS_TYPE(world, "Type_2", "Position, Velocity, Mass");
+			var (_, type1) = ECS_TYPE(world, "Type_1", "Position, Velocity");
+			var (_, type2) = ECS_TYPE(world, "Type_2", "Position, Velocity, Mass");
 
 			var e_1 = ecs.new_w_count(world, type1, 3);
 			var e_2 = ecs.new_w_count(world, type2, 3);
@@ -49,9 +49,9 @@ namespace Flecs.Tests
 			var velType = ECS_COMPONENT<Velocity>(world);
 			var massType = ECS_COMPONENT<Mass>(world);
 
-			var type1 = ECS_TYPE(world, "Type_1", "Position, Velocity");
-			var type2 = ECS_TYPE(world, "Type_2", "Position, Velocity, Mass");
-			var type3 = ECS_TYPE(world, "Type_3", "Position, Mass");
+			var (_, type1) = ECS_TYPE(world, "Type_1", "Position, Velocity");
+			var (_, type2) = ECS_TYPE(world, "Type_2", "Position, Velocity, Mass");
+			var (_, type3) = ECS_TYPE(world, "Type_3", "Position, Mass");
 
 			var e_1 = ecs.new_w_count(world, type1, 3);
 			var e_2 = ecs.new_w_count(world, type2, 3);
