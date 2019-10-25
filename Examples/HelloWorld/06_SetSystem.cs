@@ -1,8 +1,7 @@
 ﻿using System;
-using Flecs;
 using static Flecs.Macros;
 
-namespace Samples
+namespace Flecs.Examples
 {
 	public class SetSystem
 	{

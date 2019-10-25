@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
-using Flecs;
 using static Flecs.Macros;
 
 
-namespace Samples
+namespace Flecs.Examples
 {
 	public unsafe class GetChildren
 	{

@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Reflection;
-using Flecs;
 
-namespace Samples
+namespace Flecs.Examples
 {
 	class Program
 	{
-		static Type[] exampleTypes = new[]
-		{
+		static Type[] exampleTypes = {
 			typeof(HelloWorld), typeof(SimpleSystem), typeof(MoveSystem), typeof(SimpleModuleExample),
 			typeof(AddRemoveSystem), typeof(SetSystem), typeof(NoMacros), typeof(Hierarchy), typeof(HierarchyApi),
 			typeof(Inheritance), typeof(InheritanceApi), typeof(Override), typeof(OverrideInit), typeof(AddType),

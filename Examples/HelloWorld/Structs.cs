@@ -1,4 +1,4 @@
-namespace Samples
+namespace Flecs.Examples
 {
 	public struct Position
 	{

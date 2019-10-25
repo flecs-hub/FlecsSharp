@@ -1,8 +1,7 @@
 using System;
-using Flecs;
 
 
-namespace Samples
+namespace Flecs.Examples
 {
 	public unsafe class OverrideInit
 	{

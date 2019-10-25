@@ -1,8 +1,7 @@
 using System;
-using Flecs;
 using static Flecs.Macros;
 
-namespace Samples
+namespace Flecs.Examples
 {
 	public unsafe class HierarchyApi
 	{
@@ -26,30 +25,30 @@ namespace Samples
 			var root = ecs.new_entity(world);
 			ecs.set_ptr(world, root, ecs.TEcsId, Caches.AddUnmanagedString("Root").Ptr());
 			ecs.add(world, root, worldPosType);
-			ecs.set(world, root, new Position {X = 0, Y = 0});
-			ecs.set(world, root, new Velocity {X = 1, Y = 2});
+			ecs.set(world, root, new Position { X = 0, Y = 0 });
+			ecs.set(world, root, new Velocity { X = 1, Y = 2 });
 
 			/* Create children that don't move and are relative to the parent */
 			var child1 = ecs.new_child(world, root);
 			ecs.set_id(world, child1, "Child1");
 			ecs.add(world, child1, worldPosType);
-			ecs.set(world, child1, new Position {X = 100, Y = 100});
+			ecs.set(world, child1, new Position { X = 100, Y = 100 });
 			{
 				var gChild1 = ecs.new_child(world, child1);
 				ecs.set_id(world, gChild1, "GChild1");
 				ecs.add(world, gChild1, worldPosType);
-				ecs.set(world, gChild1, new Position {X = 1000, Y = 1000});
+				ecs.set(world, gChild1, new Position { X = 1000, Y = 1000 });
 			}
 
 			var child2 = ecs.new_child(world, root);
 			ecs.set_id(world, child2, "Child2");
 			ecs.add(world, child2, worldPosType);
-			ecs.set(world, child2, new Position {X = 200, Y = 200});
+			ecs.set(world, child2, new Position { X = 200, Y = 200 });
 			{
 				var gChild2 = ecs.new_child(world, child2);
 				ecs.set_id(world, gChild2, "GChild2");
 				ecs.add(world, gChild2, worldPosType);
-				ecs.set(world, gChild2, new Position {X = 2000, Y = 2000});
+				ecs.set(world, gChild2, new Position { X = 2000, Y = 2000 });
 			}
 
 

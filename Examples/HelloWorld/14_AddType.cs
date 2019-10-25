@@ -1,10 +1,8 @@
 using System;
-using System.Runtime.InteropServices;
-using Flecs;
 using static Flecs.Macros;
 
 
-namespace Samples
+namespace Flecs.Examples
 {
 	public unsafe class AddType
 	{

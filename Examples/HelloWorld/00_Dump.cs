@@ -1,10 +1,8 @@
 using System;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
-using Flecs;
 using static Flecs.Macros;
 
-namespace Samples
+namespace Flecs.Examples
 {
 	public unsafe class Dump
 	{
@@ -15,19 +13,19 @@ namespace Samples
 			var moveRawSys = ECS_SYSTEM(world, MoveSystemRaw, SystemKind.Manual, "Position, Speed");
 			var moveSpanSys = ECS_SYSTEM(world, MoveSystemSpan, SystemKind.Manual, "Position, Speed");
 
-			ecs.new_entity(world, new Position {X = 1, Y = 2}, new Speed {SpeedValue = 5});
-			ecs.new_entity(world, new Position {X = 1, Y = 2}, new Speed {SpeedValue = 5});
-			ecs.new_entity(world, new Position {X = 1, Y = 2}, new Speed {SpeedValue = 5});
+			ecs.new_entity(world, new Position { X = 1, Y = 2 }, new Speed { SpeedValue = 5 });
+			ecs.new_entity(world, new Position { X = 1, Y = 2 }, new Speed { SpeedValue = 5 });
+			ecs.new_entity(world, new Position { X = 1, Y = 2 }, new Speed { SpeedValue = 5 });
 
 			var e = ecs.new_entity(world);
-			ecs.set(world, e, new Position {X = 14, Y = 2});
+			ecs.set(world, e, new Position { X = 14, Y = 2 });
 			e = ecs.new_entity(world);
-			ecs.set(world, e, new Position {X = 13, Y = 2});
+			ecs.set(world, e, new Position { X = 13, Y = 2 });
 
 			ecs.new_entity<Position, Speed>(world);
 			ecs.new_entity<Position, Speed>(world);
 
-			ecs.new_entity(world, new Position {X = 75, Y = 23}, new Speed {SpeedValue = 66});
+			ecs.new_entity(world, new Position { X = 75, Y = 23 }, new Speed { SpeedValue = 66 });
 
 			var watch = System.Diagnostics.Stopwatch.StartNew();
 			for (var j = 0; j < 100000; j++)
