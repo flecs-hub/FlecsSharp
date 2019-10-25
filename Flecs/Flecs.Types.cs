@@ -346,16 +346,20 @@ namespace Flecs
 	{
 		public static TypeId Zero = (TypeId)0;
 
-		public IntPtr ptr;
+		public readonly IntPtr ptr;
 		public TypeId(IntPtr ptr) => this.ptr = ptr;
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static explicit operator TypeId(int val) => new TypeId(new IntPtr(val));
-
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static implicit operator Vector(TypeId type) => new Vector(type.ptr);
+		public static implicit operator Vector*(TypeId type) => (Vector*)type.ptr;
 
-		public Span<EntityId> Contents => new Span<EntityId>((void*)(ptr + 8), (int)ecs.vector_count(this));
+		public Vector* AsVector => (Vector*)ptr;
+
+		/// <summary>
+		/// returns all the EntityIds present in this TypeId
+		/// </summary>
+		public Span<EntityId> Entities => new Span<EntityId>((void*)(ptr + 8), (int)AsVector->count);
 
 		public static bool operator ==(TypeId obj1, TypeId obj2) => obj1.ptr == obj2.ptr;
 		public static bool operator !=(TypeId obj1, TypeId obj2) => obj1.ptr != obj2.ptr;
@@ -379,12 +383,18 @@ namespace Flecs
 	//ecs_vector_t
 	public unsafe partial struct Vector
 	{
-		public IntPtr ptr;
-		public Vector(IntPtr ptr) => this.ptr = ptr;
-		public Vector* Ptr => (Vector*)ptr;
+		public uint count;
+		public uint size;
 
-		public Span<T> ToSpan<T>() where T : unmanaged
-			=> new Span<T>((void*)ecs.vector_first(this), (int)ecs.vector_count(this));
+		public Span<T> GetContents<T>() where T : unmanaged
+		{
+			fixed (void* voidPtr = &this)
+			{
+				// we add 8 to the pointer to account for the header (count and size)
+				var intPtr = (IntPtr)voidPtr + 8;
+				return new Span<T>((void*)intPtr, (int)count);
+			}
+		}
 	}
 
 	//ecs_chunked_t

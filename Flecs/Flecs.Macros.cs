@@ -4,7 +4,6 @@ using System.Runtime.InteropServices;
 
 namespace Flecs
 {
-
 	public delegate void SystemAction<T>(ref Rows ids, Span<T> comp) where T : unmanaged;
 	public delegate void SystemAction<T1, T2>(ref Rows ids, Span<T1> comp1, Span<T2> comp2) where T1 : unmanaged where T2 : unmanaged;
 	public delegate void SystemAction<T1, T2, T3>(ref Rows ids, Span<T1> comp1, Span<T2> comp2, Span<T3> comp3)
