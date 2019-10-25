@@ -11,8 +11,8 @@ namespace Samples
 		{
 			/* Define components */
 			ECS_COMPONENT<Position>(world);
-			var forceType = Caches.AddTypedef<Position>(world, "Force");
-			var massType = Caches.AddTypedef<int>(world, "Mass");
+			var forceType = Caches.AddComponentTypedef<Position>(world, "Force");
+			var massType = Caches.AddComponentTypedef<int>(world, "Mass");
 
 			/* Define a system called Move that is executed every frame, and subscribes
 			     * for the 'Position', 'Force' and 'Mass' components. The Mass component

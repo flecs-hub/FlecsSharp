@@ -292,14 +292,16 @@ namespace Flecs
 	public unsafe partial struct TypeId : IEquatable<TypeId>
 	{
 		public static TypeId Zero = (TypeId)0;
+
 		internal IntPtr ptr;
 		public TypeId(IntPtr ptr) => this.ptr = ptr;
-		internal TypeId* Ptr => (TypeId*)ptr;
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static explicit operator TypeId(int val) => new TypeId(new IntPtr(val));
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static implicit operator Vector(TypeId type) => new Vector(type.ptr);
+
+		public Span<EntityId> Contents => new Span<EntityId>((void*)(ptr + 8), (int)ecs.vector_count(this));
 
 		public static bool operator ==(TypeId obj1, TypeId obj2) => obj1.ptr == obj2.ptr;
 		public static bool operator !=(TypeId obj1, TypeId obj2) => obj1.ptr != obj2.ptr;

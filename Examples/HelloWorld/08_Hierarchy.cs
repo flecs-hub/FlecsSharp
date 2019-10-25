@@ -10,7 +10,7 @@ namespace Samples
 		public static void Run(World world)
 		{
 			/* Define components */
-			Caches.AddTypedef<Position>(world, "WorldPosition");
+			Caches.AddComponentTypedef<Position>(world, "WorldPosition");
 			ECS_COMPONENT<Position>(world);
 			ECS_COMPONENT<Velocity>(world);
 

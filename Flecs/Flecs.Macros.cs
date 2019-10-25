@@ -42,7 +42,6 @@ namespace Flecs
 			return e;
 		}
 
-
 		public static EntityId new_entity<T1, T2>(World world, T1 value1 = default, T2 value2 = default) where T1 : unmanaged where T2 : unmanaged
 		{
 			var e = _ecs.@new(world, TypeId.Zero);
@@ -59,6 +58,9 @@ namespace Flecs
 
 		public static bool has<T>(World world, EntityId entity) where T : unmanaged
 			=> _ecs.has(world, entity, Caches.GetComponentTypeId<T>(world));
+
+		public static bool has_owned(World world, EntityId entity, TypeId type)
+			=> _ecs.has_owned(world, entity, type);
 
 		public static EntityId new_w_count(World world, TypeId typeId, uint count)
 			=> _ecs.new_w_count(world, typeId, count);

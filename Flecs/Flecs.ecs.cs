@@ -111,14 +111,14 @@ namespace Flecs
 		///</code>
 		// ecs_vector_new: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/vector.h#L30
 		[DllImport(NativeLibName, EntryPoint = "ecs_vector_new", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-		public static extern Vector vector_new(out VectorParams @params, uint size);
+		public static extern Vector vector_new(ref VectorParams @params, uint size);
 
 		///<code>
 		///ecs_vector_t * ecs_vector_new_from_buffer(const ecs_vector_params_t *, uint32_t, void *)
 		///</code>
 		// ecs_vector_new_from_buffer: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/vector.h#L35
 		[DllImport(NativeLibName, EntryPoint = "ecs_vector_new_from_buffer", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-		public static extern Vector vector_new_from_buffer(out VectorParams @params, uint size, IntPtr buffer);
+		public static extern Vector vector_new_from_buffer(ref VectorParams @params, uint size, IntPtr buffer);
 
 		///<code>
 		///void ecs_vector_free(ecs_vector_t *)
@@ -139,21 +139,21 @@ namespace Flecs
 		///</code>
 		// ecs_vector_add: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/vector.h#L49
 		[DllImport(NativeLibName, EntryPoint = "ecs_vector_add", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-		public static extern IntPtr vector_add(out Vector arrayInout, out VectorParams @params);
+		public static extern IntPtr vector_add(ref Vector arrayInout, ref VectorParams @params);
 
 		///<code>
 		///void * ecs_vector_addn(ecs_vector_t **, const ecs_vector_params_t *, uint32_t)
 		///</code>
 		// ecs_vector_addn: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/vector.h#L54
 		[DllImport(NativeLibName, EntryPoint = "ecs_vector_addn", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-		public static extern IntPtr vector_addn(out Vector arrayInout, out VectorParams @params, uint count);
+		public static extern IntPtr vector_addn(ref Vector arrayInout, ref VectorParams @params, uint count);
 
 		///<code>
 		///void * ecs_vector_get(const ecs_vector_t *, const ecs_vector_params_t *, uint32_t)
 		///</code>
 		// ecs_vector_get: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/vector.h#L60
 		[DllImport(NativeLibName, EntryPoint = "ecs_vector_get", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-		public static extern IntPtr vector_get(Vector array, out VectorParams @params, uint index);
+		public static extern IntPtr vector_get(Vector array, ref VectorParams @params, uint index);
 
 		///<code>
 		///uint32_t ecs_vector_get_index(const ecs_vector_t *, const ecs_vector_params_t *, void *)

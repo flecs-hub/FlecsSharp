@@ -10,7 +10,7 @@ namespace Samples
 		{
 			typeof(HelloWorld), typeof(SimpleSystem), typeof(MoveSystem), typeof(SimpleModuleExample),
 			typeof(AddRemoveSystem), typeof(SetSystem), typeof(NoMacros), typeof(Hierarchy), typeof(HierarchyApi),
-			typeof(Inheritance), typeof(InheritanceApi)
+			typeof(Inheritance), typeof(InheritanceApi), typeof(Override), typeof(OverrideInit), typeof(AddType)
 		};
 
 		static void Main(string[] args)

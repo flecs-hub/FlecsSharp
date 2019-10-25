@@ -138,8 +138,8 @@ namespace Flecs.Tests
 		public void SystemOnFrame_1_type_3_component_typedefs()
 		{
 			var positionTypeId = ECS_COMPONENT<Position>(world);
-			var velTypeId = Caches.AddTypedef<Position>(world, "CustomVelocity");
-			var massTypeId = Caches.AddTypedef<Mass>(world, "CustomMass");
+			var velTypeId = Caches.AddComponentTypedef<Position>(world, "CustomVelocity");
+			var massTypeId = Caches.AddComponentTypedef<Mass>(world, "CustomMass");
 
 			var systemEntityId = ECS_SYSTEM(world, Iter, SystemKind.OnUpdate, "Position, CustomVelocity, CustomMass");
 
