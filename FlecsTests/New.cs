@@ -29,7 +29,7 @@ namespace Flecs.Tests
 		public void New_type()
 		{
 			ECS_COMPONENT(world, typeof(Position));
-			var typeId = ECS_TYPE(world, "Type", "Position");
+			var (_, typeId) = ECS_TYPE(world, "Type", "Position");
 
 			var e = ecs.new_entity(world, typeId);
 			Assert.NotZero((UInt64)e);
@@ -41,7 +41,7 @@ namespace Flecs.Tests
 		{
 			ECS_COMPONENT(world, typeof(Position));
 			ECS_COMPONENT(world, typeof(Velocity));
-			var typeId = ECS_TYPE(world, "Type", "Position, Velocity");
+			var (_, typeId) = ECS_TYPE(world, "Type", "Position, Velocity");
 
 			var e = ecs.new_entity(world, typeId);
 			Assert.NotZero((UInt64)e);
@@ -54,7 +54,7 @@ namespace Flecs.Tests
 		{
 			ECS_COMPONENT(world, typeof(Position));
 			ECS_TYPE(world, "Type_1", "Position");
-			var typeId2 = ECS_TYPE(world, "Type_2", "Type_1");
+			var (_, typeId2) = ECS_TYPE(world, "Type_2", "Type_1");
 
 			var e = ecs.new_entity(world, typeId2);
 			Assert.NotZero((UInt64)e);
@@ -69,7 +69,7 @@ namespace Flecs.Tests
 
 			ECS_TYPE(world, "Type_1", "Position");
 			ECS_TYPE(world, "Type_2", "Velocity");
-			var typeId3 = ECS_TYPE(world, "Type_3", "Type_1, Type_2");
+			var (_, typeId3) = ECS_TYPE(world, "Type_3", "Type_1, Type_2");
 
 			var e = ecs.new_entity(world, typeId3);
 			Assert.NotZero((UInt64)e);
@@ -84,7 +84,7 @@ namespace Flecs.Tests
 			ECS_COMPONENT<Velocity>(world);
 
 			ECS_TYPE(world, "Type_1", "Position");
-			var typeId2 = ECS_TYPE(world, "Type_2", "Type_1, Velocity");
+			var (_, typeId2) = ECS_TYPE(world, "Type_2", "Type_1, Velocity");
 
 			var e = ecs.new_entity(world, typeId2);
 			Assert.NotZero((UInt64)e);
@@ -106,7 +106,7 @@ namespace Flecs.Tests
 		public void New_type_w_tag()
 		{
 			var tagTypeId = ECS_TAG(world, "Tag");
-			var typeId = ECS_TYPE(world, "Type", "Tag");
+			var (_, typeId) = ECS_TYPE(world, "Type", "Tag");
 
 			var e = ecs.new_entity(world, typeId);
 			Assert.NotZero((UInt64)e);
@@ -119,7 +119,7 @@ namespace Flecs.Tests
 			var tag1Type = ECS_TAG(world, "Tag_1");
 			var tag2Type = ECS_TAG(world, "Tag_2");
 
-			var typeId = ECS_TYPE(world, "Type", "Tag_1, Tag_2");
+			var (_, typeId) = ECS_TYPE(world, "Type", "Tag_1, Tag_2");
 
 			var e = ecs.new_entity(world, typeId);
 			Assert.NotZero((UInt64)e);
@@ -133,7 +133,7 @@ namespace Flecs.Tests
 			var tagTypeId = ECS_TAG(world, "Tag");
 			var posTypeId = ECS_COMPONENT<Position>(world);
 
-			var typeId = ECS_TYPE(world, "Type", "Position, Tag");
+			var (_, typeId) = ECS_TYPE(world, "Type", "Position, Tag");
 
 			var e = ecs.new_entity(world, typeId);
 			Assert.NotZero((UInt64)e);

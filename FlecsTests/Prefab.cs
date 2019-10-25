@@ -93,7 +93,7 @@ namespace Flecs.Tests
 			var posTypeId = ECS_COMPONENT<Position>(world);
 			var velTypeId = ECS_COMPONENT<Velocity>(world);
 			var (prefabEntity, prefabType) = ECS_PREFAB(world, "Prefab", "Velocity");
-			var typeTypeId = ECS_TYPE(world, "Type", "INSTANCEOF | Prefab, Position");
+			var (_, typeTypeId) = ECS_TYPE(world, "Type", "INSTANCEOF | Prefab, Position");
 			var systemEntity = ECS_SYSTEM(world, Prefab_w_field, SystemKind.OnUpdate, "Position, Velocity");
 
 			ecs.set(world, prefabEntity, new Velocity { x = 1, y = 2 });

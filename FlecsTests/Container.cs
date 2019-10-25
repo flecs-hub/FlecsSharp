@@ -53,9 +53,9 @@ namespace Flecs.Tests
 
 			var childType = ecs.get_type(world, child);
 			Assert.AreNotEqual(childType, default(TypeId));
-			Assert.IsTrue(ecs.vector_count(childType) == 2);
+			Assert.IsTrue(ecs.vector_count(childType.AsVector) == 2);
 
-			var array = ecs.vector_first(childType);
+			var array = ecs.vector_first(childType.AsVector);
 			Assert.IsFalse(array == IntPtr.Zero);
 
 			EntityId* eArr = (EntityId*)array.ToPointer();

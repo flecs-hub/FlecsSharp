@@ -21,7 +21,7 @@ namespace Flecs.Tests
 
 		VectorParams ArrParams = new VectorParams { elementSize = (uint)Heap.SizeOf<int>() };
 
-		Vector FillArray(Vector array)
+		Vector* FillArray(Vector* array)
 		{
 			int* elem;
 
@@ -39,7 +39,7 @@ namespace Flecs.Tests
 		public void Vector_free_empty()
 		{
 			var array = ecs.vector_new(ref ArrParams, 0);
-			Assert.IsTrue(array.ptr != IntPtr.Zero);
+			Assert.IsTrue(&array != null);
 			ecs.vector_free(array);
 		}
 
@@ -57,7 +57,7 @@ namespace Flecs.Tests
 		public void Vector_count_empty()
 		{
 			var array = ecs.vector_new(ref ArrParams, 0);
-			Assert.IsTrue(array.ptr != IntPtr.Zero);
+			Assert.IsTrue(&array != null);
 			Assert.IsTrue(ecs.vector_count(array) == 0);
 			ecs.vector_free(array);
 		}

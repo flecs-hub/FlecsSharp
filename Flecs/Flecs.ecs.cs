@@ -111,159 +111,163 @@ namespace Flecs
 		[DllImport(NativeLibName, EntryPoint = "ecs_time_measure", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
 		public static extern double time_measure(out Time start);
 
+		#region Vector
+
 		///<code>
 		///ecs_vector_t * ecs_vector_new(const ecs_vector_params_t *, uint32_t)
 		///</code>
 		// ecs_vector_new: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/vector.h#L30
 		[DllImport(NativeLibName, EntryPoint = "ecs_vector_new", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-		public static extern Vector vector_new(ref VectorParams @params, uint size);
+		public static extern Vector* vector_new(ref VectorParams @params, uint size);
 
 		///<code>
 		///ecs_vector_t * ecs_vector_new_from_buffer(const ecs_vector_params_t *, uint32_t, void *)
 		///</code>
 		// ecs_vector_new_from_buffer: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/vector.h#L35
 		[DllImport(NativeLibName, EntryPoint = "ecs_vector_new_from_buffer", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-		public static extern Vector vector_new_from_buffer(ref VectorParams @params, uint size, IntPtr buffer);
+		public static extern Vector* vector_new_from_buffer(ref VectorParams @params, uint size, IntPtr buffer);
 
 		///<code>
 		///void ecs_vector_free(ecs_vector_t *)
 		///</code>
 		// ecs_vector_free: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/vector.h#L41
 		[DllImport(NativeLibName, EntryPoint = "ecs_vector_free", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-		public static extern void vector_free(Vector array);
+		public static extern void vector_free(Vector* array);
 
 		///<code>
 		///void ecs_vector_clear(ecs_vector_t *)
 		///</code>
 		// ecs_vector_clear: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/vector.h#L45
 		[DllImport(NativeLibName, EntryPoint = "ecs_vector_clear", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-		public static extern void vector_clear(Vector array);
+		public static extern void vector_clear(Vector* array);
 
 		///<code>
 		///void * ecs_vector_add(ecs_vector_t **, const ecs_vector_params_t *)
 		///</code>
 		// ecs_vector_add: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/vector.h#L49
 		[DllImport(NativeLibName, EntryPoint = "ecs_vector_add", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-		public static extern IntPtr vector_add(ref Vector arrayInout, ref VectorParams @params);
+		public static extern IntPtr vector_add(ref Vector* arrayInout, ref VectorParams @params);
 
 		///<code>
 		///void * ecs_vector_addn(ecs_vector_t **, const ecs_vector_params_t *, uint32_t)
 		///</code>
 		// ecs_vector_addn: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/vector.h#L54
 		[DllImport(NativeLibName, EntryPoint = "ecs_vector_addn", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-		public static extern IntPtr vector_addn(ref Vector arrayInout, ref VectorParams @params, uint count);
+		public static extern IntPtr vector_addn(ref Vector* arrayInout, ref VectorParams @params, uint count);
 
 		///<code>
 		///void * ecs_vector_get(const ecs_vector_t *, const ecs_vector_params_t *, uint32_t)
 		///</code>
 		// ecs_vector_get: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/vector.h#L60
 		[DllImport(NativeLibName, EntryPoint = "ecs_vector_get", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-		public static extern IntPtr vector_get(Vector array, ref VectorParams @params, uint index);
+		public static extern IntPtr vector_get(Vector* array, ref VectorParams @params, uint index);
 
 		///<code>
 		///uint32_t ecs_vector_get_index(const ecs_vector_t *, const ecs_vector_params_t *, void *)
 		///</code>
 		// ecs_vector_get_index: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/vector.h#L66
 		[DllImport(NativeLibName, EntryPoint = "ecs_vector_get_index", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-		public static extern uint vector_get_index(Vector array, out VectorParams @params, IntPtr elem);
+		public static extern uint vector_get_index(Vector* array, out VectorParams @params, IntPtr elem);
 
 		///<code>
 		///void * ecs_vector_last(const ecs_vector_t *, const ecs_vector_params_t *)
 		///</code>
 		// ecs_vector_last: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/vector.h#L72
 		[DllImport(NativeLibName, EntryPoint = "ecs_vector_last", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-		public static extern IntPtr vector_last(Vector array, out VectorParams @params);
+		public static extern IntPtr vector_last(Vector* array, out VectorParams @params);
 
 		///<code>
 		///uint32_t ecs_vector_remove(ecs_vector_t *, const ecs_vector_params_t *, void *)
 		///</code>
 		// ecs_vector_remove: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/vector.h#L77
 		[DllImport(NativeLibName, EntryPoint = "ecs_vector_remove", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-		public static extern uint vector_remove(Vector array, out VectorParams @params, IntPtr elem);
+		public static extern uint vector_remove(Vector* array, out VectorParams @params, IntPtr elem);
 
 		///<code>
 		///void ecs_vector_remove_last(ecs_vector_t *)
 		///</code>
 		// ecs_vector_remove_last: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/vector.h#L83
 		[DllImport(NativeLibName, EntryPoint = "ecs_vector_remove_last", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-		public static extern void vector_remove_last(Vector array);
+		public static extern void vector_remove_last(Vector* array);
 
 		///<code>
 		///bool ecs_vector_pop(ecs_vector_t *, const ecs_vector_params_t *, void *)
 		///</code>
 		// ecs_vector_pop: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/vector.h#L87
 		[DllImport(NativeLibName, EntryPoint = "ecs_vector_pop", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-		public static extern bool vector_pop(Vector array, out VectorParams @params, IntPtr @value);
+		public static extern bool vector_pop(Vector* array, out VectorParams @params, IntPtr @value);
 
 		///<code>
 		///uint32_t ecs_vector_move_index(ecs_vector_t **, ecs_vector_t *, const ecs_vector_params_t *, uint32_t)
 		///</code>
 		// ecs_vector_move_index: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/vector.h#L93
 		[DllImport(NativeLibName, EntryPoint = "ecs_vector_move_index", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-		public static extern uint vector_move_index(out Vector dstArray, Vector srcArray, out VectorParams @params, uint index);
+		public static extern uint vector_move_index(ref Vector* dstArray, Vector* srcArray, out VectorParams @params, uint index);
 
 		///<code>
 		///uint32_t ecs_vector_remove_index(ecs_vector_t *, const ecs_vector_params_t *, uint32_t)
 		///</code>
 		// ecs_vector_remove_index: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/vector.h#L100
 		[DllImport(NativeLibName, EntryPoint = "ecs_vector_remove_index", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-		public static extern uint vector_remove_index(Vector array, out VectorParams @params, uint index);
+		public static extern uint vector_remove_index(Vector* array, out VectorParams @params, uint index);
 
 		///<code>
 		///void ecs_vector_reclaim(ecs_vector_t **, const ecs_vector_params_t *)
 		///</code>
 		// ecs_vector_reclaim: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/vector.h#L106
 		[DllImport(NativeLibName, EntryPoint = "ecs_vector_reclaim", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-		public static extern void vector_reclaim(out Vector array, out VectorParams @params);
+		public static extern void vector_reclaim(ref Vector* array, out VectorParams @params);
 
 		///<code>
 		///uint32_t ecs_vector_set_size(ecs_vector_t **, const ecs_vector_params_t *, uint32_t)
 		///</code>
 		// ecs_vector_set_size: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/vector.h#L111
 		[DllImport(NativeLibName, EntryPoint = "ecs_vector_set_size", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-		public static extern uint vector_set_size(out Vector array, out VectorParams @params, uint size);
+		public static extern uint vector_set_size(ref Vector* array, out VectorParams @params, uint size);
 
 		///<code>
 		///uint32_t ecs_vector_set_count(ecs_vector_t **, const ecs_vector_params_t *, uint32_t)
 		///</code>
 		// ecs_vector_set_count: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/vector.h#L117
 		[DllImport(NativeLibName, EntryPoint = "ecs_vector_set_count", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-		public static extern uint vector_set_count(out Vector array, out VectorParams @params, uint size);
+		public static extern uint vector_set_count(ref Vector* array, out VectorParams @params, uint size);
 
 		///<code>
 		///uint32_t ecs_vector_count(const ecs_vector_t *)
 		///</code>
 		// ecs_vector_count: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/vector.h#L123
 		[DllImport(NativeLibName, EntryPoint = "ecs_vector_count", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-		public static extern uint vector_count(Vector array);
+		public static extern uint vector_count(Vector* array);
 
 		///<code>
 		///uint32_t ecs_vector_size(const ecs_vector_t *)
 		///</code>
 		// ecs_vector_size: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/vector.h#L127
 		[DllImport(NativeLibName, EntryPoint = "ecs_vector_size", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-		public static extern uint vector_size(Vector array);
+		public static extern uint vector_size(Vector* array);
 
 		///<code>
 		///void * ecs_vector_first(const ecs_vector_t *)
 		///</code>
 		// ecs_vector_first: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/vector.h#L131
 		[DllImport(NativeLibName, EntryPoint = "ecs_vector_first", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-		public static extern IntPtr vector_first(Vector array);
+		public static extern IntPtr vector_first(Vector* array);
 
 		///<code>
 		///void ecs_vector_sort(ecs_vector_t *, const ecs_vector_params_t *, EcsComparator)
 		///</code>
 		// ecs_vector_sort: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/vector.h#L135
 		[DllImport(NativeLibName, EntryPoint = "ecs_vector_sort", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-		public static extern void vector_sort(Vector array, out VectorParams @params, ComparatorDelegate compareAction);
+		public static extern void vector_sort(Vector* array, out VectorParams @params, ComparatorDelegate compareAction);
 
 		///<code>
 		///void ecs_vector_memory(const ecs_vector_t *, const ecs_vector_params_t *, uint32_t *, uint32_t *)
 		///</code>
 		// ecs_vector_memory: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/vector.h#L141
 		[DllImport(NativeLibName, EntryPoint = "ecs_vector_memory", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-		public static extern void vector_memory(Vector array, out VectorParams @params, out uint allocd, out uint used);
+		public static extern void vector_memory(Vector* array, out VectorParams @params, out uint allocd, out uint used);
+
+		#endregion
 
 		///<code>
 		///void ecs_chunked_free(ecs_chunked_t *)
