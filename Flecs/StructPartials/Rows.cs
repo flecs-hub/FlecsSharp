@@ -18,22 +18,22 @@ namespace Flecs
 			get => entities[i];
 		}
 
-		public Set<int> Columns
+		public Span<int> Columns
 		{
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			get => new Set<int>(columns, columnCount);
+			get => new Span<int>(columns, columnCount);
 		}
 
-		public Set<EntityId> Components
+		public Span<EntityId> Components
 		{
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			get => new Set<EntityId>(components, columnCount);
+			get => new Span<EntityId>(components, columnCount);
 		}
 
-		public Set<EntityId> Entities
+		public Span<EntityId> Entities
 		{
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			get => new Set<EntityId>(entities, count);
+			get => new Span<EntityId>(entities, (int)count);
 		}
 
 		///<summary>

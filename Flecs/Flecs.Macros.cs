@@ -5,9 +5,9 @@ using System.Runtime.InteropServices;
 namespace Flecs
 {
 
-	public delegate void SystemAction<T>(ref Rows ids, Set<T> comp) where T : unmanaged;
-	public delegate void SystemAction<T1, T2>(ref Rows ids, Set<T1> comp1, Set<T2> comp2) where T1 : unmanaged where T2 : unmanaged;
-	public delegate void SystemAction<T1, T2, T3>(ref Rows ids, Set<T1> comp1, Set<T2> comp2, Set<T3> comp3)
+	public delegate void SystemAction<T>(ref Rows ids, Span<T> comp) where T : unmanaged;
+	public delegate void SystemAction<T1, T2>(ref Rows ids, Span<T1> comp1, Span<T2> comp2) where T1 : unmanaged where T2 : unmanaged;
+	public delegate void SystemAction<T1, T2, T3>(ref Rows ids, Span<T1> comp1, Span<T2> comp2, Span<T3> comp3)
 		where T1 : unmanaged where T2 : unmanaged where T3 : unmanaged;
 
 	/// <summary>
@@ -295,7 +295,7 @@ namespace Flecs
 			SystemActionDelegate del = delegate(ref Rows rows)
 			{
 				var set1 = (T1*)_ecs.column(ref rows, Heap.SizeOf<T1>(), 1);
-				systemImpl(ref rows, new Set<T1>(set1, rows.count));
+				systemImpl(ref rows, new Span<T1>(set1, (int)rows.count));
 			};
 
 			// ensure our system doesnt get GCd and that our Component is registered
@@ -312,7 +312,7 @@ namespace Flecs
 			{
 				var set1 = (T1*)_ecs.column(ref rows, Heap.SizeOf<T1>(), 1);
 				var set2 = (T2*)_ecs.column(ref rows, Heap.SizeOf<T2>(), 2);
-				systemImpl(ref rows, new Set<T1>(set1, rows.count), new Set<T2>(set2, rows.count));
+				systemImpl(ref rows, new Span<T1>(set1, (int)rows.count), new Span<T2>(set2, (int)rows.count));
 			};
 
 			// ensure our system doesnt get GCd and that our Component is registered
@@ -332,7 +332,7 @@ namespace Flecs
 				var set1 = (T1*)_ecs.column(ref rows, Heap.SizeOf<T1>(), 1);
 				var set2 = (T2*)_ecs.column(ref rows, Heap.SizeOf<T2>(), 2);
 				var set3 = (T3*)_ecs.column(ref rows, Heap.SizeOf<T3>(), 3);
-				systemImpl(ref rows, new Set<T1>(set1, rows.count), new Set<T2>(set2, rows.count), new Set<T3>(set3, rows.count));
+				systemImpl(ref rows, new Span<T1>(set1, (int)rows.count), new Span<T2>(set2, (int)rows.count), new Span<T3>(set3, (int)rows.count));
 			};
 
 			// ensure our system doesnt get GCd and that our Component is registered
@@ -345,10 +345,10 @@ namespace Flecs
 			return ecs.new_system(world, systemNamePtr, kind, $"{typeof(T1).Name}, {typeof(T2).Name}, {typeof(T3).Name}", del);
 		}
 
-		public static void ECS_COLUMN<T>(ref Rows rows, out Set<T> column, uint columnIndex) where T : unmanaged
+		public static void ECS_COLUMN<T>(ref Rows rows, out Span<T> column, uint columnIndex) where T : unmanaged
 		{
 			var set = ecs.column<T>(ref rows, columnIndex);
-			column = set != null ? new Set<T>(set, rows.count) : new Set<T>(); // with C# 8 we can return null here
+			column = set != null ? new Span<T>(set, (int)rows.count) : null;
 		}
 
 		public static EntityId ECS_ENTITY(World world, string id, string expr)

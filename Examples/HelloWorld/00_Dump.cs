@@ -1,16 +1,19 @@
 using System;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using Flecs;
 using static Flecs.Macros;
 
 namespace Samples
 {
-	public class Dump
+	public unsafe class Dump
 	{
 		public static void Run(World world)
 		{
-			ECS_SYSTEM<Position, Speed>(world, MoveSystem, SystemKind.OnUpdate);
+			var moveSys = ECS_SYSTEM<Position, Speed>(world, MoveSystem, SystemKind.Manual);
 			ECS_SYSTEM<Position>(world, PositionSystem, SystemKind.OnUpdate);
+			var moveRawSys = ECS_SYSTEM(world, MoveSystemRaw, SystemKind.Manual, "Position, Speed");
+			var moveSpanSys = ECS_SYSTEM(world, MoveSystemSpan, SystemKind.Manual, "Position, Speed");
 
 			ecs.new_entity(world, new Position {X = 1, Y = 2}, new Speed {SpeedValue = 5});
 			ecs.new_entity(world, new Position {X = 1, Y = 2}, new Speed {SpeedValue = 5});
@@ -27,21 +30,43 @@ namespace Samples
 			ecs.new_entity(world, new Position {X = 75, Y = 23}, new Speed {SpeedValue = 66});
 
 			var watch = System.Diagnostics.Stopwatch.StartNew();
-			for (var j = 0; j < 10000; j++)
+			for (var j = 0; j < 100000; j++)
 				ecs.new_entity(world, new Position { X = 75, Y = 23 }, new Speed { SpeedValue = 66 });
 			Console.WriteLine($"-- add one-by-one: {watch.ElapsedMilliseconds} ms, ticks: {watch.ElapsedTicks}");
 
 			// bulk add with a template
 			watch.Restart();
-			BulkAddWithTemplate(world, 10000);
+			BulkAddWithTemplate(world, 100000);
 			Console.WriteLine($"-- bulk add w template: {watch.ElapsedMilliseconds} ms, ticks: {watch.ElapsedTicks}");
 
 			// bulk add with an init system
 			watch.Restart();
-			BulkAddWithInitSystem(world, 10000);
+			BulkAddWithInitSystem(world, 100000);
 			Console.WriteLine($"-- add w init system: {watch.ElapsedMilliseconds} ms, ticks: {watch.ElapsedTicks}");
 
 			ProfileProgressTicks(world, 3);
+
+
+			for (var q = 0; q < 10; q++)
+			{
+				Console.WriteLine("-------- ++++++++ ---------");
+				watch.Restart();
+				for (var z = 0; z < 1; z++)
+					ecs.run(world, moveSys, 0.016f, IntPtr.Zero);
+				Console.WriteLine($"------- --- Move system: {watch.ElapsedMilliseconds} ms, ticks: {watch.ElapsedTicks}");
+
+				watch.Restart();
+				for (var z = 0; z < 1; z++)
+					ecs.run(world, moveRawSys, 0.016f, IntPtr.Zero);
+				Console.WriteLine($"------- --- Move Raw system: {watch.ElapsedMilliseconds} ms, ticks: {watch.ElapsedTicks}");
+
+				watch.Restart();
+				for (var z = 0; z < 1; z++)
+					ecs.run(world, moveSpanSys, 0.016f, IntPtr.Zero);
+				Console.WriteLine($"------- --- Move Span system: {watch.ElapsedMilliseconds} ms, ticks: {watch.ElapsedTicks}");
+			}
+
+
 
 			ecs.set_target_fps(world, 60);
 			var i = 0;
@@ -52,9 +77,9 @@ namespace Samples
 			}
 		}
 
-		static void PositionSystem(ref Rows rows, Set<Position> position)
+		static void PositionSystem(ref Rows rows, Span<Position> position)
 		{
-			Console.WriteLine($"PositionSystem: {rows.count}");
+			// Console.WriteLine($"PositionSystem: {rows.count}");
 			for (int i = 0; i < (int)rows.count; i++)
 			{
 				var entityId = rows[i];
@@ -64,7 +89,7 @@ namespace Samples
 			}
 		}
 
-		static void OnAddMoveSystem(ref Rows rows, Set<Position> position, Set<Speed> speed)
+		static void OnAddMoveSystem(ref Rows rows, Span<Position> position, Span<Speed> speed)
 		{
 			Console.WriteLine($"OnAddMoveSystem: {rows.count}");
 			for (int i = 0; i < (int)rows.count; i++)
@@ -76,9 +101,40 @@ namespace Samples
 			}
 		}
 
-		static void MoveSystem(ref Rows rows, Set<Position> position, Set<Speed> speed)
+		static void MoveSystem(ref Rows rows, Span<Position> position, Span<Speed> speed)
 		{
-			Console.WriteLine($"MoveSystem: {rows.count}");
+			// Console.WriteLine($"MoveSystem: {rows.count}");
+			for (var i = 0; i < (int)rows.count; i++)
+			{
+				var entityId = rows[i];
+				position[i].X += speed[i].SpeedValue * rows.deltaTime;
+				position[i].Y += speed[i].SpeedValue * rows.deltaTime;
+			}
+		}
+
+		static void MoveSystemRaw(ref Rows rows)
+		{
+			unchecked
+			{
+				var position = ecs.column<Position>(ref rows, 1);
+				var speed = ecs.column<Speed>(ref rows, 2);
+
+				// Console.WriteLine($"MoveSystemRaw: {rows.count}");
+				for (var i = 0; i < (int)rows.count; i++)
+				{
+					var entityId = rows[i];
+					position[i].X += speed[i].SpeedValue * rows.deltaTime;
+					position[i].Y += speed[i].SpeedValue * rows.deltaTime;
+				}
+			}
+		}
+
+		static void MoveSystemSpan(ref Rows rows)
+		{
+			var position = new Span<Position>(ecs.column<Position>(ref rows, 1), (int)rows.count);
+			var speed = new Span<Speed>(ecs.column<Speed>(ref rows, 2), (int)rows.count);
+
+			// Console.WriteLine($"MoveSystemRaw: {rows.count}");
 			for (var i = 0; i < (int)rows.count; i++)
 			{
 				var entityId = rows[i];

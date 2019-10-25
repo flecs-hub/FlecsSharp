@@ -17,6 +17,7 @@ namespace Samples
 		{
 			// using (var world = World.Create())
 			// 	Dump.Run(world);
+			// return;
 
 			foreach (var type in exampleTypes)
 			{
@@ -24,7 +25,7 @@ namespace Samples
 
 				Console.WriteLine($"---- Running {type.Name} ----");
 				using (var world = World.Create())
-					runMethod.Invoke(null, new object[] {world});
+					runMethod?.Invoke(null, new object[] {world});
 				Console.WriteLine();
 			}
 		}
