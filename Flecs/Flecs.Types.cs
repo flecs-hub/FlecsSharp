@@ -91,6 +91,8 @@ namespace Flecs
 
 	public unsafe partial struct EntityId : IEquatable<EntityId>
 	{
+		public static EntityId Zero = (EntityId)0;
+
 		public EntityId(UInt64 value) => Value = value;
 
 		public readonly UInt64 Value;

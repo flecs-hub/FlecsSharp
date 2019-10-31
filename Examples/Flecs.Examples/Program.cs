@@ -10,7 +10,7 @@ namespace Flecs.Examples
 			typeof(AddRemoveSystem), typeof(SetSystem), typeof(NoMacros), typeof(Hierarchy), typeof(HierarchyApi),
 			typeof(Inheritance), typeof(InheritanceApi), typeof(Override), typeof(OverrideInit), typeof(AddType),
 			typeof(AutoOverride), typeof(Prefab), typeof(PrefabVariant), typeof(NestedPrefab), typeof(AutoOverrideNestedPrefab),
-			typeof(NestedVariant), typeof(SystemFeatures), typeof(Optional), typeof(GetChildren)
+			typeof(NestedVariant), typeof(SystemFeatures), typeof(Optional), typeof(GetChildren), typeof(OnDemandSystem)
 		};
 
 		static void Main(string[] args)
