@@ -7,6 +7,17 @@ namespace Flecs.Tests
 	[TestFixture]
 	public unsafe class SystemOnFrame : AbstractTest
 	{
+		void InstallTestAbort()
+		{
+			ecs.os_set_api_defaults();
+			var os_api = ecs.ecs_os_api;
+			os_api.AbortCallback = test_abort;
+			ecs.os_set_api(ref os_api);
+		}
+
+		static void test_abort()
+		{}
+
 		static void Iter(ref Rows rows)
 		{
 			ECS_COLUMN<Position>(ref rows, out var p, 1);
@@ -44,6 +55,11 @@ namespace Flecs.Tests
 				if (m != null)
 					m[i].mass = 50;
 			}
+		}
+
+		static void TestIsSharedOnNotSet(ref Rows rows)
+		{
+			ecs.is_shared(ref rows, 2);
 		}
 
 		[Test]
@@ -234,6 +250,22 @@ namespace Flecs.Tests
 			p = (Position*)ecs.get_ptr(world, e_2, positionTypeId);
 			Assert.IsTrue(p->x == 10);
 			Assert.IsTrue(p->y == 20);
+		}
+
+		[Test]
+		public void SystemOnFrame_is_shared_on_column_not_set()
+		{
+			InstallTestAbort();
+
+			ECS_COMPONENT<Position>(world);
+			ECS_COMPONENT<Velocity>(world);
+
+			ECS_ENTITY(world, "Entity", "Position");
+
+			ECS_SYSTEM(world, TestIsSharedOnNotSet, SystemKind.OnUpdate, "Position, ?Velocity");
+
+			// TODO: figure out a way to avoid the actual abort occuring here.
+			//ecs.progress(world, 0);
 		}
 	}
 }

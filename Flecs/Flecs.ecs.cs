@@ -32,12 +32,14 @@ namespace Flecs
 		public static readonly EntityId ECS_SINGLETON = (EntityId)(ECS_ENTITY_MASK.Value - 1);
 		public static readonly EntityId ECS_INVALID_ENTITY = (EntityId)0;
 
+		public static OsApi ecs_os_api => InteropUtils.LoadTypedSymbol<OsApi>("ecs_os_api");
+
 		///<code>
 		///void ecs_os_set_api(ecs_os_api_t *)
 		///</code>
 		// ecs_os_set_api: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs/util/os_api.h#L189
 		[DllImport(NativeLibName, EntryPoint = "ecs_os_set_api", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-		public static extern void os_set_api(out OsApi osApi);
+		public static extern void os_set_api(ref OsApi osApi);
 
 		///<code>
 		///void ecs_os_set_api_defaults()

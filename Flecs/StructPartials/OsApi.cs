@@ -213,14 +213,6 @@ namespace Flecs
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			set => _moduleToDl = value != default ? Marshal.GetFunctionPointerForDelegate(value) : default;
 		}
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void OsSetApi()
-		{
-			ecs.os_set_api(out this);
-		}
-
 	}
-
 }
 
