@@ -232,6 +232,8 @@ namespace Flecs
 		public Vector components; //size: 8, offset:224
 		[MarshalAs(UnmanagedType.U1)] public bool frameProfiling; //size: 1, offset:232
 		[MarshalAs(UnmanagedType.U1)] public bool systemProfiling; //size: 1, offset:233
+
+		public void Free() => ecs.free_stats(ref this);
 	}
 
 	//EcsMemoryStats

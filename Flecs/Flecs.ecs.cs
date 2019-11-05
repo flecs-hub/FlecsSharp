@@ -482,7 +482,7 @@ namespace Flecs
 		///</code>
 		// ecs_init_w_args: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L272
 		[DllImport(NativeLibName, EntryPoint = "ecs_init_w_args", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-		public static extern World init_w_args(int argc, out sbyte argv);
+		public static extern World init_w_args(int argc, ref sbyte argv);
 
 		///<summary>
 		/// Delete a world. This operation deletes the world, and all entities, components and systems within the world.
@@ -823,7 +823,7 @@ namespace Flecs
 		///</code>
 		// ecs_delete_w_filter: https://github.com/SanderMertens/flecs/blob/612c28635497c1749f8f3e84fa24eabfea58e05a/include/flecs.h#L891
 		[DllImport(NativeLibName, EntryPoint = "ecs_delete_w_filter", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-		public static extern void delete_w_filter(World world, out TypeFilter filter);
+		public static extern void delete_w_filter(World world, ref TypeFilter filter);
 
 		///<summary>
 		/// Adopt a child entity by a parent. This operation adds the specified parent entity to the type of the specified entity, which effectively establishes a parent-child relationship. The parent entity, when added, behaves like a normal component in that it becomes part of the entity type.
