@@ -13,7 +13,7 @@ namespace Flecs
 	public static class Caches
 	{
 		static Dictionary<IntPtr, Dictionary<string, TypeId>> typedefMap = new Dictionary<IntPtr, Dictionary<string, TypeId>>();
-		static Dictionary<IntPtr, Dictionary<Type, TypeId>> typeMap = new Dictionary<IntPtr, Dictionary<Type, TypeId>>();
+		static Dictionary<IntPtr, Dictionary<int, TypeId>> typeMap = new Dictionary<IntPtr, Dictionary<int, TypeId>>();
 		static Dictionary<IntPtr, List<SystemActionDelegate>> systemActions = new Dictionary<IntPtr, List<SystemActionDelegate>>();
 		static Dictionary<int, CharPtr> unmanagedStrings = new Dictionary<int, CharPtr>();
 		static UnmanagedStringBuffer stringBuffer = UnmanagedStringBuffer.Create();
@@ -66,7 +66,7 @@ namespace Flecs
 		internal static void RegisterWorld(World world)
 		{
 			typedefMap[world] = new Dictionary<string, TypeId>();
-			typeMap[world] = new Dictionary<Type, TypeId>();
+			typeMap[world] = new Dictionary<int, TypeId>();
 			systemActions[world] = new List<SystemActionDelegate>();
 		}
 
@@ -91,12 +91,13 @@ namespace Flecs
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		internal static TypeId GetComponentTypeId(World world, Type compType)
 		{
-			if (!typeMap[world].TryGetValue(compType, out var typeId))
+			var typeHash = compType.GetHashCode();
+			if (!typeMap[world].TryGetValue(typeHash, out var typeId))
 			{
 				var charPtr = AddUnmanagedString(compType.Name);
 				var entityId = ecs.new_component(world, charPtr, Heap.SizeOf(compType));
 				typeId = ecs.type_from_entity(world, entityId);
-				typeMap[world][compType] = typeId;
+				typeMap[world][typeHash] = typeId;
 			}
 
 			return typeId;
