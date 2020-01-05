@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>netcoreapp3.0</TargetFramework>
+		<LangVersion>7.3</LangVersion>
+		<AssemblyName>Flecs.Samples</AssemblyName>
+		<RootNamespace>Flecs.Examples</RootNamespace>
+		<!--<RunWorkingDirectory>$(MSBuildProjectDirectory)/../runtime</RunWorkingDirectory>-->
+	</PropertyGroup>
+	
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	  <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	  <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	</PropertyGroup>
+	<ItemGroup>
+		<None Include="..\..\NativeLibs\macOS\libflecs_shared.dylib" Visible="false">
+			<Link>libflecs_shared.dylib</Link>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+	
+	<ItemGroup>
+		<ProjectReference Include="..\..\Flecs\Flecs.csproj" />
+	</ItemGroup>
+</Project>
